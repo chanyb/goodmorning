@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/lo_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_70"
+        android:visibility="gone">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_15_black000219_outline_2d3147"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.3666666667"
+            app:layout_constraintHeight_percent="0.34">
+
+
+            <TextView
+                android:id="@+id/txt_alert_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="로그아웃 하시겠습니까?"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                android:lineSpacingMultiplier="1.4"
+                android:gravity="center"
+                app:layout_constraintWidth_percent="0.8264642082"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintVertical_bias="0.4148936170"
+                />
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:text="취소"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:textColor="@color/black"
+                android:background="@drawable/background_edge_20_white"
+                android:fontFamily="@font/pretendard_bold"
+                app:layout_constraintWidth_percent="0.3409090909"
+                app:layout_constraintHeight_percent="0.1960784314"
+                app:layout_constraintBottom_toTopOf="@id/guide_btn"
+                app:layout_constraintEnd_toStartOf="@id/guide_btn"
+                />
+
+            <View
+                android:id="@+id/guide_btn"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.0433839479"
+                app:layout_constraintHeight_percent="0.1041666667"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/btn_confirm"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                android:text="로그아웃"
+                android:gravity="center"
+                android:textSize="22dp"
+                android:textColor="@color/white"
+                android:background="@drawable/background_edge_20_blue"
+                android:fontFamily="@font/pretendard_bold"
+                app:layout_constraintWidth_percent="0.3409090909"
+                app:layout_constraintHeight_percent="0.1960784314"
+                app:layout_constraintBottom_toTopOf="@id/guide_btn"
+                app:layout_constraintStart_toEndOf="@id/guide_btn"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lo_root"
+        android:background="@drawable/background_edge_10_transparent_black_90"
+        android:layout_width="565dp"
+        android:layout_height="268dp"
+        android:clipToOutline="true">
+
+        <View
+            android:id="@+id/guide_0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1716417910"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="차량번호"
+            android:textSize="18dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_semibold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.03"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_watch_video"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toEndOf="@id/txt_nickname"
+            app:layout_constraintEnd_toStartOf="@id/lo_dismiss"
+            app:layout_constraintWidth_percent="0.1634408602"
+            app:layout_constraintHorizontal_bias="0.2">
+
+            <kr.co.kworks.goodmorning.view.Circle
+                android:id="@+id/circle_out"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/white"
+                app:layout_constraintTop_toTopOf="@id/tt_watch_video"
+                app:layout_constraintBottom_toBottomOf="@id/tt_watch_video"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <kr.co.kworks.goodmorning.view.Circle
+                android:id="@+id/circle_in"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/black_000219"
+                app:layout_constraintTop_toTopOf="@id/circle_out"
+                app:layout_constraintBottom_toBottomOf="@id/circle_out"
+                app:layout_constraintStart_toStartOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="@id/circle_out"
+                app:layout_constraintHeight_percent="0.47"
+                app:layout_constraintDimensionRatio="1:1"
+                />
+
+            <kr.co.kworks.goodmorning.view.Triangle
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/white"
+                app:layout_constraintTop_toTopOf="@id/circle_out"
+                app:layout_constraintBottom_toBottomOf="@id/circle_out"
+                app:layout_constraintStart_toStartOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="@id/circle_out"
+                app:layout_constraintHeight_percent="0.23"
+                android:rotation="90"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHorizontal_bias="0.6"/>
+
+            <TextView
+                android:id="@+id/tt_watch_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="영상보기"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:fontFamily="@font/pretendard_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.3"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_dismiss"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintWidth_percent="0.1">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_x"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintDimensionRatio="1:1"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/gray_333"
+            app:layout_constraintTop_toBottomOf="@id/guide_0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <View
+            android:id="@+id/margin_start"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.0301075269"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <View
+            android:id="@+id/margin_end"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.0301075269"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <View
+            android:id="@+id/margin_top"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.0522388060"
+            app:layout_constraintTop_toBottomOf="@id/guide_0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            />
+
+        <View
+            android:id="@+id/margin_bottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.0522388060"
+            app:layout_constraintTop_toBottomOf="@id/guide_0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_vehicle_info"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/margin_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintTop_toBottomOf="@id/margin_top">
+
+            <TextView
+                android:id="@+id/tt_transfer_datetime"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="송신일시"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.1182795699"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <View
+                android:id="@+id/guide1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tt_transfer_datetime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.02"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_transfer_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="2025-12-31 12:12:12"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guide1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <View
+                android:id="@+id/guide2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintWidth_percent="0.53" />
+
+            <TextView
+                android:id="@+id/tt_speed"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="속도"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guide2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.0602150538"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <View
+                android:id="@+id/guide3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tt_wind"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.02"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="99.99km/h"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/guide3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <!-- 위치측위 | 풍향(풍속) -->
+            <TextView
+                android:id="@+id/tt_location_datetime"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="위치측위"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toBottomOf="@id/tt_transfer_datetime"
+                app:layout_constraintBottom_toTopOf="@id/tt_weather_datetime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.1182795699"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_location_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="2025-12-31 12:12:12"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_location_datetime"
+                app:layout_constraintBottom_toBottomOf="@id/tt_location_datetime"
+                app:layout_constraintStart_toEndOf="@id/guide1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.145"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/tt_wind"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="풍향(풍속)"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_location_datetime"
+                app:layout_constraintBottom_toBottomOf="@id/tt_location_datetime"
+                app:layout_constraintStart_toEndOf="@id/guide2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.143"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_wind"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="남동 44.44m/s"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_wind"
+                app:layout_constraintBottom_toBottomOf="@id/tt_wind"
+                app:layout_constraintStart_toEndOf="@id/guide3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.14"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <!-- 기상수집 | 온도/습도 -->
+            <TextView
+                android:id="@+id/tt_weather_datetime"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="기상수집"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toBottomOf="@id/tt_location_datetime"
+                app:layout_constraintBottom_toTopOf="@id/tt_longitude"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.1182795699"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_weather_datetime"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="2025-12-31 12:12:12"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_weather_datetime"
+                app:layout_constraintBottom_toBottomOf="@id/tt_weather_datetime"
+                app:layout_constraintStart_toEndOf="@id/guide1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/tt_weather"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="온도/습도"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_weather_datetime"
+                app:layout_constraintBottom_toBottomOf="@id/tt_weather_datetime"
+                app:layout_constraintStart_toEndOf="@id/guide2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.1290322581"
+                app:layout_constraintHeight_percent="0.13924050"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="32.21˚C / 99.99%"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_weather"
+                app:layout_constraintBottom_toBottomOf="@id/tt_weather"
+                app:layout_constraintStart_toEndOf="@id/guide3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <!-- 경도 -->
+            <TextView
+                android:id="@+id/tt_longitude"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="경도"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toBottomOf="@id/tt_weather_datetime"
+                app:layout_constraintBottom_toTopOf="@id/tt_latitude"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.0602150538"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_longitude"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="2025-12-31 12:12:12"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="0.1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_longitude"
+                app:layout_constraintBottom_toBottomOf="@id/tt_longitude"
+                app:layout_constraintStart_toEndOf="@id/guide1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.145"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <!-- 위도 -->
+            <TextView
+                android:id="@+id/tt_latitude"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="위도"
+                android:textSize="50dp"
+                android:textColor="@color/gray_cccccc"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.0602150538"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <TextView
+                android:id="@+id/txt_latitude"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="2025-12-31 12:12:12"
+                android:textSize="50dp"
+                android:textColor="@color/white"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="0.1dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="@id/tt_latitude"
+                app:layout_constraintBottom_toBottomOf="@id/tt_latitude"
+                app:layout_constraintStart_toEndOf="@id/guide1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.1392405063"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

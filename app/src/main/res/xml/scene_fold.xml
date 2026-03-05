@@ -1,0 +1,34 @@
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+<!--    &lt;!&ndash; 시작 상태 &ndash;&gt;-->
+<!--    <ConstraintSet android:id="@+id/start">-->
+<!--        <ConstraintOverride-->
+<!--            android:id="@id/lo_fire_caution_level"-->
+<!--            />-->
+
+<!--        <ConstraintOverride-->
+<!--            android:id="@id/lo_fire_caution_level_closed"-->
+<!--            android:alpha="0"-->
+<!--            android:visibility="invisible"/>-->
+<!--    </ConstraintSet>-->
+
+<!--    &lt;!&ndash; 끝 상태 &ndash;&gt;-->
+<!--    <ConstraintSet android:id="@+id/end">-->
+<!--        <ConstraintOverride-->
+<!--            android:id="@id/lo_fire_caution_level"-->
+<!--            android:layout_height="1dp"-->
+<!--            android:alpha="0"-->
+<!--            android:visibility="invisible"/>-->
+
+<!--        <ConstraintOverride-->
+<!--            android:id="@id/lo_fire_caution_level_closed" />-->
+<!--    </ConstraintSet>-->
+
+<!--    &lt;!&ndash; 전환 정의 &ndash;&gt;-->
+<!--    <Transition-->
+<!--        motion:constraintSetStart="@id/start"-->
+<!--        motion:constraintSetEnd="@id/end"-->
+<!--        motion:duration="500">-->
+<!--    </Transition>-->
+</MotionScene>

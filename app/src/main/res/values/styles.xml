@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom font 적용 -->
+    <style name="customTextViewFontStyle" parent="@android:style/Widget.TextView">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="customButtonFontStyle" parent="@android:style/Widget.DeviceDefault.Button.Borderless">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="customEditTextFontStyle" parent="@android:style/Widget.EditText">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="customRadioButtonFontStyle" parent="@android:style/Widget.DeviceDefault.CompoundButton.RadioButton">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="customCheckboxFontStyle" parent="@android:style/Widget.DeviceDefault.CompoundButton.CheckBox">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="customAlertDialogFontStyle">
+        <item name="android:fontFamily">@font/custom_font_family</item>
+    </style>
+
+    <style name="hintTextBold" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/sub</item>
+        <item name="android:textSize">15.4dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="hintTextRedBold" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">15.4dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+<!--    <style name="CustomWindowAnimation">-->
+<!--        <item name="android:windowEnterAnimation">@anim/in_right</item>-->
+<!--        <item name="android:windowExitAnimation">@anim/out_left</item>-->
+<!--        <item name="android:windowSharedElementEnterTransition">@anim/in_right</item>-->
+<!--        <item name="android:windowSharedElementExitTransition">@anim/out_left</item>-->
+<!--    </style>-->
+</resources>

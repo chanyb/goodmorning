@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lo_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/str_software_update_1"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintWidth_percent="0.2270833333333333"
+            app:layout_constraintHeight_percent="0.065"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.0833333333333333"
+            />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_software_update_2"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/gray_abacb3"
+            android:textSize="30dp"
+            android:lineSpacingMultiplier="1.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/guide"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.45625"
+            app:layout_constraintHeight_percent="0.0966666666666667"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.92">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_btn_later"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_30_transparent_outline_white"
+            app:layout_constraintWidth_percent="0.2104166666666667"
+            app:layout_constraintHeight_percent="0.0966666666666667"
+            app:layout_constraintTop_toTopOf="@id/guide"
+            app:layout_constraintBottom_toBottomOf="@id/guide"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintEnd_toEndOf="@id/guide"
+            app:layout_constraintHorizontal_bias="0"
+            android:clipToOutline="true">
+
+            <TextView
+                android:id="@+id/txt_btn_later"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/str_do_later"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/white"
+                android:textSize="80dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                android:gravity="center"
+                app:layout_constraintWidth_percent="0.4863636363636364"
+                app:layout_constraintHeight_percent="0.5862068965517241"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_btn_update"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.2104166666666667"
+            app:layout_constraintHeight_percent="0.0966666666666667"
+            app:layout_constraintTop_toTopOf="@id/guide"
+            app:layout_constraintBottom_toBottomOf="@id/guide"
+            app:layout_constraintEnd_toEndOf="@id/guide"
+            app:layout_constraintStart_toStartOf="@id/guide"
+            app:layout_constraintHorizontal_bias="1"
+            android:background="@drawable/background_edge_30_transparent_outline_green"
+            android:clipToOutline="true">
+
+            <TextView
+                android:id="@+id/txt_btn_update"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@string/str_download_update"
+                android:fontFamily="@font/pretendard_bold"
+                android:textColor="@color/communicate_green"
+                android:textSize="80dp"
+                android:autoSizeTextType="uniform"
+                android:autoSizeStepGranularity="1dp"
+                android:maxLines="1"
+                android:gravity="center"
+                app:layout_constraintWidth_percent="0.3727272727272727"
+                app:layout_constraintHeight_percent="0.5862068965517241"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/txt_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="업데이트 파일 다운로드중..."
+            android:textColor="@color/gray_abacb3"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:fontFamily="@font/pretendard_medium"
+            android:visibility="gone"
+            app:layout_constraintHeight_percent="0.0366666667"
+            app:layout_constraintBottom_toTopOf="@id/top_margin_lo_progress"
+            app:layout_constraintStart_toStartOf="@id/lo_progress"
+            app:layout_constraintEnd_toEndOf="@id/lo_progress"
+            />
+
+        <View
+            android:id="@+id/top_margin_lo_progress"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/lo_progress"
+            app:layout_constraintStart_toStartOf="@id/lo_progress"
+            app:layout_constraintEnd_toEndOf="@id/lo_progress"
+            app:layout_constraintHeight_percent="0.02"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_progress"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/lo_btn_later"
+            app:layout_constraintStart_toStartOf="@id/text2"
+            app:layout_constraintEnd_toEndOf="@id/text2"
+            app:layout_constraintVertical_bias="0.1"
+            app:layout_constraintHeight_percent="0.01">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lo_root"
+        android:layout_width="90dp"
+        android:layout_height="105dp">
+
+        <ImageView
+            android:id="@+id/marker_image"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_helli_live_on"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_marker_caption"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_20_white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.3095238095"
+            app:layout_constraintVertical_bias="0.95">
+
+            <TextView
+                android:id="@+id/marker_caption"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="726도3434"
+                android:textSize="17dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/pretendard_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lo_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/background_edge_10_transparent_white_10">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.0643086816720257"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.4919614147909968"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.5080385852090032"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_vertical_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.9356913183279743"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.08"
+            android:orientation="horizontal"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.198"
+            android:orientation="horizontal"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.218" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.336"
+            android:orientation="horizontal"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.356"
+            android:orientation="horizontal"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_horizontal_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.474"
+            android:orientation="horizontal"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/padding_start_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.090032154340836"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/padding_end_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.4662379421221865"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/padding_start_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.5337620578778135"
+            android:orientation="vertical"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/padding_end_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.909967845659164"
+            android:orientation="vertical"
+            />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_integrate_server"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_1"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_2"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_2" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_edge_ai_device"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_1"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_2"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_3"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_4" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_weather_sensor"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_3"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_4"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_2" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_cctv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_3"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_4"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_3"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_4" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_vehicle_board"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_5"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_6"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_1"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_2" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_update_server"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/background_edge_10_black000219"
+            app:layout_constraintTop_toTopOf="@id/guide_horizontal_5"
+            app:layout_constraintBottom_toBottomOf="@id/guide_horizontal_6"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_3"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_4" />
+
+        <TextView
+            android:id="@+id/txt_integrate_server"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="통합 연계 서버"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_integrate_server"
+            app:layout_constraintBottom_toBottomOf="@id/lo_integrate_server"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_edge_ai_device"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="엣지 AI 디바이스"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_edge_ai_device"
+            app:layout_constraintBottom_toBottomOf="@id/lo_edge_ai_device"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_weather_sensor"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="기상 센서"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_weather_sensor"
+            app:layout_constraintBottom_toBottomOf="@id/lo_weather_sensor"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_cctv"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="CCTV"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_cctv"
+            app:layout_constraintBottom_toBottomOf="@id/lo_cctv"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_vehicle_board"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="차량 중계보드"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_vehicle_board"
+            app:layout_constraintBottom_toBottomOf="@id/lo_vehicle_board"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_update_server"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:text="소프트웨어 업데이트 서버"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintTop_toTopOf="@id/lo_update_server"
+            app:layout_constraintBottom_toBottomOf="@id/lo_update_server"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_integrate_server_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintTop_toTopOf="@id/lo_integrate_server"
+            app:layout_constraintBottom_toBottomOf="@id/lo_integrate_server"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <TextView
+            android:id="@+id/txt_edge_ai_device_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintTop_toTopOf="@id/lo_edge_ai_device"
+            app:layout_constraintBottom_toBottomOf="@id/lo_edge_ai_device"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <TextView
+            android:id="@+id/txt_weather_sensor_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintTop_toTopOf="@id/lo_weather_sensor"
+            app:layout_constraintBottom_toBottomOf="@id/lo_weather_sensor"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <TextView
+            android:id="@+id/txt_cctv_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintTop_toTopOf="@id/lo_cctv"
+            app:layout_constraintBottom_toBottomOf="@id/lo_cctv"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <TextView
+            android:id="@+id/txt_vehicle_board_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintTop_toTopOf="@id/lo_vehicle_board"
+            app:layout_constraintBottom_toBottomOf="@id/lo_vehicle_board"
+            app:layout_constraintStart_toStartOf="@id/padding_start_1"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_1"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <TextView
+            android:id="@+id/txt_update_server_status"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="양호"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="@color/communicate_green"
+            android:textSize="80dp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeStepGranularity="1dp"
+            android:maxLines="1"
+            android:gravity="end"
+            app:layout_constraintWidth_percent="0.1"
+            app:layout_constraintHeight_percent="0.056"
+            app:layout_constraintTop_toTopOf="@id/lo_update_server"
+            app:layout_constraintBottom_toBottomOf="@id/lo_update_server"
+            app:layout_constraintStart_toStartOf="@id/padding_start_2"
+            app:layout_constraintEnd_toEndOf="@id/padding_end_2"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

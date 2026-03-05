@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/lo_root"
+        android:background="@drawable/background_edge_10_transparent_black_90"
+        android:layout_width="310dp"
+        android:layout_height="268dp"
+        android:clipToOutline="true">
+
+        <View
+            android:id="@+id/guide1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1716417910"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            />
+
+        <TextView
+            android:id="@+id/txt_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="호출부호"
+            android:textSize="18dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_semibold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_watch_video"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toEndOf="@id/txt_nickname"
+            app:layout_constraintEnd_toStartOf="@id/lo_dismiss"
+            app:layout_constraintWidth_percent="0.3"
+            app:layout_constraintHorizontal_bias="0.5">
+
+            <kr.co.kworks.goodmorning.view.Circle
+                android:id="@+id/circle_out"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/white"
+                app:layout_constraintTop_toTopOf="@id/tt_watch_video"
+                app:layout_constraintBottom_toBottomOf="@id/tt_watch_video"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHorizontal_bias="0"
+                />
+
+            <kr.co.kworks.goodmorning.view.Circle
+                android:id="@+id/circle_in"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/black_000219"
+                app:layout_constraintTop_toTopOf="@id/circle_out"
+                app:layout_constraintBottom_toBottomOf="@id/circle_out"
+                app:layout_constraintStart_toStartOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="@id/circle_out"
+                app:layout_constraintHeight_percent="0.47"
+                app:layout_constraintDimensionRatio="1:1"
+                />
+
+            <kr.co.kworks.goodmorning.view.Triangle
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:color="@color/white"
+                app:layout_constraintTop_toTopOf="@id/circle_out"
+                app:layout_constraintBottom_toBottomOf="@id/circle_out"
+                app:layout_constraintStart_toStartOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="@id/circle_out"
+                app:layout_constraintHeight_percent="0.23"
+                android:rotation="90"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHorizontal_bias="0.6"/>
+
+            <TextView
+                android:id="@+id/tt_watch_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="영상보기"
+                android:textColor="@color/white"
+                android:textSize="16dp"
+                android:fontFamily="@font/pretendard_medium"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/circle_out"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.3"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_dismiss"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/line"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintWidth_percent="0.15">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/icon_x"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintDimensionRatio="1:1"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/gray_333"
+            app:layout_constraintTop_toBottomOf="@id/guide1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+        <View
+            android:id="@+id/margin_start"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.0862745098"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            />
+
+        <View
+            android:id="@+id/margin_end"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.0862745098"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            />
+
+        <View
+            android:id="@+id/margin_top"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.0522388060"
+            app:layout_constraintTop_toBottomOf="@id/guide1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0"
+            />
+
+        <View
+            android:id="@+id/margin_bottom"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.0522388060"
+            app:layout_constraintTop_toBottomOf="@id/guide1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_datetime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/margin_top"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintEnd_toStartOf="@id/margin_end">
+
+            <TextView
+                android:id="@+id/tt_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="일시"
+                android:textColor="@color/gray_cccccc"
+                android:textSize="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.3"
+                />
+
+            <TextView
+                android:id="@+id/txt_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="2026-01-01 13:43:23"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.7"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_speed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lo_datetime"
+            app:layout_constraintBottom_toTopOf="@id/lo_altitude"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintEnd_toStartOf="@id/margin_end">
+
+            <TextView
+                android:id="@+id/tt_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="속도"
+                android:textColor="@color/gray_cccccc"
+                android:textSize="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.3"
+                />
+
+            <TextView
+                android:id="@+id/txt_speed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="100km"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.7"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_altitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lo_speed"
+            app:layout_constraintBottom_toTopOf="@id/lo_longitude"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintEnd_toStartOf="@id/margin_end">
+
+            <TextView
+                android:id="@+id/tt_altitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="고도"
+                android:textColor="@color/gray_cccccc"
+                android:textSize="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.3"
+                />
+
+            <TextView
+                android:id="@+id/txt_altitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="1373m"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.7"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_longitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lo_altitude"
+            app:layout_constraintBottom_toTopOf="@id/lo_latitude"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintEnd_toStartOf="@id/margin_end">
+
+            <TextView
+                android:id="@+id/tt_longitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="경도"
+                android:textColor="@color/gray_cccccc"
+                android:textSize="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.3"
+                />
+
+            <TextView
+                android:id="@+id/txt_longitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="127.152534342"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.7"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_latitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/margin_top"
+            app:layout_constraintBottom_toTopOf="@id/margin_bottom"
+            app:layout_constraintStart_toEndOf="@id/margin_start"
+            app:layout_constraintEnd_toStartOf="@id/margin_end"
+            app:layout_constraintVertical_bias="1">
+
+            <TextView
+                android:id="@+id/tt_latitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="위도"
+                android:textColor="@color/gray_cccccc"
+                android:textSize="18dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.3"
+                />
+
+            <TextView
+                android:id="@+id/txt_latitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="37.46564342"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:maxLines="1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintWidth_percent="0.7"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
