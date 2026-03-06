@@ -37,8 +37,7 @@ android {
             )
             signingConfig = signingConfigs.getByName("release");
 
-            resValue("string", "INTEGRATE_SERVER_DOMAIN", getProperty("INTEGRATE_SERVER_DOMAIN"))
-            resValue("string", "STREAM_DOMAIN", getProperty("WOWZA_STREAM_DOMAIN"))
+            resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
 
@@ -54,10 +53,30 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            resValue("string", "INTEGRATE_SERVER_DOMAIN", getProperty("INTEGRATE_SERVER_DOMAIN"))
-            resValue("string", "STREAM_DOMAIN", getProperty("WOWZA_STREAM_DOMAIN"))
+            resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
+
+        create("devlee") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            resValue("string", "domain", getProperty("DEV_LEE_IP"))
+            buildConfigField("Boolean", "IS_PRODUCTION", "false")
+        }
+
+        create("devnoh") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            resValue("string", "domain", getProperty("DEV_NOH_IP"))
+            buildConfigField("Boolean", "IS_PRODUCTION", "false")
+        }
+
     }
 
 
