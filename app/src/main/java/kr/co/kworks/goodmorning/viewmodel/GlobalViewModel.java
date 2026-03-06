@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import kr.co.kworks.goodmorning.model.repository.DeviceInfoRepository;
-import kr.co.kworks.goodmorning.utils.Database;
 
 
 @HiltViewModel

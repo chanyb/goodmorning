@@ -36,10 +36,10 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Locale;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.dialog.DialogManager;
-import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
@@ -47,6 +47,7 @@ import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
+@AndroidEntryPoint
 public class WebviewFragment extends Fragment implements SinglePageActivity.onBackPressedListener {
     private ProgressDialog mProgressDialog;
     private WebView webview, childView;
@@ -113,6 +114,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         previousQrValue = "";
 
         /* Object Value */
+        global = new ViewModelProvider(this).get(GlobalViewModel.class);
         mHandler = new Handler(Looper.getMainLooper());
         securityManager = new SecurityManager(getContext());
         preferenceHandler = new PreferenceHandler(getContext());
