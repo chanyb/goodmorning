@@ -58,7 +58,6 @@ public class IntroActivity extends AppCompatActivity {
     private ScheduledExecutorService loadingFailureExecutor;
     private ScheduledFuture<?> loadingFailureScheduled;
     private CalendarHandler calendarHandler;
-    private IntroViewModel introViewModel;
     private FragmentManager fragmentManager;
 
 
@@ -105,7 +104,6 @@ public class IntroActivity extends AppCompatActivity {
         loadingFailureExecutor = Executors.newScheduledThreadPool(1);
         out = new AtomicBoolean(false);
         calendarHandler = new CalendarHandler();
-        introViewModel = new ViewModelProvider(this).get(IntroViewModel.class);
         fragmentManager = getSupportFragmentManager();
 
         getOnBackPressedDispatcher().addCallback(

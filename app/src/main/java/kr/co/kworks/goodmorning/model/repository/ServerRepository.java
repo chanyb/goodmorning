@@ -19,12 +19,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @Singleton
-public class IntegrateServerRepository {
+public class ServerRepository {
     private RequestInterface api;
     private CalendarHandler calendarHandler;
 
     @Inject
-    public IntegrateServerRepository(@NetworkModule.IntegrateSystem RequestInterface requestInterface) {
+    public ServerRepository(@NetworkModule.Server RequestInterface requestInterface) {
         api = requestInterface;
         calendarHandler = new CalendarHandler();
     }

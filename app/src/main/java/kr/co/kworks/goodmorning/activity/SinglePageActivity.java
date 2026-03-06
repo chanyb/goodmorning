@@ -27,30 +27,23 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
 import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
-import kr.co.kworks.goodmorning.model.repository.DeviceInfoRepository;
-import kr.co.kworks.goodmorning.model.repository.LocationRepository;
 import kr.co.kworks.goodmorning.service.LocationService;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
-import kr.co.kworks.goodmorning.viewmodel.IntroViewModel;
 
 @AndroidEntryPoint
 public class SinglePageActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
-    private IntroViewModel introViewModel;
     private GlobalViewModel globalViewModel;
     private Handler mHandler;
-    private long ffmpegSessionId;
     private ActivitySinglePageBinding binding;
 
     private WebviewFragment webViewFragment;
@@ -67,13 +60,6 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private onBackPressedListener mOnBackPressedListener;
-
-
-    @Inject
-    LocationRepository locationRepository;
-
-    @Inject
-    DeviceInfoRepository deviceInfoRepository;
 
 
     @Override
@@ -109,7 +95,6 @@ public class SinglePageActivity extends AppCompatActivity {
         globalViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
-        introViewModel = new ViewModelProvider(this).get(IntroViewModel.class);
         webViewFragment = new WebviewFragment("https://kworks.co.kr", null);
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
