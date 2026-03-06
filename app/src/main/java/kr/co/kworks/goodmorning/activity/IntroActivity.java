@@ -57,11 +57,8 @@ public class IntroActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> mManageAppAllFiles;
     private ScheduledExecutorService loadingFailureExecutor;
     private ScheduledFuture<?> loadingFailureScheduled;
-    private String sPermission;
-    private Drawable downLoading;
     private CalendarHandler calendarHandler;
     private IntroViewModel introViewModel;
-    private int downloadPercent;
     private FragmentManager fragmentManager;
 
 
@@ -90,7 +87,7 @@ public class IntroActivity extends AppCompatActivity {
         }
 
         if (requestCode == 2425) {
-            if (Boolean.FALSE.equals(getNeededPermissions().isEmpty())) {
+            if (Boolean.FALSE.equals(getNeededDetailPermission().isEmpty())) {
                 Toast.makeText(this, "허용되지 않은 권한이 있습니다.\n앱을 종료합니다.", Toast.LENGTH_SHORT).show();
                 mHandler.postDelayed(this::finish, 2000);
             } else {
@@ -162,46 +159,22 @@ public class IntroActivity extends AppCompatActivity {
 
     private ArrayList<String> getNeededPermissions() {
         ArrayList<String> neededPermissions = new ArrayList<>();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
-            neededPermissions.add(Manifest.permission.CAMERA);
-        }
-
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                neededPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-        }
-
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-            neededPermissions.add(Manifest.permission.RECORD_AUDIO);
-        }
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-            neededPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-            neededPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-
         return neededPermissions;
     }
 
     private void createChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, NotificationManager.IMPORTANCE_MAX);
+//            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, NotificationManager.IMPORTANCE_MAX);
         } else {
-            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, 1);
+//            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, 1);
         }
 
-        if (GlobalApplication.getContext().isNotificationChannelEnabled(Utils.LOCATION_SERVICE_CHANNEL_ID)) {
-            requestPermissions();
-        } else {
-            Toast.makeText(this, "채널을 생성하지 못했습니다.\n앱을 종료합니다.", Toast.LENGTH_SHORT).show();
-            mHandler.postDelayed(this::finish, 2000);
-        }
+//        if (!GlobalApplication.getContext().isNotificationChannelEnabled(Utils.LOCATION_SERVICE_CHANNEL_ID)) {
+//            Toast.makeText(this, "채널을 생성하지 못했습니다.\n앱을 종료합니다.", Toast.LENGTH_SHORT).show();
+//            mHandler.postDelayed(this::finish, 2000);
+//        }
+
+        requestPermissions();
 
     }
     private void createNotificationChannel(String channelId, int importance) {
@@ -212,8 +185,6 @@ public class IntroActivity extends AppCompatActivity {
             GlobalApplication.getContext().createNotificationChannel(channelId, importance);
         }
     }
-
-
 
     private void requestPermissions() {
         ArrayList<String> list = getNeededPermissions();
@@ -256,12 +227,6 @@ public class IntroActivity extends AppCompatActivity {
 
     private ArrayList<String> getNeededDetailPermission() {
         ArrayList<String> neededDetailPermissions = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                neededDetailPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-            }
-        }
-
         return neededDetailPermissions;
     }
     private void requestDetailPermission() {

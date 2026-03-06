@@ -23,7 +23,7 @@ public class WebviewInterface {
         mActivity = activity;
         mProgressDialog = progressDialog;
         webviewCommunicationViewModel = new ViewModelProvider(GlobalApplication.getContext()).get(WebviewCommunicationViewModel.class);
-        global = new ViewModelProvider(GlobalApplication.getContext()).get(GlobalViewModel.class);
+//        global = new ViewModelProvider(GlobalApplication.getContext()).get(GlobalViewModel.class);
         preferenceHandler = new PreferenceHandler(mActivity);
     }
 

@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">다목적산불진화</string>
-    <string name="app_name_ko">차</string>
+    <string name="app_name">굿모닝</string>
+    <string name="app_name_ko">굿모닝</string>
     <string name="kakao_app_key">bba4db3f090a14a6680e661b886a06f5</string>
     <string name="kakao_app_scheme">kakaobba4db3f090a14a6680e661b886a06f5</string>
     <string name="naver_client_id">tkeVPHNk6yl5ESvNGRVN</string>

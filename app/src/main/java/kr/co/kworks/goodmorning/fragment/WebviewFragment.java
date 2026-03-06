@@ -23,6 +23,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,19 +37,19 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import kr.co.kworks.goodmorning.R;
+import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.dialog.DialogManager;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
-import kr.co.kworks.goodmorning.utils.GlobalApplication;
+import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
-public class WebviewFragment extends Fragment {
+public class WebviewFragment extends Fragment implements SinglePageActivity.onBackPressedListener {
     private ProgressDialog mProgressDialog;
     private WebView webview, childView;
-    private GlobalViewModel user;
     private SecurityManager securityManager;
     private WebviewCommunicationViewModel webviewCommunicationViewModel;
     private StringBuilder postDataBuilder;
@@ -58,6 +59,8 @@ public class WebviewFragment extends Fragment {
     private String previousQrValue;
     private Handler mHandler;
     private PreferenceHandler preferenceHandler;
+    private long backKeyPressedTime = 0;
+    private Toast toast;
 
     public WebviewFragment(String url, HashMap<String, String> postData) {
         this.url = url;
@@ -67,6 +70,17 @@ public class WebviewFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        SinglePageActivity activity = (SinglePageActivity) getActivity();
+        if (activity == null) return;
+        activity.setOnKeyBackPressedListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        SinglePageActivity activity = (SinglePageActivity) getActivity();
+        if (activity == null) return;
+        activity.setOnKeyBackPressedListener(null);
     }
 
     @Nullable
@@ -100,16 +114,14 @@ public class WebviewFragment extends Fragment {
 
         /* Object Value */
         mHandler = new Handler(Looper.getMainLooper());
-        global = new ViewModelProvider(GlobalApplication.getContext()).get(GlobalViewModel.class);
         securityManager = new SecurityManager(getContext());
         preferenceHandler = new PreferenceHandler(getContext());
-        webviewCommunicationViewModel = new ViewModelProvider(GlobalApplication.getContext()).get(WebviewCommunicationViewModel.class);
+        webviewCommunicationViewModel = new ViewModelProvider(getActivity()).get(WebviewCommunicationViewModel.class);
         webviewCommunicationViewModel.functionName.removeObservers(this);
         webviewCommunicationViewModel.functionName.observe(this, o -> {
             if(o == null) return;
             callFunction(o, null);
         });
-        user = new ViewModelProvider(GlobalApplication.getContext()).get(GlobalViewModel.class);
 
         if (getView() == null) throw new NullPointerException("getView is null");
         // webview init
@@ -209,18 +221,22 @@ public class WebviewFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            if (url == null) {
+                return false;
+            }
+
             if (url.startsWith("tel:")) {
                 Intent tel = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
                 startActivity(tel);
-            }
-            else if (url.startsWith("id:")) {
+                return true;
+            } else if (url.startsWith("id:")) {
                 String sId = url.replace("id://", "");
                 preferenceHandler.setStringPreference(PreferenceHandler.PREF_USER_ID, sId);
+                return true;
             }
-            else {
-                view.loadUrl(url);
-            }
-            return true;
+
+            // http/https 및 일반 URL은 WebView가 원래대로 처리하게 둠
+            return false;
         }
 
         // 로딩이 시작될 때
@@ -314,6 +330,8 @@ public class WebviewFragment extends Fragment {
                 if (timeoutHandler != null) timeoutHandler.removeCallbacksAndMessages(null);
                 timeout = false;
             }
+
+            Logger.getInstance().info("onProgressChange: " + newProgress);
         }
 
         @Override
@@ -328,7 +346,7 @@ public class WebviewFragment extends Fragment {
 
         @Override
         public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-            view.removeAllViews();
+//            view.removeAllViews();
             //view.scrollTo(0,0);
             childView = new WebView(view.getContext());
             /*  웹뷰의 캐시 모드를 설정하는 속성으로써 5가지 모드가 존재합니다.
@@ -416,21 +434,6 @@ public class WebviewFragment extends Fragment {
         });
     }
 
-    public boolean canGoBack() {
-        if (webview == null) return false;
-        else if (webview.getUrl().equals(ApiConstants.LOGIN_URL)) {
-            // 로그인
-            return false;
-        }
-        else if (webview.canGoBack()) {
-            webview.goBack();
-            Log.i("this", "webView.goBack()");
-            return true;
-        }
-//        webview.loadUrl("javascript: fn_pageBack()");
-        return false;
-    }
-
     private void registerObservers() {
     }
 
@@ -446,4 +449,49 @@ public class WebviewFragment extends Fragment {
         if(webview != null && webview.getUrl() != null) webview.loadUrl(webview.getUrl());
     }
 
+    public void onBack() {
+        if (childView != null) {
+            if (childView.canGoBack()) {
+                childView.goBack();
+            } else {
+                 closeChildView();
+            }
+            return;
+        }
+
+        if (webview != null && webview.canGoBack()) {
+            webview.goBack();
+            return;
+        }
+
+        // 2초 이내 2번 클릭 시 종료
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            showGuide();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            getActivity().finish();
+            getActivity().overridePendingTransition(0,0);
+            toast.cancel();
+        }
+
+
+    }
+
+    private void closeChildView() {
+        if (childView != null) {
+            if (webview != null) {
+                webview.removeView(childView);
+            }
+            childView.destroy();
+            childView = null;
+        }
+    }
+
+    public void showGuide() {
+        toast = Toast.makeText(getActivity(),
+            "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+        toast.show();
+    }
 }

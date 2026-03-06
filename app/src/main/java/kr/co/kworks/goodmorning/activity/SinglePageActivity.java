@@ -3,7 +3,6 @@ package kr.co.kworks.goodmorning.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -23,7 +22,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
-import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -31,24 +29,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import ai.instavision.ffmpegkit.FFmpegKit;
-import ai.instavision.ffmpegkit.FFmpegKitConfig;
-import ai.instavision.ffmpegkit.ReturnCode;
-import ai.instavision.ffmpegkit.Session;
-import ai.instavision.ffmpegkit.SessionState;
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
-import kr.co.kworks.goodmorning.model.business_logic.DeviceInfo;
+import kr.co.kworks.goodmorning.fragment.WebviewFragment;
 import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
 import kr.co.kworks.goodmorning.model.repository.DeviceInfoRepository;
 import kr.co.kworks.goodmorning.model.repository.LocationRepository;
 import kr.co.kworks.goodmorning.service.LocationService;
-import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
-import kr.co.kworks.goodmorning.utils.LiveUpdator;
-import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
@@ -63,14 +53,21 @@ public class SinglePageActivity extends AppCompatActivity {
     private long ffmpegSessionId;
     private ActivitySinglePageBinding binding;
 
+    private WebviewFragment webViewFragment;
+
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> rtmpRelayScheduled, startServiceScheduled, appUpdateCheckScheduled;
-    private LocationManagerHandler locationManagerHandler;
+    private ScheduledFuture<?> startServiceScheduled;
 
     private CalendarHandler calendarHandler;
 
     private NetworkBroadcastReceiver networkBroadcastReceiver;
-    private LiveUpdator liveUpdator;
+
+    public interface onBackPressedListener {
+        public void onBack();
+    }
+
+    private onBackPressedListener mOnBackPressedListener;
+
 
     @Inject
     LocationRepository locationRepository;
@@ -85,26 +82,19 @@ public class SinglePageActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_single_page);
         init();
         observerInit();
-        initClickListener();
+//        initClickListener();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        rtmpRelaySchedule();
         registerBroadcastReceiver();
-        setLocationListener();
-        startAppUpdateCheckScheduled();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        stopRtmpRelay();
-        stopRtmpRelayScheduled();
         unregisterBroadcastReceiver();
-        removeLocationListener();
-        stopAppUpdateCheckScheduled();
     }
 
     @Override
@@ -120,14 +110,9 @@ public class SinglePageActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
         introViewModel = new ViewModelProvider(this).get(IntroViewModel.class);
-        liveUpdator = new LiveUpdator(this, introViewModel);
-
-
-        locationManagerHandler = new LocationManagerHandler(this);
-
+        webViewFragment = new WebviewFragment("https://kworks.co.kr", null);
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
-            globalViewModel._networkConnected.postValue(bool);
         });
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
@@ -139,7 +124,11 @@ public class SinglePageActivity extends AppCompatActivity {
             new OnBackPressedCallback(true) {   // 항상 활성(true) ← 매우 중요
                 @Override
                 public void handleOnBackPressed() {
+                    if (mOnBackPressedListener != null) {
+                        mOnBackPressedListener.onBack();
+                    } else {
 
+                    }
                 }
             }
         );
@@ -192,6 +181,17 @@ public class SinglePageActivity extends AppCompatActivity {
             }
         });
 
+        globalViewModel._webViewFragment.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) {
+            } else {
+                if (isHandled.equals("visible")) {
+                    replaceFragment(webViewFragment, "webview");
+                }
+            }
+        });
+
     }
 
     private void popAllBackStack() {
@@ -201,30 +201,6 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private void initClickListener() {
-        binding.appUpdateConfirm.loDialog.setOnClickListener(v-> {});
-
-        binding.appUpdateConfirm.btnCancel.setOnClickListener(v -> {
-            binding.appUpdateConfirm.loDialog.setVisibility(View.GONE);
-        });
-
-        binding.appUpdateConfirm.btnUpdate.setOnClickListener(v -> {
-            binding.appUpdateConfirm.txtAlertBody.setText("업데이트 파일을 다운로드 합니다...");
-            liveUpdator.downloadApk("forestvehicleapp.apk", getFilesDir().getAbsolutePath());
-            binding.appUpdateConfirm.loProgress.setVisibility(View.VISIBLE);
-            binding.appUpdateConfirm.btnUpdate.setVisibility(View.GONE);
-            binding.appUpdateConfirm.btnCancel.setVisibility(View.GONE);
-        });
-
-        binding.videoRelayConfirm.loDialog.setOnClickListener(v -> {});
-        binding.videoRelayConfirm.btnCancel.setOnClickListener(v -> {
-            binding.videoRelayConfirm.loDialog.setVisibility(View.GONE);
-        });
-
-        binding.videoRelayConfirm.btnStart.setOnClickListener(v -> {
-            globalViewModel.headerFragment_switch.postValue(new Event<>("on"));
-            binding.videoRelayConfirm.btnCancel.callOnClick();
-        });
-
     }
 
     /**
@@ -240,125 +216,15 @@ public class SinglePageActivity extends AppCompatActivity {
         }
     }
 
-    private void startRtmpRelay() {
-        Logger.getInstance().info("startRtmpRelay");
-        DeviceInfo deviceInfo = globalViewModel.getDeviceInfo();
-        if(deviceInfo == null) return;
-
-        mHandler.postDelayed(() -> {
-            String cmd = String.format(Locale.KOREA,
-                "-i %s " +
-                    "-c:v copy " +
-                    "-an " +
-                    "-f flv rtmps://%s:%s@%s:8443/live/%s"
-                , ApiConstants.FFMPEG_RELAY_URL, "vehicle_pub", "c4adb642ccb91327", ApiConstants.STREAM_DOMAIN, deviceInfo.vehicleCode);
-//
-//            String cmd = String.format(Locale.KOREA,
-//                "-rtsp_transport tcp " +
-//                    "-fflags +genpts -use_wallclock_as_timestamps 1 " +
-//                    "-avoid_negative_ts make_zero " +
-//                    "-i %s " +
-//                    "-vf \"scale=848:480,fps=30,format=yuv420p\" " +
-//                    "-c:v h264_mediacodec " +
-//                    "-g 30 -keyint_min 30 " +
-//                    "-force_key_frames \"expr:gte(t,n_forced*1)\" " +
-//                    "-b:v 1000k -maxrate 1000k -bufsize 2000k " +
-//                    "-an " +
-//                    "-f flv rtmps://%s:%s@%s:8443/live/%s"
-//                , globalViewModel.currentPlayUrl, "vehicle_pub", "c4adb642ccb91327", ApiConstants.STREAM_DOMAIN, deviceInfo.vehicleCode);
-
-
-            FFmpegKit.cancel(ffmpegSessionId);
-            FFmpegKitConfig.enableStatisticsCallback(null);
-
-            FFmpegKit.executeAsync(cmd, session -> {
-                SessionState state = session.getState();
-                ReturnCode rc = session.getReturnCode();
-                String output = session.getOutput();
-                if (ReturnCode.isSuccess(rc)) {
-                    Logger.getInstance().info("✅ 중계 성공------------------------------------------------");
-                } else if (ReturnCode.isCancel(rc)) {
-                    Logger.getInstance().info("⛔ 중계 취소됨");
-                } else {
-                    Logger.getInstance().error("❌ 중계 실패. state=" + state + ", rc=" + rc + "\n" + output, null);
-                }
-                FFmpegKitConfig.clearSessions();
-            });
-
-            Session session3 = FFmpegKitConfig.getLastSession();
-            if (session3 != null) ffmpegSessionId = session3.getSessionId();
-
-        }, 3000);
-    }
-
-    private void stopRtmpRelay() {
-        if(ffmpegSessionId != -1L) {
-            FFmpegKit.execute("q");
-            FFmpegKit.cancel(ffmpegSessionId);
-            Logger.getInstance().info("stopRtmpRelay()");
-        }
-    }
-
-    private void rtmpRelaySchedule() {
-        stopRtmpRelayScheduled();
-        rtmpRelayScheduled = executor.scheduleWithFixedDelay(() -> {
-            Logger.getInstance().info("rtmpRelaySchedule()");
-
-            if (deviceInfoRepository.getDeviceInfoFromDB().videoRelayYn.equalsIgnoreCase("N")) {
-                stopRtmpRelay();
-                return;
-            }
-
-            try {
-                Thread.sleep(15_000);
-            } catch (InterruptedException e) {
-            }
-
-            if(FFmpegKitConfig.getLastSession() != null && FFmpegKitConfig.getLastSession().getState() != null) {
-                if (FFmpegKitConfig.getLastSession().getState() == SessionState.RUNNING) {
-                    Logger.getInstance().info("FFmpegKit is RUNNGING return");
-                    return;
-                }
-
-                if (FFmpegKitConfig.getLastSession().getState() == SessionState.CREATED) {
-                    Logger.getInstance().info("FFmpegKit is CREATED return");
-                    return;
-                }
-
-                if (FFmpegKitConfig.getLastSession().getState() == SessionState.COMPLETED) {
-                    Logger.getInstance().info("FFmpegKit is COMPLETED, not return");
-                }
-
-                if (FFmpegKitConfig.getLastSession().getState() == SessionState.FAILED) {
-                    Logger.getInstance().info("FFmpegKit is FAILED return");
-                    return;
-                }
-            }
-
-            if (GlobalApplication.getContext().isForeground()) startRtmpRelay();
-        }, 2000, 5_000, TimeUnit.MILLISECONDS);
-    }
-
-    private void stopRtmpRelayScheduled() {
-        if (rtmpRelayScheduled != null && !rtmpRelayScheduled.isCancelled()) rtmpRelayScheduled.cancel(true);
-    }
-
     private void startStartServiceScheduled() {
         stopStartServiceScheduled();
         startServiceScheduled = executor.scheduleWithFixedDelay(() -> {
-            DeviceInfo deviceInfo = globalViewModel.getDeviceInfo();
-            if(deviceInfo == null || deviceInfo.vehicleCode == null || deviceInfo.vehicleCode.isEmpty()) return;
             startService();
         }, 2000, 5000, TimeUnit.MILLISECONDS);
     }
 
     private void stopStartServiceScheduled() {
         if (startServiceScheduled != null && !startServiceScheduled.isCancelled()) startServiceScheduled.cancel(true);
-    }
-
-    private void whenLocationObserved(Location location) {
-        if (location == null) return;
-        globalViewModel._location.postValue(location);
     }
 
     private boolean isOnline(Context context) {
@@ -376,45 +242,11 @@ public class SinglePageActivity extends AppCompatActivity {
         unregisterReceiver(networkBroadcastReceiver);
     }
 
-    private void setLocationListener() {
-//        if (fusedLocationProvider.canUse()) {
-//            fusedLocationProvider.liveLocation.observe(this,this::whenLocationObserved);
-//            fusedLocationProvider.start();
-//        } else {
-        locationManagerHandler.liveLocation.observe(this, this::whenLocationObserved);
-        locationManagerHandler.start();
-//        }
-    }
-
-    private void removeLocationListener() {
-//        if (fusedLocationProvider.canUse()) {
-//            fusedLocationProvider.liveLocation.removeObservers(this);
-//            fusedLocationProvider.stop();
-//        } else {
-        locationManagerHandler.liveLocation.removeObservers(this);
-        locationManagerHandler.stop();
-//        }
-    }
-
     private void setFirstFragment() {
-        globalViewModel._prepareFragment.postValue(new Event<>("visible"));
-//        if (globalViewModel.deviceInfoRepository.getDeviceInfoFromDB() == null) {
-//            return;
-//        }
-//
-//        if (globalViewModel.deviceInfoRepository.getDeviceInfoFromDB().vehicleNumber != null && !globalViewModel.deviceInfoRepository.getDeviceInfoFromDB().vehicleNumber.isEmpty()) {
-//            globalViewModel._mapFragment.postValue(new Event<>("visible"));
-//        }
+        globalViewModel._webViewFragment.postValue(new Event<>("visible"));
     }
 
-    private void startAppUpdateCheckScheduled() {
-        stopAppUpdateCheckScheduled();
-        appUpdateCheckScheduled = executor.scheduleWithFixedDelay(() -> {
-            globalViewModel.appUpdateCheck(this);
-        }, 15_000, 600_000, TimeUnit.MILLISECONDS);
-    }
-
-    private void stopAppUpdateCheckScheduled() {
-        if (appUpdateCheckScheduled != null && !appUpdateCheckScheduled.isCancelled()) appUpdateCheckScheduled.cancel(true);
+    public void setOnKeyBackPressedListener(onBackPressedListener listener) {
+        mOnBackPressedListener = listener;
     }
 }

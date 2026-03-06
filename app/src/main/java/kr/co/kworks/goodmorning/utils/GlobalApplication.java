@@ -117,17 +117,6 @@ public class GlobalApplication extends Application implements ViewModelStoreOwne
         @Override
         public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
             getScreenSize(activity);
-            if (activity instanceof  AppCompatActivity) {
-                hideStatusBar((AppCompatActivity) activity);
-                View decorView = activity.getWindow().getDecorView();
-                decorView.setOnSystemUiVisibilityChangeListener(visibility -> {
-                    if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                        Logger.getInstance().info("call hideStatusBar()");
-                        hideStatusBar((AppCompatActivity) activity); // 다시 숨김
-                    }
-                });
-            }
-
         }
 
         @Override

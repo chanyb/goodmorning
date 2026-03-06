@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SinglePageActivity" android:exported="false" android:screenOrientation="landscape" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".activity.SinglePageActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
 
         <!-- provider -->
         <provider
@@ -38,17 +38,6 @@
         </provider>
 
         <!-- Service -->
-        <service
-            android:name=".service.LocationService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location"
-            />
-
-        <!-- Meta data -->
-        <meta-data
-            android:name="com.naver.maps.map.NCP_KEY_ID"
-            android:value="nv2kq0di1e" />
     </application>
 
     <!-- NETWORK -->
@@ -70,26 +59,6 @@
     <!-- SIM INFO -->
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
-    <!-- camera -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-
-    <!-- AUDIO -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-
-    <!-- 화면 스트리밍을 위해 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
-    <!-- Install package -->
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
-    <!-- Location -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-feature android:name="android.hardware.location.gps" />
 
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
