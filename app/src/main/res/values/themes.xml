@@ -1,11 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Vehicle" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.GoodMorning" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimaryDark">#13182C</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <!--        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/background</item>-->
-<!--        <item name="android:fitsSystemWindows">true</item>-->
+        <item name="colorPrimaryDark">@color/primary</item>
 
         <!--custom font-family 적용-->
         <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
@@ -13,7 +10,12 @@
         <item name="editTextStyle">@style/customEditTextFontStyle</item>
         <item name="android:radioButtonStyle">@style/customRadioButtonFontStyle</item>
         <item name="android:checkboxStyle">@style/customCheckboxFontStyle</item>
+
+        <item name="colorPrimary">@color/primary</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:navigationBarColor">@color/primary</item>
     </style>
 
-    <style name="Theme.Vehicle" parent="Base.Theme.Vehicle" />
+    <style name="Theme.GoodMorning" parent="Base.Theme.GoodMorning" />
 </resources>
