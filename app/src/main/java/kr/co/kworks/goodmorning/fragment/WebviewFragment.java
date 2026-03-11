@@ -44,6 +44,7 @@ import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
+import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
@@ -114,7 +115,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         previousQrValue = "";
 
         /* Object Value */
-        global = new ViewModelProvider(this).get(GlobalViewModel.class);
+        global = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         mHandler = new Handler(Looper.getMainLooper());
         securityManager = new SecurityManager(getContext());
         preferenceHandler = new PreferenceHandler(getContext());
@@ -157,8 +158,10 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setMessage(getString(R.string.sentence_please_wait));
         setWebView(webview);
+    }
 
-        registerObservers();
+    private void observerInit() {
+
     }
 
     private void setWebView(WebView webView) {
@@ -245,7 +248,9 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onPageStarted(WebView view, final String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            mProgressDialog.show();
+            mHandler.post(() -> {
+                global._progress.setValue(new Event<>("visible"));
+            });
         }
 
         // 로딩이 완료됬을 때 한번 호출
@@ -254,7 +259,9 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             super.onPageFinished(view, url);
             if (mProgressDialog.isShowing()) mProgressDialog.dismiss();
 //            CookieManager.getInstance().flush();
-
+            mHandler.post(() -> {
+                global._progress.setValue(new Event<>("gone"));
+            });
             Log.i("this", "url: "+url);
         }
 
@@ -312,27 +319,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-
-            if (newProgress == 10) {
-                if (view == webview) {
-                    if (!mProgressDialog.isShowing()) {
-                        mProgressDialog.setMessage(getContext().getString(R.string.sentence_please_wait));
-                        mProgressDialog.setCancelable(false);
-                        mProgressDialog.show();
-                    }
-
-                }
-            }
-            if (newProgress == 100) {
-                if (view == webview) {
-                    if (mProgressDialog.isShowing()) {
-                        mProgressDialog.dismiss();
-                    }
-                }
-                if (timeoutHandler != null) timeoutHandler.removeCallbacksAndMessages(null);
-                timeout = false;
-            }
-
+            global.progressDialog.progress = newProgress;
             Logger.getInstance().info("onProgressChange: " + newProgress);
         }
 
@@ -375,36 +362,19 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
         @Override
         public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(() -> {
-                DialogManager.getInstance().showAlertDialog(getContext(),message, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        DialogManager.getInstance().dismissAlertDialog((Activity) getContext());
-                        result.confirm();
-                    }
-                }, R.drawable.icon_alert, getString(R.string.str_caution));
-            }, 0);
-
+            mHandler.post(() -> {
+                global.jsResult = result;
+                global._alert.postValue(new Event<>("visible"));
+            });
             return true;
         }
 
         @Override
         public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
-            DialogManager.getInstance().showConfirmDialog(getContext(), message, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DialogManager.getInstance().dismissConfirmDialog(getActivity());
-                    result.cancel();
-                }
-            }, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DialogManager.getInstance().dismissConfirmDialog(getActivity());
-                    result.confirm();
-                }
-            }, DialogManager.ICON_NULL, null);
-
+            mHandler.post(() -> {
+                global.jsResult = result;
+                global._confirm.postValue(new Event<>("visible"));
+            });
             return true;
         }
 
@@ -434,9 +404,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         mHandler.post(() -> {
             webview.loadUrl(String.format(Locale.KOREA, "javascript: %s(%d, '%s')", funcName, count, phoneNumbers));
         });
-    }
-
-    private void registerObservers() {
     }
 
     public void sendImage(String name, String mimeType, String base64string, String end, int delay) {

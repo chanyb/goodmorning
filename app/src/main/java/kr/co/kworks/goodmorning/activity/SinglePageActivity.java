@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -31,8 +32,10 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
+import kr.co.kworks.goodmorning.model.business_logic.ProgressDialog;
 import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
 import kr.co.kworks.goodmorning.service.LocationService;
+import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
 import kr.co.kworks.goodmorning.utils.Logger;
@@ -49,7 +52,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private WebviewFragment webViewFragment;
 
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> startServiceScheduled;
+    private ScheduledFuture<?> startServiceScheduled, progressSyncScheduled;
 
     private CalendarHandler calendarHandler;
 
@@ -68,19 +71,21 @@ public class SinglePageActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_single_page);
         init();
         observerInit();
-//        initClickListener();
+        initClickListener();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         registerBroadcastReceiver();
+        startAllScheduled();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterBroadcastReceiver();
+        release();
     }
 
     @Override
@@ -95,10 +100,12 @@ public class SinglePageActivity extends AppCompatActivity {
         globalViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
-        webViewFragment = new WebviewFragment("https://kworks.co.kr", null);
+        webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
+        binding.progressDialog.progressCircular.setIndeterminate(true);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
         setFirstFragment();
@@ -177,6 +184,41 @@ public class SinglePageActivity extends AppCompatActivity {
             }
         });
 
+        globalViewModel._confirm.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) {
+            } else {
+                if (isHandled.equals("visible")) {
+                    binding.confirmDialog.loDialog.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        globalViewModel._alert.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) {
+            } else {
+                if (isHandled.equals("visible")) {
+                    binding.alertDialog.loDialog.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        globalViewModel._progress.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) {
+            } else {
+                if (isHandled.equals("visible")) {
+                    binding.progressDialog.loDialog.setVisibility(View.VISIBLE);
+                } else if (isHandled.equals("gone")) {
+                    binding.progressDialog.loDialog.setVisibility(View.GONE);
+                    globalViewModel.progressDialog.progress = 0;
+                }
+            }
+        });
     }
 
     private void popAllBackStack() {
@@ -186,6 +228,30 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private void initClickListener() {
+        binding.confirmDialog.btnLeft.setOnClickListener(v -> {
+            if (globalViewModel.jsResult != null) {
+                globalViewModel.jsResult.cancel();
+                globalViewModel.jsResult = null;
+            }
+            binding.confirmDialog.loDialog.setVisibility(View.GONE);
+        });
+        binding.confirmDialog.btnRight.setOnClickListener(v -> {
+            if (globalViewModel.jsResult != null) {
+                globalViewModel.jsResult.confirm();
+                globalViewModel.jsResult = null;
+            }
+            binding.confirmDialog.loDialog.setVisibility(View.GONE);
+        });
+        binding.alertDialog.btn.setOnClickListener(v -> {
+            if (globalViewModel.jsResult != null) {
+                globalViewModel.jsResult.confirm();
+                globalViewModel.jsResult = null;
+            }
+            binding.alertDialog.loDialog.setVisibility(View.GONE);
+        });
+        binding.confirmDialog.loDialog.setOnClickListener(v -> {});
+        binding.alertDialog.loDialog.setOnClickListener(v -> {});
+        binding.progressDialog.loDialog.setOnClickListener(v -> {});
     }
 
     /**
@@ -233,5 +299,42 @@ public class SinglePageActivity extends AppCompatActivity {
 
     public void setOnKeyBackPressedListener(onBackPressedListener listener) {
         mOnBackPressedListener = listener;
+    }
+
+    private void stopProgressSyncScheduled() {
+        if (progressSyncScheduled != null && !progressSyncScheduled.isCancelled()) progressSyncScheduled.cancel(true);
+    }
+
+    private void startProgressSyncScheduled() {
+        stopProgressSyncScheduled();
+        progressSyncScheduled = executor.scheduleWithFixedDelay(() -> {
+            ProgressDialog progressDialog = globalViewModel.progressDialog;
+            if (progressDialog == null) return;
+            if (progressDialog.progress != -1) {
+                mHandler.post(() -> {
+                    binding.progressDialog.text.setText(
+                        String.format(Locale.KOREA, "%s %d%%", progressDialog.message, progressDialog.progress)
+                    );
+                });
+                return;
+            }
+
+            mHandler.post(() -> {
+                binding.progressDialog.text.setText(
+                    String.format(Locale.KOREA, "%s", progressDialog.message)
+                );
+            });
+
+
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+    }
+
+    private void startAllScheduled() {
+        startProgressSyncScheduled();
+    }
+
+    private void release() {
+        stopProgressSyncScheduled();
+        stopStartServiceScheduled();
     }
 }

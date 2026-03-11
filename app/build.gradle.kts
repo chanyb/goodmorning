@@ -53,12 +53,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
+            resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
         create("devlee") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -69,6 +70,7 @@ android {
 
         create("devnoh") {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

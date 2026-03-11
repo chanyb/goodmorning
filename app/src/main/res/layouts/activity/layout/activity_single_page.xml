@@ -19,12 +19,16 @@
             />
 
         <include
-            android:id="@+id/app_update_confirm"
-            layout="@layout/item_app_update_confirm" />
+            android:id="@+id/progress_dialog"
+            layout="@layout/item_progress_dialog" />
 
         <include
-            android:id="@+id/video_relay_confirm"
-            layout="@layout/item_video_relay_confirm" />
+            android:id="@+id/confirm_dialog"
+            layout="@layout/item_confirm_dialog" />
+
+        <include
+            android:id="@+id/alert_dialog"
+            layout="@layout/item_alert_dialog" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
