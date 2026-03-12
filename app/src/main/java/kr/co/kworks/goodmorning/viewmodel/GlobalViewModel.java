@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import kr.co.kworks.goodmorning.model.business_logic.Alert;
+import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.model.business_logic.ProgressDialog;
 
 @HiltViewModel
@@ -22,6 +24,8 @@ public class GlobalViewModel extends ViewModel {
     public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress;
     public JsResult jsResult;
     public ProgressDialog progressDialog;
+    public MutableLiveData<Alert> alertContent;
+    public MutableLiveData<Confirm> confirmContent;
 
 
     @Inject
@@ -45,6 +49,8 @@ public class GlobalViewModel extends ViewModel {
         _progress = new MutableLiveData<>();
         jsResult = null;
         progressDialog = new ProgressDialog();
+        alertContent = new MutableLiveData<>(new Alert());
+        confirmContent = new MutableLiveData<>(new Confirm());
 
     }
 }

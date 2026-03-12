@@ -40,6 +40,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.dialog.DialogManager;
+import kr.co.kworks.goodmorning.model.business_logic.Alert;
+import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
@@ -362,8 +364,11 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
         @Override
         public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+            Alert alert = global.alertContent.getValue();
+            alert.body = message;
             mHandler.post(() -> {
                 global.jsResult = result;
+                global.alertContent.postValue(alert);
                 global._alert.postValue(new Event<>("visible"));
             });
             return true;
@@ -371,8 +376,11 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
         @Override
         public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+            Confirm confirm = global.confirmContent.getValue();
+            confirm.body = message;
             mHandler.post(() -> {
                 global.jsResult = result;
+                global.confirmContent.postValue(confirm);
                 global._confirm.postValue(new Event<>("visible"));
             });
             return true;

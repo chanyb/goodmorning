@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -32,6 +33,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
+import kr.co.kworks.goodmorning.model.business_logic.Alert;
+import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.model.business_logic.ProgressDialog;
 import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
 import kr.co.kworks.goodmorning.service.LocationService;
@@ -219,12 +222,36 @@ public class SinglePageActivity extends AppCompatActivity {
                 }
             }
         });
+
+        globalViewModel.confirmContent.observe(this, o -> {
+            if (o == null) return;
+            setConfirmContent(o);
+        });
+
+        globalViewModel.alertContent.observe(this, o -> {
+            if (o == null) return;
+            setAlertContent(o);
+        });
+
+
     }
 
     private void popAllBackStack() {
         while (fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
+    }
+
+    private void setAlertContent(@NonNull Alert alertContent) {
+        binding.alertDialog.txtTitle.setText(alertContent.title);
+        binding.alertDialog.txtBody.setText(alertContent.body);
+    }
+
+    private void setConfirmContent(@NonNull Confirm confirmContent) {
+        binding.confirmDialog.txtTitle.setText(confirmContent.title);
+        binding.confirmDialog.txtBody.setText(confirmContent.body);
+        binding.confirmDialog.btnLeft.setText(confirmContent.leftBtnName);
+        binding.confirmDialog.btnRight.setText(confirmContent.rightBtnName);
     }
 
     private void initClickListener() {

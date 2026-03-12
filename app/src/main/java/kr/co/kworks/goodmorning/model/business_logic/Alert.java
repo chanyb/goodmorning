@@ -3,7 +3,10 @@ package kr.co.kworks.goodmorning.model.business_logic;
 public class Alert {
     public String title, body;
 
-    public Alert() {}
+    public Alert() {
+        this.title = "알림";
+        this.body = "";
+    }
     public Alert(String title, String body) {
         this.title = title;
         this.body = body;
