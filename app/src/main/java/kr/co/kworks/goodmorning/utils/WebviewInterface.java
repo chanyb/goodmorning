@@ -13,15 +13,13 @@ import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
 
 public class WebviewInterface {
-    private ProgressDialog mProgressDialog;
     private Activity mActivity;
     private WebviewCommunicationViewModel webviewCommunicationViewModel;
     private GlobalViewModel global;
     private PreferenceHandler preferenceHandler;
 
-    public WebviewInterface(Activity activity, ProgressDialog progressDialog) {
+    public WebviewInterface(Activity activity) {
         mActivity = activity;
-        mProgressDialog = progressDialog;
         webviewCommunicationViewModel = new ViewModelProvider(GlobalApplication.getContext()).get(WebviewCommunicationViewModel.class);
 //        global = new ViewModelProvider(GlobalApplication.getContext()).get(GlobalViewModel.class);
         preferenceHandler = new PreferenceHandler(mActivity);

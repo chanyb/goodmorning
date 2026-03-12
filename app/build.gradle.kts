@@ -59,6 +59,7 @@ android {
 
         create("devlee") {
             isMinifyEnabled = false
+            isDebuggable = true
             signingConfig = signingConfigs.getByName("release");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -70,6 +71,7 @@ android {
 
         create("devnoh") {
             isMinifyEnabled = false
+            isDebuggable = true
             signingConfig = signingConfigs.getByName("release");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

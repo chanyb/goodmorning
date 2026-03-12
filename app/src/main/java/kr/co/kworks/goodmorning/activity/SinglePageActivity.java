@@ -3,6 +3,7 @@ package kr.co.kworks.goodmorning.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -22,6 +23,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -75,6 +81,7 @@ public class SinglePageActivity extends AppCompatActivity {
         init();
         observerInit();
         initClickListener();
+        initProgressDialog();
     }
 
     @Override
@@ -107,8 +114,6 @@ public class SinglePageActivity extends AppCompatActivity {
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
-        binding.progressDialog.progressCircular.setIndeterminate(true);
-
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
         setFirstFragment();
@@ -233,7 +238,15 @@ public class SinglePageActivity extends AppCompatActivity {
             setAlertContent(o);
         });
 
+        globalViewModel._progressText1.observe(this, o -> {
+            if (o == null) return;
+            binding.progressDialog.text1.setText(o);
+        });
 
+        globalViewModel._progressText2.observe(this, o -> {
+            if (o == null) return;
+            binding.progressDialog.text2.setText(o);
+        });
     }
 
     private void popAllBackStack() {
@@ -328,40 +341,28 @@ public class SinglePageActivity extends AppCompatActivity {
         mOnBackPressedListener = listener;
     }
 
-    private void stopProgressSyncScheduled() {
-        if (progressSyncScheduled != null && !progressSyncScheduled.isCancelled()) progressSyncScheduled.cancel(true);
-    }
-
-    private void startProgressSyncScheduled() {
-        stopProgressSyncScheduled();
-        progressSyncScheduled = executor.scheduleWithFixedDelay(() -> {
-            ProgressDialog progressDialog = globalViewModel.progressDialog;
-            if (progressDialog == null) return;
-            if (progressDialog.progress != -1) {
-                mHandler.post(() -> {
-                    binding.progressDialog.text.setText(
-                        String.format(Locale.KOREA, "%s %d%%", progressDialog.message, progressDialog.progress)
-                    );
-                });
-                return;
-            }
-
-            mHandler.post(() -> {
-                binding.progressDialog.text.setText(
-                    String.format(Locale.KOREA, "%s", progressDialog.message)
-                );
-            });
-
-
-        }, 0, 1000, TimeUnit.MILLISECONDS);
-    }
-
     private void startAllScheduled() {
-        startProgressSyncScheduled();
     }
 
     private void release() {
-        stopProgressSyncScheduled();
         stopStartServiceScheduled();
+    }
+
+    private void initProgressDialog() {
+        Glide.with(this)
+            .asGif()
+            .load(R.drawable.loading)
+            .into(new CustomTarget<GifDrawable>() {
+                @Override
+                public void onResourceReady(@NonNull GifDrawable resource, Transition<? super GifDrawable> transition) {
+                    binding.progressDialog.gif.setImageDrawable(resource);
+                    resource.setLoopCount(GifDrawable.LOOP_FOREVER);
+                    resource.start();
+                }
+
+                @Override
+                public void onLoadCleared(Drawable placeholder) {}
+            });
+
     }
 }

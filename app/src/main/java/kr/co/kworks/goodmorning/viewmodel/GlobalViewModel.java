@@ -26,6 +26,7 @@ public class GlobalViewModel extends ViewModel {
     public ProgressDialog progressDialog;
     public MutableLiveData<Alert> alertContent;
     public MutableLiveData<Confirm> confirmContent;
+    public MutableLiveData<String> _progressText1, _progressText2;
 
 
     @Inject
@@ -51,6 +52,8 @@ public class GlobalViewModel extends ViewModel {
         progressDialog = new ProgressDialog();
         alertContent = new MutableLiveData<>(new Alert());
         confirmContent = new MutableLiveData<>(new Confirm());
+        _progressText1 = new MutableLiveData<>();
+        _progressText2 = new MutableLiveData<>();
 
     }
 }

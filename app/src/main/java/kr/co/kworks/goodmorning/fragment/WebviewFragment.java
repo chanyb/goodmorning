@@ -1,7 +1,5 @@
 package kr.co.kworks.goodmorning.fragment;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +17,9 @@ import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -31,6 +32,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -52,7 +54,6 @@ import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
 @AndroidEntryPoint
 public class WebviewFragment extends Fragment implements SinglePageActivity.onBackPressedListener {
-    private ProgressDialog mProgressDialog;
     private WebView webview, childView;
     private SecurityManager securityManager;
     private WebviewCommunicationViewModel webviewCommunicationViewModel;
@@ -102,9 +103,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     @Override
     public void onStop() {
         super.onStop();
-        if (mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
     }
 
     @Override
@@ -151,23 +149,51 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         }
 
         Log.i("this", "url: " + url);
+
+        setWebView(webview);
+        reserveTimeout();
         if(postDataBuilder == null) webview.loadUrl(url);
         else webview.postUrl(url, postDataBuilder.toString().getBytes());
-//        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) webview.getLayoutParams();
-//        params.height = GlobalApplcation.getContext().getHeight();
-//        webview.setLayoutParams(params);
 
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setMessage(getString(R.string.sentence_please_wait));
-        setWebView(webview);
     }
 
     private void observerInit() {
 
     }
 
+    private final Runnable timeoutRunnable = () -> {
+        if (webview != null) {
+            webview.stopLoading();
+        }
+
+        global._progress.setValue(new Event<>("gone"));
+
+        Alert alert = global.alertContent.getValue();
+        if (alert != null) {
+            alert.body = "서버의 응답시간이 초과 되었습니다.";
+            global.alertContent.setValue(alert);
+            global._alert.setValue(new Event<>("visible"));
+        }
+    };
+
+    private void reserveTimeout() {
+        mHandler.removeCallbacks(timeoutRunnable);
+        mHandler.postDelayed(timeoutRunnable, 10_000);
+        mHandler.post(() -> {
+            global._progress.setValue(new Event<>("visible"));
+        });
+    }
+
+    private void releaseTimeout() {
+        mHandler.removeCallbacks(timeoutRunnable);
+        mHandler.post(() -> {
+            global._progress.setValue(new Event<>("gone"));
+        });
+    }
+
+
     private void setWebView(WebView webView) {
-        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);                           //웹뷰가 캐시를 사용하지 않도록 설정
+        webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);                           //웹뷰가 캐시를 사용하지 않도록 설정
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setGeolocationEnabled(true);
         webView.getSettings().setAllowFileAccess(true);
@@ -194,12 +220,10 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         } else {
             webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        webView.addJavascriptInterface(new WebviewInterface(getActivity(), mProgressDialog), "HybridApp");
+        webView.addJavascriptInterface(new WebviewInterface(getActivity()), "HybridApp");
 
         webView.clearCache(true);
         webView.clearHistory();
-
-//        webView.loadUrl(Utils.URL_BASE + sUrl + "?" + sPostData);
 
         webview.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
@@ -240,6 +264,15 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 String sId = url.replace("id://", "");
                 preferenceHandler.setStringPreference(PreferenceHandler.PREF_USER_ID, sId);
                 return true;
+            } else if (url.startsWith("intent://")) {
+                Intent intent = null;
+                try {
+                    intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (URISyntaxException e) {
+                }
+                return true;
             }
 
             // http/https 및 일반 URL은 WebView가 원래대로 처리하게 둠
@@ -259,51 +292,19 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onPageFinished(WebView view, final String url) {
             super.onPageFinished(view, url);
-            if (mProgressDialog.isShowing()) mProgressDialog.dismiss();
-//            CookieManager.getInstance().flush();
-            mHandler.post(() -> {
-                global._progress.setValue(new Event<>("gone"));
-            });
-            Log.i("this", "url: "+url);
+            releaseTimeout();
         }
 
         @Override
-        public void onReceivedError(final WebView view, int errorCode, String description, final String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
-            Log.e("this", "webview-onReceivedError, code: "+errorCode + " desc: " + description);
-            switch (errorCode) {
-                case ERROR_AUTHENTICATION:
-                    break;               // 서버에서 사용자 인증 실패
-                case ERROR_BAD_URL:
-                    break;                           // 잘못된 URL
-                case ERROR_CONNECT:
-                    break;                          // 서버로 연결 실패
-                case ERROR_FAILED_SSL_HANDSHAKE:
-                    break;    // SSL handshake 수행 실패
-                case ERROR_FILE:
-                    break;                                  // 일반 파일 오류
-                case ERROR_FILE_NOT_FOUND:
-                    break;               // 파일을 찾을 수 없습니다
-                case ERROR_HOST_LOOKUP:
-                    break;           // 서버 또는 프록시 호스트 이름 조회 실패
-                case ERROR_IO:
-                    break;                              // 서버에서 읽거나 서버로 쓰기 실패
-                case ERROR_PROXY_AUTHENTICATION:
-                    break;   // 프록시에서 사용자 인증 실패
-                case ERROR_REDIRECT_LOOP:
-                    break;               // 너무 많은 리디렉션
-                case ERROR_TIMEOUT:
-                    break;                          // 연결 시간 초과
-                case ERROR_TOO_MANY_REQUESTS:
-                    break;     // 페이지 로드중 너무 많은 요청 발생
-                case ERROR_UNKNOWN:
-                    break;                        // 일반 오류
-                case ERROR_UNSUPPORTED_AUTH_SCHEME:
-                    break; // 지원되지 않는 인증 체계
-                case ERROR_UNSUPPORTED_SCHEME:
-                    break;          // URI가 지원되지 않는 방식
-            }
-            view.loadUrl("about:blank");
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
+//            view.loadUrl("about:blank");
+            Alert alert = global.alertContent.getValue();
+            alert.body = String.format(Locale.KOREA, "(%d) %s", error.getErrorCode(), error.getDescription());
+            mHandler.post(() -> {
+                global.alertContent.setValue(alert);
+                global._alert.postValue(new Event<>("visible"));
+            });
         }
     }
 
@@ -321,8 +322,9 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             super.onProgressChanged(view, newProgress);
-            global.progressDialog.progress = newProgress;
-            Logger.getInstance().info("onProgressChange: " + newProgress);
+            mHandler.post(() -> {
+                global._progressText1.setValue(String.format(Locale.KOREA,"통신중 %d%%", newProgress));
+            });
         }
 
         @Override
@@ -347,7 +349,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 LOAD_NORMAL 기본적인 모드로 캐시를 사용합니다.
                 LOAD_NO_CACHE 캐시모드를 사용하지 않고 네트워크를 통해서만 호출합니다.*/
             childView.setY(view.getScrollY());
-            childView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);                           //웹뷰가 캐시를 사용하지 않도록 설정
+            childView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);                           //웹뷰가 캐시를 사용하지 않도록 설정
             childView.getSettings().setJavaScriptEnabled(true);                                          //자바스크립트로 이루어져 있는 기능을 사용하기 위한 설정
             childView.getSettings().setDomStorageEnabled(true);                                           //로컬 스토리지 사용 여부를 설정하는 속성으로 팝업창등을 '하루동안 보지 않기' 기능 사용에 필요합니다.
             childView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);                      //자바스크립트가 window.open()을 사용할 수 있도록 설정
