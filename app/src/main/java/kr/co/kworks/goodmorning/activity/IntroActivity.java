@@ -43,7 +43,9 @@ import kr.co.kworks.goodmorning.model.business_logic.Wise;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
+import kr.co.kworks.goodmorning.utils.FCMManager;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
+import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.Utils;
 import kr.co.kworks.goodmorning.viewmodel.IntroViewModel;
@@ -123,6 +125,8 @@ public class IntroActivity extends AppCompatActivity {
         initFragment();
         initObserver();
         initDatabase();
+        FCMManager fcmManager = new FCMManager();
+        fcmManager.getToken();
     }
 
     private void initFragment() {
@@ -207,9 +211,9 @@ public class IntroActivity extends AppCompatActivity {
 
     private void createChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, NotificationManager.IMPORTANCE_MAX);
+            createNotificationChannel(FCMManager.CHANNEL_ID, NotificationManager.IMPORTANCE_MAX);
         } else {
-//            createNotificationChannel(Utils.LOCATION_SERVICE_CHANNEL_ID, 1);
+            createNotificationChannel(FCMManager.CHANNEL_ID, 1);
         }
 
 //        if (!GlobalApplication.getContext().isNotificationChannelEnabled(Utils.LOCATION_SERVICE_CHANNEL_ID)) {

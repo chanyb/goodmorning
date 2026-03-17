@@ -2,7 +2,7 @@
 plugins {
     // 모든 구간에서 사용하기 위해 등록
     id("com.android.application") version "8.9.3" apply false
-    id("com.google.gms.google-services") version "4.4.3" apply false
+    id("com.google.gms.google-services") version "4.4.4" apply false
     id("com.google.dagger.hilt.android") version "2.44" apply false
 }
 
