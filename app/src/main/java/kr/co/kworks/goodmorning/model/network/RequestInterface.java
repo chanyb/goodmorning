@@ -1,7 +1,5 @@
 package kr.co.kworks.goodmorning.model.network;
 
-import kr.co.kworks.goodmorning.model.business_logic.PostTest;
-import kr.co.kworks.goodmorning.model.business_logic.PostTestResult;
 import kr.co.kworks.goodmorning.model.request.GetAutoRefreshRequest;
 import kr.co.kworks.goodmorning.model.request.GetAuthRequest;
 import kr.co.kworks.goodmorning.model.request.GetHelliListRequest;
@@ -24,10 +22,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface RequestInterface {
-
-    @Headers("x-api-key: reqres-free-v1")
-    @POST("/api/users")
-    Call<PostTestResult> postTest(@Body PostTest requestParameter);
 
     @GET("/")
     Call<ResponseBody> serviceHealthCheck();

@@ -23,10 +23,6 @@ import java.util.concurrent.ScheduledFuture;
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.IntroActivity;
-import kr.co.kworks.goodmorning.model.business_logic.CameraStatus;
-import kr.co.kworks.goodmorning.model.business_logic.DeviceInfo;
-import kr.co.kworks.goodmorning.model.business_logic.Queue;
-import kr.co.kworks.goodmorning.model.network.ByteSocketServer;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
@@ -51,18 +47,13 @@ public class LocationService extends LifecycleService {
     private Observer locationObserver;
     private ScheduledExecutorService executor;
     private ScheduledFuture<?> webSocketScheduled, sensorDataCollectScheduled, saveHeadingDegreeScheduled, locationScheduled, checkCameraStatusScheduled;
-    private DeviceInfo deviceInfo;
     private WebSocket ws;
     private OkHttpClient client;
-    private ByteSocketServer byteSocketServer;
     private Handler mHandler;
 
     private SensorManagerHandler sensorManagerHandler;
-    private Queue azimuthQueue;
 
     private MutableLiveData<Location> locationMutableLiveData;
-
-    private CameraStatus recentCameraStatus;
 
     @Override
     public void onCreate() {

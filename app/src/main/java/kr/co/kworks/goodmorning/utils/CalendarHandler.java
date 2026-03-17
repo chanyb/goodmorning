@@ -174,4 +174,25 @@ public class CalendarHandler {
         calendar.setTime(date);
         return calendar;
     }
+
+    public String getDayOfWeekKorean(Calendar calendar) {
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        String korean = "";
+        if (dayOfWeek == 1) {
+            korean = "일";
+        } else if (dayOfWeek == 2) {
+            korean = "월";
+        } else if (dayOfWeek == 3) {
+            korean = "화";
+        } else if (dayOfWeek == 4) {
+            korean = "수";
+        } else if (dayOfWeek == 5) {
+            korean = "목";
+        } else if (dayOfWeek == 6) {
+            korean = "금";
+        } else if (dayOfWeek == 7) {
+            korean = "토";
+        }
+        return korean;
+    }
 }

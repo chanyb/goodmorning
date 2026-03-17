@@ -23,6 +23,7 @@
             />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_datetime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -62,6 +63,69 @@
                 />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_wise"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/lo_datetime"
+            app:layout_constraintBottom_toTopOf="@id/lo_seekbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1"
+            app:layout_constraintWidth_percent="0.87"
+            android:background="@drawable/background_edge_20_transparent_black_20"
+            android:layout_marginBottom="20dp"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/txt_wise"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="120dp"
+                app:layout_constraintHeight_max="120dp"
+                android:ellipsize="end"
+                android:textColor="@color/white"
+                android:text="@string/sentence_sample_long"
+                android:textSize="22dp"
+                android:fontFamily="@font/pretendard_medium"
+                android:lineSpacingMultiplier="1.2"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/txt_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:maxHeight="40dp"
+                app:layout_constraintHeight_max="120dp"
+                android:ellipsize="end"
+                android:textColor="@color/white"
+                android:text="@string/str"
+                android:fontFamily="@font/pretendard_medium"
+                android:lineSpacingMultiplier="1.2"
+                android:textSize="22dp"
+                android:gravity="end"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/txt_wise"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/lo_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.93"
+            app:layout_constraintWidth_percent="0.87"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

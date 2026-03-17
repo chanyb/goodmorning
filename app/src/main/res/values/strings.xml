@@ -6,6 +6,7 @@
     <string name="naver_client_id">tkeVPHNk6yl5ESvNGRVN</string>
     <string name="naver_client_secret">ocyvr7Hv8h</string>
 
+    <string name="str_lock_drag">밀어서 잠금해제</string>
     <string name="str_main_title">대형산불 대응 지능형 솔루션 기술 개발</string>
     <string name="str_step_0_text_1">다목적 산불 진화 차량 임무 수행 능력 고도화 연구 과제로 제작되었습니다.</string>
     <string name="str_step_0_text_2">안전운전과 교통 규칙을 준수하십시오.\n운전중에 화면을 조작하거나 화면을 보실 경우 심각한 사고로 이어질 수 있습니다.\n화면조작은 바드시 안전한 곳에 주차하신 후 조작하십시오.\n일부 맵 데이터의 경우는 실제 도로 상황과 다를 수 있습니다.</string>
