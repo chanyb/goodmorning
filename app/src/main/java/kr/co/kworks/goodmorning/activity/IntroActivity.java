@@ -161,17 +161,13 @@ public class IntroActivity extends AppCompatActivity {
             db.insert(Column.wise, new Wise("무례한 사람의 행위는 내 행실을 바로 잡게 해주는 스승이다.", "공자").getContentValues());
             db.insert(Column.wise, new Wise("절대 어제를 후회하지 마라. 인생은 오늘의 나 안에 있고 내일은 스스로 만드는 것이다.", "L.론허바드").getContentValues());
             db.insert(Column.wise, new Wise("인간의 삶 전체는 단지 한 순간에 불과하다. 인생을 즐기자.", "플루타르코스").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
-            db.insert(Column.wise, new Wise("", "").getContentValues());
+            db.insert(Column.wise, new Wise("세상에게 당신은 그저 한 사람일 뿐이지만, 누군가에게는 당신이 세상 전부일 수도 있다.", "닥터 수스").getContentValues());
+            db.insert(Column.wise, new Wise("모르는 것을 두려워하지 말라. 그것에 대해 배우지 못하는 것을 두려워 하라.", "불교 명언").getContentValues());
+            db.insert(Column.wise, new Wise("무지가 행동으로 나타나는 것보다 더 무서운 것은 없다.", "괴테").getContentValues());
+            db.insert(Column.wise, new Wise("친구란 무엇인가? 두 몸에 깃든 하나의 영혼이다.", "아리스토텔레스").getContentValues());
+            db.insert(Column.wise, new Wise("누구나 그림을 그릴 수 있지만, 그 그림을 팔 수 있는 사람은 현명한 사람이다.", "사무엘 버틀러").getContentValues());
+            db.insert(Column.wise, new Wise("진실이란 없다. 오직 인식만이 존재할 뿐이다.", "구스타브 플로베르").getContentValues());
+            db.insert(Column.wise, new Wise("세상에 확실한 건 단 하나, 시도조차 하지 않으면 절대 목표를 달성할 수 없다는 것이다.", "웨인 그레츠키").getContentValues());
         }
     }
 
