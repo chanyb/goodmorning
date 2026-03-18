@@ -16,7 +16,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.FragmentSeekbarBinding;
@@ -25,6 +24,10 @@ public class SeekbarFragment extends Fragment {
     private Handler mHandler;
     private FragmentSeekbarBinding binding;
     private int beforeProgress;
+    private Listener listener;
+    public interface Listener {
+        public void onComplete();
+    }
 
     public SeekbarFragment() {
     }
@@ -67,7 +70,6 @@ public class SeekbarFragment extends Fragment {
                 binding.seeker.setActiveColor(seekerColor);
                 if (beforeProgress + 20 < i) binding.seekbar.setProgress(0);
                 else {
-//                    printSeekBarDragAndSeeker(seekBar);
                     beforeProgress = i;
                     printDraggedSeeker(i);
                 }
@@ -124,6 +126,20 @@ public class SeekbarFragment extends Fragment {
                 binding.seekbar.setProgress(finalProgress);
             });
         }
+
+        if(progress == 100) complete();
+    }
+
+    /**
+     * Seekbar Fragment 역할 완료 시
+     */
+    private void complete() {
+        if (listener == null) return;
+        listener.onComplete();
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
 }

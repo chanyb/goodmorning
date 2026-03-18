@@ -139,6 +139,12 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private void initSeekbar() {
         replaceFragment(binding.loSeekbar.getId(), seekbarFragment, "seekbar");
+        seekbarFragment.setListener(new SeekbarFragment.Listener() {
+            @Override
+            public void onComplete() {
+                finish();
+            }
+        });
     }
 
 
