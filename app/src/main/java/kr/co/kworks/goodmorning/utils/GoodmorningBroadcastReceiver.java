@@ -4,8 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.os.Build;
 
 import androidx.lifecycle.MutableLiveData;
+
+import kr.co.kworks.goodmorning.activity.LockScreenActivity;
+import kr.co.kworks.goodmorning.service.GoodmorningService;
 
 public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
 
@@ -19,7 +23,7 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
 
         switch (action) {
             case Intent.ACTION_BOOT_COMPLETED -> {
-                Logger.getInstance().info("BOOT_COMPLETE");
+                startForeground(context);
             }
             case Intent.ACTION_BATTERY_CHANGED -> {
                 // level: 현재 배터리 레벨
@@ -37,8 +41,23 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 Logger.getInstance().info("battery: " + batteryPercentage);
             }
             case Intent.ACTION_SCREEN_ON -> {
-                Logger.getInstance().info("screen on");
             }
+            case Intent.ACTION_SCREEN_OFF -> {
+                Intent lockScreenIntent = new Intent(context, LockScreenActivity.class);
+                lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(lockScreenIntent);
+            }
+        }
+    }
+
+    private void startForeground(Context context) {
+        Intent serviceIntent = new Intent(context, GoodmorningService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(serviceIntent);
+        } else {
+            context.startService(serviceIntent);
         }
     }
 }

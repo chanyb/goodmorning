@@ -1,6 +1,7 @@
 package kr.co.kworks.goodmorning.activity;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +10,12 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.WindowManager;
 import android.widget.Toast;
 import android.window.OnBackInvokedDispatcher;
@@ -53,7 +56,7 @@ import kr.co.kworks.goodmorning.viewmodel.IntroViewModel;
 
 
 /**
- * 채널생성 -> 1차 권한 요청 -> 2차 권한요청 -> nextPage
+ * 채널생성 -> 1차 권한 요청 -> 2차 권한요청 -> RequestOverlayPermission -> nextPage
  */
 public class IntroActivity extends AppCompatActivity {
     private AtomicBoolean out;
@@ -132,12 +135,24 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void startForeground() {
+        if (isServiceRunning(this)) return;
+
         Intent serviceIntent = new Intent(this, GoodmorningService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
         } else {
             startService(serviceIntent);
         }
+    }
+
+    private boolean isServiceRunning (Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo rsi : am.getRunningServices(Integer.MAX_VALUE)) {
+            if (GoodmorningService.class.getName().equals(rsi.service.getClassName())) return true;
+        }
+
+        return false;
     }
 
     private void initFragment() {
@@ -288,11 +303,34 @@ public class IntroActivity extends AppCompatActivity {
         ArrayList<String> list = getNeededDetailPermission();
         if(list.isEmpty()) {
             // 권한 요청 끝남
-            nextPage();
+            requestOverlayPermission();
             return;
         }
         String[] permissions = list.toArray(new String[0]);
         ActivityCompat.requestPermissions(this, permissions, 2425);
+    }
+
+    private void requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName())
+                );
+                startActivity(intent);
+            } else {
+                // 이미 허용됨
+                startOverlayWork();
+            }
+        } else {
+            // Android 6 미만은 별도 체크 없이 진행
+            startOverlayWork();
+        }
+    }
+
+    private void startOverlayWork() {
+        // 오버레이 관련 작업 시작
+        nextPage();
     }
 }
 

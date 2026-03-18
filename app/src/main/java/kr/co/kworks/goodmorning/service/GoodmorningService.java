@@ -46,6 +46,8 @@ public class GoodmorningService extends LifecycleService {
     private ScheduledFuture<?> webSocketScheduled;
     private Handler mHandler;
 
+    private boolean screenOff;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -115,6 +117,7 @@ public class GoodmorningService extends LifecycleService {
     private void registerBroadcastReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         registerReceiver(goodmorningBroadcastReceiver, intentFilter);

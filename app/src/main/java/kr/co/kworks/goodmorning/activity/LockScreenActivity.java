@@ -1,5 +1,6 @@
 package kr.co.kworks.goodmorning.activity;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.activity.OnBackPressedCallback;
@@ -56,7 +58,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private CalendarHandler calendarHandler;
 
-    private GoodmorningBroadcastReceiver goodmorningBroadcastReceiver;
+    private KeyguardManager km;
 
     public interface onBackPressedListener {
         public void onBack();
@@ -68,11 +70,19 @@ public class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0, 0);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_lock_screen);
         init();
         observerInit();
         initClickListener();
         initSeekbar();
+
+        getWindow().addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+        );
+
+        km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
     }
 
     @Override
@@ -91,6 +101,7 @@ public class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        overridePendingTransition(0, 0);
         Logger.getInstance().info("SinglePageActivity - onDestroy");
     }
 
@@ -101,7 +112,6 @@ public class LockScreenActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
         seekbarFragment = new SeekbarFragment();
-        goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
 
         getOnBackPressedDispatcher().addCallback(
             this,
@@ -139,7 +149,7 @@ public class LockScreenActivity extends AppCompatActivity {
         seekbarFragment.setListener(new SeekbarFragment.Listener() {
             @Override
             public void onComplete() {
-                finish();
+                requestKeyguardDismiss();
             }
         });
     }
@@ -226,5 +236,32 @@ public class LockScreenActivity extends AppCompatActivity {
             });
         }
         cursor.close();
+    }
+
+    private void requestKeyguardDismiss() {
+        if (km != null && km.isKeyguardLocked()) {
+            km.requestDismissKeyguard(
+                this,
+                new KeyguardManager.KeyguardDismissCallback() {
+                    @Override
+                    public void onDismissSucceeded() {
+                        super.onDismissSucceeded();
+                        finish();
+                    }
+
+                    @Override
+                    public void onDismissCancelled() {
+                        super.onDismissCancelled();
+                    }
+
+                    @Override
+                    public void onDismissError() {
+                        super.onDismissError();
+                    }
+                }
+            );
+        } else {
+            finish();
+        }
     }
 }
