@@ -46,6 +46,14 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service android:name="kr.co.kworks.goodmorning.service.GoodmorningService"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Detect screen on/off and present in-app overlay UI for application workflow" />
+        </service>
+
     </application>
 
     <!-- NETWORK -->
@@ -70,6 +78,6 @@
 
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
 </manifest>

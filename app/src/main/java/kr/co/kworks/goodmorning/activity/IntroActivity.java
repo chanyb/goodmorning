@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivityIntroBinding;
 import kr.co.kworks.goodmorning.model.business_logic.Wise;
+import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
@@ -122,11 +123,21 @@ public class IntroActivity extends AppCompatActivity {
             }
         );
 
+        startForeground();
         initFragment();
         initObserver();
         initDatabase();
         FCMManager fcmManager = new FCMManager();
         fcmManager.getToken();
+    }
+
+    private void startForeground() {
+        Intent serviceIntent = new Intent(this, GoodmorningService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
     }
 
     private void initFragment() {
@@ -212,14 +223,11 @@ public class IntroActivity extends AppCompatActivity {
     private void createChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             createNotificationChannel(FCMManager.CHANNEL_ID, NotificationManager.IMPORTANCE_MAX);
+            createNotificationChannel(Utils.GOODMORNING_SERVICE_CHANNEL_ID, NotificationManager.IMPORTANCE_DEFAULT);
         } else {
             createNotificationChannel(FCMManager.CHANNEL_ID, 1);
+            createNotificationChannel(Utils.GOODMORNING_SERVICE_CHANNEL_ID, 1);
         }
-
-//        if (!GlobalApplication.getContext().isNotificationChannelEnabled(Utils.LOCATION_SERVICE_CHANNEL_ID)) {
-//            Toast.makeText(this, "채널을 생성하지 못했습니다.\n앱을 종료합니다.", Toast.LENGTH_SHORT).show();
-//            mHandler.postDelayed(this::finish, 2000);
-//        }
 
         requestPermissions();
 

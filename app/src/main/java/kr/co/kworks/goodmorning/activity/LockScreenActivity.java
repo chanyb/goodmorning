@@ -33,15 +33,13 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivityLockScreenBinding;
 import kr.co.kworks.goodmorning.fragment.SeekbarFragment;
-import kr.co.kworks.goodmorning.fragment.WebviewFragment;
-import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
-import kr.co.kworks.goodmorning.service.LocationService;
+import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
+import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
 import kr.co.kworks.goodmorning.utils.Logger;
-import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 
 @AndroidEntryPoint
@@ -58,7 +56,7 @@ public class LockScreenActivity extends AppCompatActivity {
 
     private CalendarHandler calendarHandler;
 
-    private NetworkBroadcastReceiver networkBroadcastReceiver;
+    private GoodmorningBroadcastReceiver goodmorningBroadcastReceiver;
 
     public interface onBackPressedListener {
         public void onBack();
@@ -80,7 +78,6 @@ public class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        registerBroadcastReceiver();
         startAllScheduled();
         setRandomWise();
     }
@@ -88,7 +85,6 @@ public class LockScreenActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        unregisterBroadcastReceiver();
         release();
     }
 
@@ -105,6 +101,7 @@ public class LockScreenActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
         seekbarFragment = new SeekbarFragment();
+        goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
 
         getOnBackPressedDispatcher().addCallback(
             this,
@@ -167,43 +164,11 @@ public class LockScreenActivity extends AppCompatActivity {
     private void initClickListener() {
     }
 
-    /**
-     * 26-01-15 POC 이후 SinglePageActivity에서 사용 하지 않음
-     */
-    private void startService() {
-        if(GlobalApplication.getContext().isServiceRunningCheck(LocationService.class)) return;
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
-    }
-
-    private void startStartServiceScheduled() {
-        stopStartServiceScheduled();
-        startServiceScheduled = executor.scheduleWithFixedDelay(() -> {
-            startService();
-        }, 2000, 5000, TimeUnit.MILLISECONDS);
-    }
-
-    private void stopStartServiceScheduled() {
-        if (startServiceScheduled != null && !startServiceScheduled.isCancelled()) startServiceScheduled.cancel(true);
-    }
 
     private boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
-    }
-
-    private void registerBroadcastReceiver() {
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkBroadcastReceiver, intentFilter);
-    }
-
-    private void unregisterBroadcastReceiver() {
-        unregisterReceiver(networkBroadcastReceiver);
     }
 
     public void setOnKeyBackPressedListener(onBackPressedListener listener) {
@@ -215,7 +180,6 @@ public class LockScreenActivity extends AppCompatActivity {
     }
 
     private void release() {
-        stopStartServiceScheduled();
         stopDatetimeScheduled();
     }
 

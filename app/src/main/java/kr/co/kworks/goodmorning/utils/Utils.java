@@ -38,13 +38,13 @@ public class Utils {
 
     // ID
     public static final int SCHEDULE_BROADCAST_ID = 9001;
-    public static final int WALK_DETECT_FOREGROUND_NOTIFICATION_ID = 1001;
+    public static final int GOODMORNING_FOREGROUND_NOTIFICATION_ID = 1001;
 
     // Action
     public static final String ACTION_REPORT = PACKAGE_NAME+".report";
 
     // Channel Name
-    public static final String LOCATION_SERVICE_CHANNEL_ID = "LOCATION_SERVICE";
+    public static final String GOODMORNING_SERVICE_CHANNEL_ID = "SERVICE";
 
     public static final String LOG_FOLDER_NAME = "CAR";
 

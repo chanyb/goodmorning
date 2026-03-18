@@ -3,6 +3,7 @@ package kr.co.kworks.goodmorning.service;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.location.Location;
 import android.os.Build;
@@ -24,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.IntroActivity;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
+import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
 import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.PreferenceHandler;
@@ -35,25 +37,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.WebSocket;
 
 @AndroidEntryPoint
-public class LocationService extends LifecycleService {
-    private Handler sensorDataTransferHandler;
-    private SecurityManager securityManager;
+public class GoodmorningService extends LifecycleService {
     private NotificationCompat.Builder builder;
     private CalendarHandler calendarHandler;
-    private PreferenceHandler preferenceHandler;
 
-    private GlobalViewModel global;
-    private LocationManagerHandler locationManagerHandler;
-    private Observer locationObserver;
+    private GoodmorningBroadcastReceiver goodmorningBroadcastReceiver;
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> webSocketScheduled, sensorDataCollectScheduled, saveHeadingDegreeScheduled, locationScheduled, checkCameraStatusScheduled;
-    private WebSocket ws;
-    private OkHttpClient client;
+    private ScheduledFuture<?> webSocketScheduled;
     private Handler mHandler;
-
-    private SensorManagerHandler sensorManagerHandler;
-
-    private MutableLiveData<Location> locationMutableLiveData;
 
     @Override
     public void onCreate() {
@@ -66,13 +57,14 @@ public class LocationService extends LifecycleService {
     public int onStartCommand(Intent    intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         generateForegroundNotification();
+        registerBroadcastReceiver();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        stopForeground(Service.STOP_FOREGROUND_REMOVE);
         release();
+        stopForeground(Service.STOP_FOREGROUND_REMOVE);
         super.onDestroy();
     }
 
@@ -86,15 +78,9 @@ public class LocationService extends LifecycleService {
 
     private void init() {
         mHandler = new Handler(Looper.getMainLooper());
-        sensorDataTransferHandler = new Handler(Looper.getMainLooper());
-        securityManager = new SecurityManager(this);
-        preferenceHandler = new PreferenceHandler(this);
         calendarHandler = new CalendarHandler();
         executor = Executors.newScheduledThreadPool(4);
-
-        client = new OkHttpClient();
-
-        sensorManagerHandler = new SensorManagerHandler(this);
+        goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
     }
 
     /**
@@ -107,17 +93,17 @@ public class LocationService extends LifecycleService {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        builder = new NotificationCompat.Builder(this, Utils.LOCATION_SERVICE_CHANNEL_ID)
-            .setSmallIcon(R.drawable.icon_svg)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+        builder = new NotificationCompat.Builder(this, Utils.GOODMORNING_SERVICE_CHANNEL_ID)
+            .setSmallIcon(R.drawable.icon)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setContentText(getString(R.string.location_service_foreground_message))
+            .setContentText(getString(R.string.service_foreground_message))
             .setContentIntent(pendingIntent);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(Utils.WALK_DETECT_FOREGROUND_NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION);
+            startForeground(Utils.GOODMORNING_FOREGROUND_NOTIFICATION_ID, builder.build(), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
         } else {
-            startForeground(Utils.WALK_DETECT_FOREGROUND_NOTIFICATION_ID, builder.build());
+            startForeground(Utils.GOODMORNING_FOREGROUND_NOTIFICATION_ID, builder.build());
         }
     }
 
@@ -126,18 +112,21 @@ public class LocationService extends LifecycleService {
     }
 
 
-    public String encryptRSA(String value) {
-//        return securityManager.encryptRSA(securityManager.getServerPublicKey(keyRepository.getValue(Database.title_server_public)), value);
-        return "";
+    private void registerBroadcastReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        registerReceiver(goodmorningBroadcastReceiver, intentFilter);
     }
 
-    private String decryptRSA(String value) {
-//        return securityManager.decryptRSA(value, keyRepository.getValue(Database.title_client_private));
-        return "";
+    private void unregisterBroadcastReceiver() {
+        unregisterReceiver(goodmorningBroadcastReceiver);
     }
+
 
     private void release() {
-        sensorManagerHandler.unregisterListeners();
+        unregisterBroadcastReceiver();
     }
 
 

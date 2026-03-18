@@ -29,7 +29,6 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
-import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -41,9 +40,8 @@ import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
-import kr.co.kworks.goodmorning.model.business_logic.ProgressDialog;
 import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
-import kr.co.kworks.goodmorning.service.LocationService;
+import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
@@ -294,30 +292,6 @@ public class SinglePageActivity extends AppCompatActivity {
         binding.progressDialog.loDialog.setOnClickListener(v -> {});
     }
 
-    /**
-     * 26-01-15 POC 이후 SinglePageActivity에서 사용 하지 않음
-     */
-    private void startService() {
-        if(GlobalApplication.getContext().isServiceRunningCheck(LocationService.class)) return;
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
-    }
-
-    private void startStartServiceScheduled() {
-        stopStartServiceScheduled();
-        startServiceScheduled = executor.scheduleWithFixedDelay(() -> {
-            startService();
-        }, 2000, 5000, TimeUnit.MILLISECONDS);
-    }
-
-    private void stopStartServiceScheduled() {
-        if (startServiceScheduled != null && !startServiceScheduled.isCancelled()) startServiceScheduled.cancel(true);
-    }
-
     private boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -345,7 +319,6 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private void release() {
-        stopStartServiceScheduled();
     }
 
     private void initProgressDialog() {
