@@ -9,8 +9,6 @@ public class ApiConstants {
     private ApiConstants() {
     }
 
-    public static final String SERVER_DOMAIN = GlobalApplication.getContext().getString(R.string.domain);
-    public static final String SERVER_BASE_URL = "http://" + SERVER_DOMAIN;
-
+    public static final String SERVER_BASE_URL = GlobalApplication.getContext().getString(R.string.domain);
     public static final String MAIN_URL = SERVER_BASE_URL + "/main/main.do";;
 }

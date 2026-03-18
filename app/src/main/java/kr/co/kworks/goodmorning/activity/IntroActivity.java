@@ -215,7 +215,7 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void nextPage() {
-        Intent intent = new Intent(mContext, LockScreenActivity.class);
+        Intent intent = new Intent(mContext, SinglePageActivity.class);
         mHandler.post(() -> startActivity(intent));
         finish();
     }
