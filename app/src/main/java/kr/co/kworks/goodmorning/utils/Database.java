@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
@@ -19,12 +19,15 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createWiseTable(db);
-        createDeviceInfoTable(db);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (oldVersion < newVersion) {
+            if (oldVersion < 2) { // 1
+                createDeviceInfoTable(sqLiteDatabase);
+            }
+        }
     }
 
     private void createWiseTable(SQLiteDatabase db) {
