@@ -23,9 +23,10 @@ public class FCMManager extends FirebaseMessagingService {
     public static final String CHANNEL_ID = "fcm_channel";
     Context context;
 
-    private PreferenceHandler preferenceHandler;
+    private Database database;
 
     public FCMManager() {
+        database = new Database();
     }
 
     public FCMManager(Context context) {
@@ -45,6 +46,7 @@ public class FCMManager extends FirebaseMessagingService {
 
                         // Get new FCM registration token
                         String token = task.getResult();
+                        database.setPushToken(token);
                         Logger.getInstance().info(token);
                     }
                 });

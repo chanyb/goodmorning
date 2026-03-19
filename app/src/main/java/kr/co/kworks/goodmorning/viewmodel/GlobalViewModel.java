@@ -21,12 +21,13 @@ public class GlobalViewModel extends ViewModel {
 
     private final Executor io = Executors.newSingleThreadExecutor();
 
-    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress;
+    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact;
     public JsResult jsResult;
     public ProgressDialog progressDialog;
     public MutableLiveData<Alert> alertContent;
     public MutableLiveData<Confirm> confirmContent;
     public MutableLiveData<String> _progressText1, _progressText2;
+    public String _callbackForContact;
 
 
     @Inject
@@ -54,6 +55,7 @@ public class GlobalViewModel extends ViewModel {
         confirmContent = new MutableLiveData<>(new Confirm());
         _progressText1 = new MutableLiveData<>();
         _progressText2 = new MutableLiveData<>();
-
+        _callFunction = new MutableLiveData<>();
+        _launchGetContact = new MutableLiveData<>();
     }
 }

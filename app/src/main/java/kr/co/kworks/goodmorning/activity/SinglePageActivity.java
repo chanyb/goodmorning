@@ -1,8 +1,10 @@
 package kr.co.kworks.goodmorning.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,11 +13,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -29,6 +35,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -64,6 +71,8 @@ public class SinglePageActivity extends AppCompatActivity {
     private CalendarHandler calendarHandler;
 
     private NetworkBroadcastReceiver networkBroadcastReceiver;
+
+    private ActivityResultLauncher<Intent> getContactLauncher;
 
     public interface onBackPressedListener {
         public void onBack();
@@ -131,6 +140,42 @@ public class SinglePageActivity extends AppCompatActivity {
             }
         );
 
+        getContactLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Log.i("this", "result");
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    handleContact(result.getData());
+                } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+                }
+            }
+        );
+
+    }
+
+    private void launchContactLauncher() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setData(ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+        getContactLauncher.launch(intent);
+    }
+
+    private void handleContact(Intent data) {
+        if(data == null || data.getData() == null) return;
+
+        try (Cursor cursor = getContentResolver().query(data.getData(), new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null)) {
+            if (cursor.moveToNext()) {
+                String name = cursor.getString(0);
+                String phone = cursor.getString(1);
+                phone = phone.replace("-", "");
+                String finalPhone = phone;
+
+                mHandler.post(() -> {
+                    globalViewModel._callFunction.setValue(new Event<>(
+                        String.format(Locale.KOREA, "%s(%s, %s)", globalViewModel._callbackForContact, name, finalPhone)
+                    ));
+                });
+            }
+        }
     }
 
     public static void hideKeyboard(View anyView) {
@@ -244,6 +289,13 @@ public class SinglePageActivity extends AppCompatActivity {
         globalViewModel._progressText2.observe(this, o -> {
             if (o == null) return;
             binding.progressDialog.text2.setText(o);
+        });
+
+        globalViewModel._launchGetContact.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+            launchContactLauncher();
         });
     }
 

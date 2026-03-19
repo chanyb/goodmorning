@@ -66,6 +66,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private PreferenceHandler preferenceHandler;
     private long backKeyPressedTime = 0;
     private Toast toast;
+    private WebviewInterface webviewInterface;
 
     public WebviewFragment(String url, HashMap<String, String> postData) {
         this.url = url;
@@ -119,12 +120,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         mHandler = new Handler(Looper.getMainLooper());
         securityManager = new SecurityManager(getContext());
         preferenceHandler = new PreferenceHandler(getContext());
-        webviewCommunicationViewModel = new ViewModelProvider(getActivity()).get(WebviewCommunicationViewModel.class);
-        webviewCommunicationViewModel.functionName.removeObservers(this);
-        webviewCommunicationViewModel.functionName.observe(this, o -> {
-            if(o == null) return;
-            callFunction(o, null);
-        });
+        webviewInterface = new WebviewInterface(getActivity());
 
         if (getView() == null) throw new NullPointerException("getView is null");
         // webview init
@@ -155,10 +151,35 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         if(postDataBuilder == null) webview.loadUrl(url);
         else webview.postUrl(url, postDataBuilder.toString().getBytes());
 
+        observerInit();
+    }
+
+    private void testInterface() {
+        webviewInterface.doGetPushToken("callback");
+        webviewInterface.doGetAppVersion("callback");
+        webviewInterface.doOpenToast("toast test");
+
+        mHandler.postDelayed(() -> {
+            webviewInterface.doOpenProgress("progress test...");
+        }, 3000);
+
+        mHandler.postDelayed(() -> {
+            webviewInterface.doCloseProgress();
+        }, 5_000);
+
+        mHandler.postDelayed(() -> {
+            webviewInterface.doGetContact("contact");
+        }, 7_000);
+
     }
 
     private void observerInit() {
-
+        global._callFunction.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+            callFunction(isHandled);
+        });
     }
 
     private final Runnable timeoutRunnable = () -> {
@@ -395,6 +416,16 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
     }
 
+    public void callFunction(String str) {
+        if (webview == null) return;
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        mHandler.post(() -> {
+            webview.loadUrl("javascript:" + str);
+        });
+
+        Logger.getInstance().info("javascript: " + str);
+    }
+
     public void callFunction(String funcName, String stringData) {
         if (webview == null) return;
         Handler mHandler = new Handler(Looper.getMainLooper());
@@ -404,7 +435,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             } else {
                 webview.loadUrl("javascript:" + funcName + "()");
             }
-
         });
     }
 
@@ -472,5 +502,12 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         toast = Toast.makeText(getActivity(),
             "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public void doNoticeUrl(String url) {
+        Intent siteLaunch = new Intent(Intent.ACTION_VIEW);
+        siteLaunch.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        siteLaunch.setData(Uri.parse(url));
+        getActivity().startActivity(siteLaunch);
     }
 }

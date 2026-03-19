@@ -19,6 +19,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createWiseTable(db);
+        createDeviceInfoTable(db);
     }
 
     @Override
@@ -34,6 +35,18 @@ public class Database extends SQLiteOpenHelper {
             Column.wise_column_text,
             Column.wise_column_name
         );
+        db.execSQL(sql);
+    }
+
+    private void createDeviceInfoTable(SQLiteDatabase db) {
+        String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
+            "%s TEXT," +
+            "%s TEXT);",
+            Column.device_info,
+            Column.device_info_column_fcm_token,
+            Column.device_info_column_tel
+        );
+
         db.execSQL(sql);
     }
 
@@ -66,6 +79,80 @@ public class Database extends SQLiteOpenHelper {
     public int update(String tableName, ContentValues contentValue, String whereCluase, String[] whereArgs) {
         Log.d("db", "update: " + tableName + " / " + contentValue.toString());
         return getWritableDatabase().update(tableName, contentValue, whereCluase, whereArgs);
+    }
+
+    public int getCountOfTable(String tableName){
+        Cursor cursor= getReadableDatabase().rawQuery("SELECT COUNT(*) FROM " + tableName , null);
+        cursor.moveToNext();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
+    }
+
+    /**
+     * Save pushToken
+     * @param token
+     * @return success > 0, fail == -1
+     */
+    public long setPushToken(String token) {
+        int count = getCountOfTable(Column.device_info);
+        if (count == 0) { // 새로 추가
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Column.device_info_column_fcm_token, token);
+            return insert(Column.device_info, contentValues);
+        } else { // 수정
+            try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
+                if (cursor.moveToNext()) {
+                    String telNum  = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+                    ContentValues cv = new ContentValues();
+                    cv.put(Column.device_info_column_tel, telNum);
+                    cv.put(Column.device_info_column_fcm_token, token);
+                    return insert(Column.device_info, cv);
+                }
+            }
+
+        }
+        return -1;
+    }
+
+    /**
+     * Save telNum
+     * @param telNum
+     * @return success > 0, fail == -1
+     */
+    public long setTelNum(String telNum) {
+        int count = getCountOfTable(Column.device_info);
+        if (count == 0) { // 새로 추가
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(Column.device_info_column_tel, telNum);
+            return insert(Column.device_info, contentValues);
+        } else { // 수정
+            Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
+            if (cursor.moveToNext()) {
+                String token  = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
+                ContentValues cv = new ContentValues();
+                cv.put(Column.device_info_column_fcm_token, token);
+                cv.put(Column.device_info_column_tel, telNum);
+                return insert(Column.device_info, cv);
+            }
+        }
+        return -1;
+    }
+
+    public String getTelNum() {
+        Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
+        if (cursor.moveToNext()) {
+            return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+        }
+        return null;
+    }
+
+    public String getFcmToken() {
+        Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
+        if (cursor.moveToNext()) {
+            return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
+        }
+        return null;
     }
 
 }
