@@ -198,6 +198,30 @@ public class IntroActivity extends AppCompatActivity {
             db.insert(Column.wise, new Wise("누구나 그림을 그릴 수 있지만, 그 그림을 팔 수 있는 사람은 현명한 사람이다.", "사무엘 버틀러").getContentValues());
             db.insert(Column.wise, new Wise("진실이란 없다. 오직 인식만이 존재할 뿐이다.", "구스타브 플로베르").getContentValues());
             db.insert(Column.wise, new Wise("세상에 확실한 건 단 하나, 시도조차 하지 않으면 절대 목표를 달성할 수 없다는 것이다.", "웨인 그레츠키").getContentValues());
+            db.insert(Column.wise, new Wise("두려움에 사로잡힌 사람은 항상 계산하고, 계획하고, 준비하고, 보호하려 든다. 이런 식으로 살다 보면 인생 전체를 망치게 된다.", "오쇼 라즈니쉬").getContentValues());
+            db.insert(Column.wise, new Wise("치즈 없이 지내는 것보다는 미로 속을 헤매는 것이 더 안전하다.", "스펜서 존슨").getContentValues());
+            db.insert(Column.wise, new Wise("가장 중요한 싸움은 자기 자신을 이기는 싸움이다.","야니").getContentValues());
+            db.insert(Column.wise, new Wise("친절이 타인에게 미치는 가장 큰 영향은 그들 스스로도 친절해지게 만든다는 점이다.","어밀리아 에어하트").getContentValues());
+            db.insert(Column.wise, new Wise("천천히 성장하는 것을 두려워마라. 제자리에 머무르는 것을 두려워하라.","중국 속담").getContentValues());
+            db.insert(Column.wise, new Wise("자신의 행복은 스스로 책임져야 하며, 절대 다른 사람에게 맡기지 마라.","로이 T. 베넷").getContentValues());
+            db.insert(Column.wise, new Wise("위대한 재능은 위대한 의지 없이는 존재할 수 없다.","오노레 드 발자크").getContentValues());
+            db.insert(Column.wise, new Wise("우리가 목표에 도달하지 못하게 막는 것은 장애물이 아니라, 더 낮은 목표로 향하는 명확한 길이다.","바가바드 기타").getContentValues());
+            db.insert(Column.wise, new Wise("인생은 아껴두는 것이 아니라 써내려가는 것이다.","D. H. 로렌스").getContentValues());
+            db.insert(Column.wise, new Wise("다수가 잘못에 동참한다고 해서 그 잘못이 잘못이 아니게 되는 것은 아니다.","레오 톨스토이").getContentValues());
+            db.insert(Column.wise, new Wise("분노, 후회, 걱정, 원한에 시간을 낭비하지 말라. 인생은 불행하게 보내기에는 너무 짧다.","로이 T. 베넷").getContentValues());
+            db.insert(Column.wise, new Wise("매일 매 순간이 형언할 수 없이 완벽한 기적이다.","월트 휘트먼").getContentValues());
+            db.insert(Column.wise, new Wise("말하지 못한 이야기를 마음속에 간직하는 것보다 더 큰 고통은 없다.","마야 앤젤루").getContentValues());
+            db.insert(Column.wise, new Wise("어리석은 자는 자신을 남으로 보지만, 지혜로운 자는 남을 자신으로 본다.","도겐").getContentValues());
+            db.insert(Column.wise, new Wise("고통은 오래가지 않고 사라지면 성장이라는 결과물이 남는다.","카말 라비칸트").getContentValues());
+            db.insert(Column.wise, new Wise("나는 인생에서 뒤로 걸어가지 않을 것이다.","J. R. R. 톨킨").getContentValues());
+            db.insert(Column.wise, new Wise("호랑이는 양의 의견 때문에 잠을 설치지 않는다.","샤히르 자그").getContentValues());
+            db.insert(Column.wise, new Wise("과거와 현재에 대한 책임을 더 많이 질수록, 원하는 미래를 더 잘 만들어낼 수 있다.","셀레스틴 추아").getContentValues());
+            db.insert(Column.wise, new Wise("당신이 하게 될 가장 창의적인 행위는 자신을 만들어가는 행위이다.","디팍 초프라").getContentValues());
+            db.insert(Column.wise, new Wise("자신 외에는 그 무엇도 평화를 가져다줄 수 없다.","데일 카네기").getContentValues());
+            db.insert(Column.wise, new Wise("성공으로 가는 길과 실패로 가는 길은 거의 똑같다.","콜린 R. 데이비스").getContentValues());
+            db.insert(Column.wise, new Wise("최고의 싸움꾼은 절대 화를 내지 않는다.","노자").getContentValues());
+            db.insert(Column.wise, new Wise("쾌락에만 몰두하는 삶보다 더 불쾌한 삶은 생각할 수 없다.","존 D. 록펠러").getContentValues());
+            db.insert(Column.wise, new Wise("실수를 전혀 하지 않는 사람은 아무것도 하지 않는 사람뿐이다.","시어도어 루스벨트").getContentValues());
         }
     }
 
