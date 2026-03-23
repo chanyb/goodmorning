@@ -19,6 +19,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createWiseTable(db);
+        createDeviceInfoTable(db);
     }
 
     @Override
@@ -85,9 +86,12 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public int getCountOfTable(String tableName){
-        Cursor cursor= getReadableDatabase().rawQuery("SELECT COUNT(*) FROM " + tableName , null);
-        cursor.moveToNext();
-        int count = cursor.getInt(0);
+        Cursor cursor = getReadableDatabase().rawQuery("SELECT COUNT(*) FROM " + tableName , null);
+        int count = 0;
+        if (cursor.moveToNext()) {
+            count = cursor.getInt(0);
+        }
+
         cursor.close();
         return count;
     }
