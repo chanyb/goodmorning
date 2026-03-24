@@ -34,15 +34,19 @@ public class WebviewInterface {
     // 1. Open Progress Dialog P
     @JavascriptInterface
     public void doOpenProgress(String msg) {
-        global._progress.setValue(new Event<>("visible"));
-        global._progressText1.setValue("");
-        global._progressText2.setValue(msg);
+        mActivity.runOnUiThread(() -> {
+            global._progress.setValue(new Event<>("visible"));
+            global._progressText1.setValue("");
+            global._progressText2.setValue(msg);
+        });
     }
 
     // 2. Close Progress Dialog P
     @JavascriptInterface
     public void doCloseProgress() {
-        global._progress.setValue(new Event<>("gone"));
+        mActivity.runOnUiThread(() -> {
+            global._progress.setValue(new Event<>("gone"));
+        });
     }
 
     // 3. 앱 버전정보 가져오기 P
@@ -52,9 +56,12 @@ public class WebviewInterface {
         PackageInfo i = null;
         try {
             i = mActivity.getPackageManager().getPackageInfo(mActivity.getPackageName(), 0);
-            global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s(%s)", callback, i.versionName)
-            ));
+            PackageInfo finalI = i;
+            mActivity.runOnUiThread(() -> {
+                global._callFunction.setValue(new Event<>(
+                    String.format(Locale.KOREA, "%s(%s)", callback, finalI.versionName)
+                ));
+            });
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -79,9 +86,12 @@ public class WebviewInterface {
     @JavascriptInterface
     public void doGetPushToken(String callback) {
         Logger.getInstance().info("doGetPushToken()");
-        global._callFunction.setValue(new Event<>(
-            String.format(Locale.KOREA, "%s(%s)", callback, db.getFcmToken())
-        ));
+        mActivity.runOnUiThread(() -> {
+            global._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "%s(%s)", callback, db.getFcmToken())
+            ));
+        });
+
     }
 
     // 7. 주소록 가져오기 (연락처에서 선택한 사람의 저장 명칭과 번호) P
@@ -89,7 +99,9 @@ public class WebviewInterface {
     public void doGetContact(String callback) {
         global._callbackForContact = callback;
         Logger.getInstance().info("doGetContact()");
-        global._launchGetContact.setValue(new Event<>("launch"));
+        mActivity.runOnUiThread(() -> {
+            global._launchGetContact.setValue(new Event<>("launch"));
+        });
     }
 
 

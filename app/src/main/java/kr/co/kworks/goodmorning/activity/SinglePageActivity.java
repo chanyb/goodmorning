@@ -171,7 +171,7 @@ public class SinglePageActivity extends AppCompatActivity {
 
                 mHandler.post(() -> {
                     globalViewModel._callFunction.setValue(new Event<>(
-                        String.format(Locale.KOREA, "%s(%s, %s)", globalViewModel._callbackForContact, name, finalPhone)
+                        String.format(Locale.KOREA, "%s('%s', '%s')", globalViewModel._callbackForContact, name, finalPhone)
                     ));
                 });
             }
