@@ -114,6 +114,9 @@ public class SeekbarFragment extends Fragment {
                 binding.seekbar.setProgress(finalProgress);
             });
         }
+        mHandler.post(() -> {
+            binding.seeker.setActiveColor(ContextCompat.getColor(getContext(), R.color.blue_2563EB));
+        });
     }
 
     private void setSeekerToMax() {

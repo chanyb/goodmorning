@@ -128,12 +128,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    // vlc
-    implementation ("org.videolan.android:libvlc-all:3.5.1")
-
-    // Preferences
-    implementation("com.github.rtoshiro.securesharedpreferences:securesharedpreferences:1.2.0")
-
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -145,23 +139,6 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
 
-    // SceneView
-    implementation("io.github.sceneview:sceneview:2.3.0")
-
-    // osmdroid
-    implementation("org.osmdroid:osmdroid-android:6.1.20")
-    implementation("org.osmdroid:osmdroid-mapsforge:6.1.20")
-
-    // media3 - exoplayer
-    val media3Version = "1.8.0"
-    implementation("androidx.media3:media3-exoplayer-rtsp:${media3Version}")
-    implementation("androidx.media3:media3-exoplayer:${media3Version}")
-    implementation("androidx.media3:media3-ui:${media3Version}")
-    // RTSP 직원을 위한 확장
-    implementation("androidx.media3:media3-exoplayer-rtsp:${media3Version}")
-    // RTMP 지원을 위한 확장
-    implementation("androidx.media3:media3-datasource-rtmp:${media3Version}")
-
     val cameraXVersion = "1.5.1"
     implementation("androidx.camera:camera-core:${cameraXVersion}")
     implementation("androidx.camera:camera-camera2:${cameraXVersion}")
@@ -169,18 +146,6 @@ dependencies {
     implementation("androidx.camera:camera-view:${cameraXVersion}")
     // 🎥 VideoCapture & VideoOutput
     implementation("androidx.camera:camera-video:${cameraXVersion}")
-
-    // pedroSG94 RTMP Broadcast
-    implementation("com.github.pedroSG94.RootEncoder:library:2.6.2")  // 최신 버전
-    implementation("com.github.pedroSG94.RootEncoder:extra-sources:2.6.2") // 카메라X 등 추가 소스
-    // pedroSG94 RTSP server
-    implementation("com.github.pedroSG94:RTSP-Server:1.3.6")
-
-    // ffmpeg
-//    implementation(files("libs/ffmpeg-kit-full-gpl-6.0-2.LTS.aar"))
-//    implementation("com.arthenica:smart-exception-java:0.2.1")
-    implementation("ai.instavision:ffmpegkit:2025.08.21")
-//    implementation("com.antonkarpenko:ffmpeg-kit-full-gpl:2.1.0") // 16KB 미지원 or vlc와 충돌
 
     // fusedLocationProvider
     implementation("com.google.android.gms:play-services-location:21.3.0")

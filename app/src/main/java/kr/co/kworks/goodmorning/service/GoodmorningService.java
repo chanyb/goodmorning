@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
-import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -14,8 +13,6 @@ import android.os.Looper;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,15 +23,8 @@ import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.IntroActivity;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
-import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
-import kr.co.kworks.goodmorning.utils.PreferenceHandler;
-import kr.co.kworks.goodmorning.utils.SecurityManager;
-import kr.co.kworks.goodmorning.utils.SensorManagerHandler;
 import kr.co.kworks.goodmorning.utils.Utils;
-import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
-import okhttp3.OkHttpClient;
-import okhttp3.WebSocket;
 
 @AndroidEntryPoint
 public class GoodmorningService extends LifecycleService {

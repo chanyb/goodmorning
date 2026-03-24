@@ -1,13 +1,10 @@
 package kr.co.kworks.goodmorning.activity;
 
-import android.Manifest;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -31,7 +28,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProvider;
 
 
 import java.util.ArrayList;
@@ -49,10 +45,7 @@ import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.FCMManager;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
-import kr.co.kworks.goodmorning.utils.Logger;
-import kr.co.kworks.goodmorning.utils.PreferenceHandler;
 import kr.co.kworks.goodmorning.utils.Utils;
-import kr.co.kworks.goodmorning.viewmodel.IntroViewModel;
 
 
 /**
@@ -62,7 +55,6 @@ public class IntroActivity extends AppCompatActivity {
     private AtomicBoolean out;
     private Context mContext;
     private Handler mHandler;
-    private PreferenceHandler preferenceHandler;
     private ActivityIntroBinding binding;
     private ActivityResultLauncher<Intent> mManageAppAllFiles;
     private ScheduledExecutorService loadingFailureExecutor;

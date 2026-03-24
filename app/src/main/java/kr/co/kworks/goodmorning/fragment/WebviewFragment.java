@@ -19,7 +19,6 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -41,12 +40,9 @@ import java.util.Locale;
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.SinglePageActivity;
-import kr.co.kworks.goodmorning.dialog.DialogManager;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.utils.Logger;
-import kr.co.kworks.goodmorning.utils.PreferenceHandler;
-import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
@@ -63,7 +59,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private GlobalViewModel global;
     private String previousQrValue;
     private Handler mHandler;
-    private PreferenceHandler preferenceHandler;
     private long backKeyPressedTime = 0;
     private Toast toast;
     private WebviewInterface webviewInterface;
@@ -118,8 +113,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         /* Object Value */
         global = new ViewModelProvider(getActivity()).get(GlobalViewModel.class);
         mHandler = new Handler(Looper.getMainLooper());
-        securityManager = new SecurityManager(getContext());
-        preferenceHandler = new PreferenceHandler(getContext());
         webviewInterface = new WebviewInterface(getActivity());
 
         if (getView() == null) throw new NullPointerException("getView is null");
@@ -135,7 +128,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 try {
                     postDataBuilder.append(URLEncoder.encode(key, "utf-8"));
                     postDataBuilder.append("=");
-                    postDataBuilder.append(URLEncoder.encode(securityManager.encryptRSA(securityManager.getServerPublicKey(), postData.get(key)), "utf-8"));
+                    postDataBuilder.append(URLEncoder.encode(postData.get(key), "utf-8"));
                     postDataBuilder.append("&");
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeException(e);
@@ -283,7 +276,6 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 return true;
             } else if (url.startsWith("id:")) {
                 String sId = url.replace("id://", "");
-                preferenceHandler.setStringPreference(PreferenceHandler.PREF_USER_ID, sId);
                 return true;
             } else if (url.startsWith("intent://")) {
                 Intent intent = null;
