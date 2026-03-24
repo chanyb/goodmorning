@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import kr.co.kworks.goodmorning.R;
@@ -57,8 +58,8 @@ public class IntroActivity extends AppCompatActivity {
     private Handler mHandler;
     private ActivityIntroBinding binding;
     private ActivityResultLauncher<Intent> mManageAppAllFiles;
-    private ScheduledExecutorService loadingFailureExecutor;
-    private ScheduledFuture<?> loadingFailureScheduled;
+    private ScheduledExecutorService executor;
+    private ScheduledFuture<?> nextPageScheduled;
     private CalendarHandler calendarHandler;
     private FragmentManager fragmentManager;
 
@@ -103,7 +104,7 @@ public class IntroActivity extends AppCompatActivity {
     private void init() {
         this.mContext = this;
         mHandler = new Handler(Looper.getMainLooper());
-        loadingFailureExecutor = Executors.newScheduledThreadPool(1);
+        executor = Executors.newScheduledThreadPool(1);
         out = new AtomicBoolean(false);
         calendarHandler = new CalendarHandler();
         fragmentManager = getSupportFragmentManager();
@@ -346,7 +347,19 @@ public class IntroActivity extends AppCompatActivity {
 
     private void startOverlayWork() {
         // 오버레이 관련 작업 시작
-        nextPage();
+        startNextPageSchedule();
+    }
+
+    private void stopNextPageSchedule() {
+        if (nextPageScheduled != null && !nextPageScheduled.isCancelled()) nextPageScheduled.cancel(true);
+    }
+
+    private void startNextPageSchedule() {
+        stopNextPageSchedule();
+        nextPageScheduled = executor.schedule(() -> {
+            mHandler.post(this::nextPage);
+        }, 2_000, TimeUnit.MILLISECONDS);
+
     }
 }
 
