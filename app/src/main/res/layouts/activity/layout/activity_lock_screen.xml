@@ -30,7 +30,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintVertical_bias="0.3">
+            app:layout_constraintVertical_bias="0.28">
 
             <TextView
                 android:id="@+id/txt_time"
@@ -82,7 +82,7 @@
                 android:id="@+id/txt_wise"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:maxHeight="120dp"
+                android:maxHeight="140dp"
                 app:layout_constraintHeight_max="120dp"
                 android:ellipsize="end"
                 android:textColor="@color/white"
