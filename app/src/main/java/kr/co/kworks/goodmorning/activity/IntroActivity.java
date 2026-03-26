@@ -119,7 +119,6 @@ public class IntroActivity extends AppCompatActivity {
             }
         );
 
-        startForeground();
         initFragment();
         initObserver();
         initDatabase();
@@ -223,6 +222,7 @@ public class IntroActivity extends AppCompatActivity {
         super.onStart();
         createChannels();
 //        requestPermissions();
+        startNextPageSchedule();
     }
 
     @Override
@@ -260,9 +260,7 @@ public class IntroActivity extends AppCompatActivity {
             createNotificationChannel(FCMManager.CHANNEL_ID, 1);
             createNotificationChannel(Utils.GOODMORNING_SERVICE_CHANNEL_ID, 1);
         }
-
-        requestPermissions();
-
+//        requestPermissions();
     }
     private void createNotificationChannel(String channelId, int importance) {
         // Create the NotificationChannel, but only on API 26+ because
