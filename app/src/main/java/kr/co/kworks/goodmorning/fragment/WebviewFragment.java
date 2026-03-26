@@ -192,7 +192,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
     private void reserveTimeout() {
         mHandler.removeCallbacks(timeoutRunnable);
-        mHandler.postDelayed(timeoutRunnable, 10_000);
+        mHandler.postDelayed(timeoutRunnable, 30_000);
         mHandler.post(() -> {
             global._progress.setValue(new Event<>("visible"));
         });
