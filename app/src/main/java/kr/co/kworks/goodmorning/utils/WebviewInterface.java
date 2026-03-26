@@ -88,12 +88,13 @@ public class WebviewInterface {
         Logger.getInstance().info("doGetPushToken()");
         String token = "";
         try {
-            db.getFcmToken();
+            token = db.getFcmToken();
         } catch (Exception e) {
         }
+        String finalToken = token;
         mActivity.runOnUiThread(() -> {
             global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s('%s')", callback, token)
+                String.format(Locale.KOREA, "%s('%s')", callback, finalToken)
             ));
         });
     }
