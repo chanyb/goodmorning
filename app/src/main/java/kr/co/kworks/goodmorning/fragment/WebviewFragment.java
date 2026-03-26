@@ -184,7 +184,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
         Alert alert = global.alertContent.getValue();
         if (alert != null) {
-            alert.body = "서버의 응답시간이 초과 되었습니다.";
+            alert.body = "서버의 응답시간이 초과 되었습니다. 잠시후 다시 시도해 주세요.";
             global.alertContent.setValue(alert);
             global._alert.setValue(new Event<>("visible"));
         }
@@ -311,7 +311,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
-//            view.loadUrl("about:blank");
+            view.loadUrl("about:blank");
             Alert alert = global.alertContent.getValue();
             alert.body = String.format(Locale.KOREA, "(%d) %s", error.getErrorCode(), error.getDescription());
             mHandler.post(() -> {
