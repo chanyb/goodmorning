@@ -86,12 +86,16 @@ public class WebviewInterface {
     @JavascriptInterface
     public void doGetPushToken(String callback) {
         Logger.getInstance().info("doGetPushToken()");
+        String token = "";
+        try {
+            db.getFcmToken();
+        } catch (Exception e) {
+        }
         mActivity.runOnUiThread(() -> {
             global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s('%s')", callback, db.getFcmToken())
+                String.format(Locale.KOREA, "%s('%s')", callback, token)
             ));
         });
-
     }
 
     // 7. 주소록 가져오기 (연락처에서 선택한 사람의 저장 명칭과 번호) P
@@ -102,6 +106,15 @@ public class WebviewInterface {
         mActivity.runOnUiThread(() -> {
             global._launchGetContact.setValue(new Event<>("launch"));
         });
+    }
+
+    // 8. 권한 요청
+    @JavascriptInterface
+    public void doGetPermission() {
+        Logger.getInstance().info("doGetPermission()");
+//        mActivity.runOnUiThread(() -> {
+//            global._launchGetContact.setValue(new Event<>("launch"));
+//        });
     }
 
 
