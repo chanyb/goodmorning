@@ -71,23 +71,19 @@
 
     <!-- NETWORK -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- WIFI-STATUS -->
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- NETWORK CHANGE -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" /> <!-- NETWORK CHANGE -->
 
     <!-- INTERNET -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- NOTIFICATION -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <!-- SIM INFO -->
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!--    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />-->
+<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
 
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
