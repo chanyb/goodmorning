@@ -59,7 +59,7 @@ public class WebviewInterface {
             PackageInfo finalI = i;
             mActivity.runOnUiThread(() -> {
                 global._callFunction.setValue(new Event<>(
-                    String.format(Locale.KOREA, "%s(%s)", callback, finalI.versionName)
+                    String.format(Locale.KOREA, "%s('%s')", callback, finalI.versionName)
                 ));
             });
         } catch (PackageManager.NameNotFoundException e) {
@@ -88,7 +88,7 @@ public class WebviewInterface {
         Logger.getInstance().info("doGetPushToken()");
         mActivity.runOnUiThread(() -> {
             global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s(%s)", callback, db.getFcmToken())
+                String.format(Locale.KOREA, "%s('%s')", callback, db.getFcmToken())
             ));
         });
 
