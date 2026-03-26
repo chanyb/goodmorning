@@ -71,16 +71,25 @@ public class FCMManager extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             String title = remoteMessage.getData().get("title");
             String body = remoteMessage.getData().get("message");
-            Logger.getInstance().info("sendNotification.title: " + title);
-            Logger.getInstance().info("sendNotification.body: " + body);
-            Logger.getInstance().info("sendNotification.noti.title: " + remoteMessage.getNotification().getTitle());
-            Logger.getInstance().info("sendNotification.noti.body: " + remoteMessage.getNotification().getBody());
-            Logger.getInstance().info("sendNotification.messageId: " + remoteMessage.getMessageId());
+            try {
+                Logger.getInstance().info("sendNotification.title: " + title);
+                Logger.getInstance().info("sendNotification.body: " + body);
+
+                Logger.getInstance().info("sendNotification.noti.title: " + remoteMessage.getNotification().getTitle());
+                Logger.getInstance().info("sendNotification.noti.body: " + remoteMessage.getNotification().getBody());
+                Logger.getInstance().info("sendNotification.messageId: " + remoteMessage.getMessageId());
+            } catch (Exception e) {
+                Logger.getInstance().error("sendNotification", e);
+            }
+
+            if (title == null) {
+                title = "타이틀";
+                body = "바디";
+            }
 
             Intent intent = new Intent(this, IntroActivity.class);
             intent.setAction(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.putExtra("messageId", remoteMessage.getMessageId());
 
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
             //PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
