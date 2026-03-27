@@ -44,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
+import kr.co.kworks.goodmorning.fragment.PermissionFragment;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
@@ -64,6 +65,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private ActivitySinglePageBinding binding;
 
     private WebviewFragment webViewFragment;
+    private PermissionFragment permissionFragment;
 
     private ScheduledExecutorService executor;
     private ScheduledFuture<?> startServiceScheduled, progressSyncScheduled;
@@ -79,6 +81,11 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private onBackPressedListener mOnBackPressedListener;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
 
     @Override
@@ -119,6 +126,7 @@ public class SinglePageActivity extends AppCompatActivity {
         executor = Executors.newSingleThreadScheduledExecutor();
         webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
 
+
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
 
@@ -150,6 +158,15 @@ public class SinglePageActivity extends AppCompatActivity {
                 }
             }
         );
+
+        // Permission Fragment 추가
+        permissionFragment = new PermissionFragment();
+        getSupportFragmentManager()
+            .beginTransaction()
+            .add(permissionFragment, "permission_fragment")
+            .commitNow();
+
+        permissionFragment.init();
 
     }
 
@@ -296,6 +313,18 @@ public class SinglePageActivity extends AppCompatActivity {
             String isHandled = event.getContentIfNotHandled();
             if (isHandled == null) return;
             launchContactLauncher();
+        });
+
+        globalViewModel._permission.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+
+            if (isHandled.equals("start")) {
+                permissionFragment.requestPermissions();
+            } else if (isHandled.equals("done")) {
+
+            }
         });
     }
 
