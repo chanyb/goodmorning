@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import kr.co.kworks.goodmorning.model.business_logic.Unlock;
+
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
     private static final int DB_VERSION = 3;
@@ -21,6 +23,7 @@ public class Database extends SQLiteOpenHelper {
         createWiseTable(db);
         createDeviceInfoTable(db);
         createUser(db);
+        createUnlock(db);
     }
 
     @Override
@@ -30,9 +33,12 @@ public class Database extends SQLiteOpenHelper {
                 createDeviceInfoTable(sqLiteDatabase);
             }
 
-            // version 3에서 is_login 컬럼 추가
             if (oldVersion < 3) {
                 createUser(sqLiteDatabase);
+            }
+
+            if (oldVersion < 4) {
+                createUnlock(sqLiteDatabase);
             }
 
         }
@@ -70,6 +76,19 @@ public class Database extends SQLiteOpenHelper {
 
         db.execSQL(sql);
     }
+
+    private void createUnlock(SQLiteDatabase db) {
+        String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
+                "%s TEXT PRIMARY KEY" +
+                "%s INTEGER DEFAULT 0);",
+            Column.unlock,
+            Column.unlock_datetime,
+            Column.unlock_submit
+        );
+
+        db.execSQL(sql);
+    }
+
 
     public Cursor selectCursor(String tableName, String[] columns, String columnForWhereClause, String[] valueForWhereClause, String groupBy, String having, String orderBy, String limit) {
         Cursor c = getReadableDatabase().query(
@@ -237,6 +256,32 @@ public class Database extends SQLiteOpenHelper {
                 }
             }
         }
+    }
+
+    public Unlock getUnlockInfo() {
+        try (
+            Cursor cursor = selectCursor(
+            Column.unlock,
+            null,
+            Column.unlock_submit + "=?",
+            new String[]{"0"},
+            null,
+            null,
+            String.format(Locale.KOREA, "%s asc", Column.unlock_datetime),
+            "1")
+        ) {
+            if (cursor.moveToNext()) {
+                String datetime = cursor.getString(cursor.getColumnIndexOrThrow(Column.unlock_datetime));
+                int submit = cursor.getInt(cursor.getColumnIndexOrThrow(Column.unlock_submit));
+
+                Unlock unlock = new Unlock();
+                unlock.datetime = datetime;
+                unlock.submit = submit;
+
+                return unlock;
+            }
+        }
+        return null;
     }
 
 }

@@ -31,10 +31,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivityLockScreenBinding;
 import kr.co.kworks.goodmorning.fragment.SeekbarFragment;
+import kr.co.kworks.goodmorning.model.business_logic.Unlock;
+import kr.co.kworks.goodmorning.model.repository.ServerRepository;
 import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Column;
@@ -59,7 +63,7 @@ public class LockScreenActivity extends AppCompatActivity {
     private CalendarHandler calendarHandler;
 
     private KeyguardManager km;
-
+    private Database database;
     public interface onBackPressedListener {
         public void onBack();
     }
@@ -112,6 +116,7 @@ public class LockScreenActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
         seekbarFragment = new SeekbarFragment();
+        database = new Database();
 
         getOnBackPressedDispatcher().addCallback(
             this,
@@ -149,6 +154,8 @@ public class LockScreenActivity extends AppCompatActivity {
         seekbarFragment.setListener(new SeekbarFragment.Listener() {
             @Override
             public void onComplete() {
+                Unlock unlock = new Unlock();
+                database.insert(Column.unlock, unlock.getContentValues());
                 requestKeyguardDismiss();
             }
         });

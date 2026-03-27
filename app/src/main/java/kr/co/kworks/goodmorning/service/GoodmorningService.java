@@ -2,6 +2,7 @@ package kr.co.kworks.goodmorning.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
@@ -17,11 +18,19 @@ import androidx.lifecycle.LifecycleService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.IntroActivity;
+import kr.co.kworks.goodmorning.model.business_logic.Unlock;
+import kr.co.kworks.goodmorning.model.repository.ServerRepository;
+import kr.co.kworks.goodmorning.model.request.UnlockRequest;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
+import kr.co.kworks.goodmorning.utils.Column;
+import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.Utils;
@@ -33,10 +42,14 @@ public class GoodmorningService extends LifecycleService {
 
     private GoodmorningBroadcastReceiver goodmorningBroadcastReceiver;
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> webSocketScheduled;
+    private ScheduledFuture<?> unLockDataScheduled;
     private Handler mHandler;
+    private Database database;
 
     private boolean screenOff;
+
+    @Inject
+    ServerRepository serverRepository;
 
     @Override
     public void onCreate() {
@@ -73,6 +86,7 @@ public class GoodmorningService extends LifecycleService {
         calendarHandler = new CalendarHandler();
         executor = Executors.newScheduledThreadPool(4);
         goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
+        database = new Database();
     }
 
     /**
@@ -100,7 +114,27 @@ public class GoodmorningService extends LifecycleService {
     }
 
     private void startScheduled() {
-        Logger.getInstance().info("startScheduled()");
+        stopUnLockDataScheduled();
+        unLockDataScheduled = executor.scheduleWithFixedDelay(() -> {
+            Unlock unlock = database.getUnlockInfo();
+            String token = database.getFcmToken();
+            if(unlock == null || token == null || token.isEmpty()) return;
+            UnlockRequest unlockRequest = new UnlockRequest();
+            unlockRequest.token = token;
+            serverRepository.unlock(
+                unlockRequest,
+                unlockResponseResponse -> {
+                    ContentValues whereCv = new ContentValues();
+                    whereCv.put(Column.unlock_datetime, unlock.datetime);
+                    unlock.submit = 1;
+                    database.update(Column.unlock, unlock.getContentValues(), whereCv);
+                },
+                throwable -> {
+                    Logger.getInstance().error("unlockRequest", throwable);
+                }
+            );
+        },1000, 1000, TimeUnit.MILLISECONDS);
+
     }
 
 
@@ -120,6 +154,13 @@ public class GoodmorningService extends LifecycleService {
 
     private void release() {
         unregisterBroadcastReceiver();
+        stopUnLockDataScheduled();
+    }
+
+    private void stopUnLockDataScheduled() {
+        if (unLockDataScheduled != null && !unLockDataScheduled.isCancelled()) {
+            unLockDataScheduled.cancel(true);
+        }
     }
 
 

@@ -24,4 +24,10 @@ public class Column {
     public static String user = "user";
     public static String user_is_login = "user_is_login";
 
+    /* unlock */
+    public static String unlock = "unlock";
+    public static String unlock_datetime = "unlock_datetime";
+    public static String unlock_submit = "unlock_submit";
+
+
 }
