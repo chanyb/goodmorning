@@ -53,6 +53,7 @@ import kr.co.kworks.goodmorning.model.network.NetworkBroadcastReceiver;
 import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
+import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.viewmodel.Event;
@@ -82,6 +83,8 @@ public class SinglePageActivity extends AppCompatActivity {
     }
 
     private onBackPressedListener mOnBackPressedListener;
+
+    private Database database;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -126,6 +129,7 @@ public class SinglePageActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
         webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
+        database = new Database();
 
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
@@ -332,7 +336,18 @@ public class SinglePageActivity extends AppCompatActivity {
             if (event==null) return;
             String isHandled = event.getContentIfNotHandled();
             if (isHandled == null) return;
-            startForeground();
+
+            if (isHandled.equals("login")) {
+                database.setLogin(true);
+                startForeground();
+            } else if (isHandled.equals("logout")) {
+                database.setLogin(false);
+                if (isServiceRunning(this)) {
+                    Intent serviceIntent = new Intent(this, GoodmorningService.class);
+                    stopService(serviceIntent);
+                }
+            }
+
         });
     }
 

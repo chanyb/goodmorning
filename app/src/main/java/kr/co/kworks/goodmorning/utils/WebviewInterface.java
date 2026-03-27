@@ -120,10 +120,10 @@ public class WebviewInterface {
 
     // 9. 로그인 성공
     @JavascriptInterface
-    public void loginSuccess() {
+    public void doSetLogin(boolean bool) {
         Logger.getInstance().info("loginSuccess()");
         mActivity.runOnUiThread(() -> {
-            global._login.setValue(new Event<>("start"));
+            global._login.setValue(new Event<>(bool ? "login":"logout"));
         });
     }
 

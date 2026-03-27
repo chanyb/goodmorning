@@ -10,7 +10,7 @@ import java.util.Locale;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
@@ -20,6 +20,7 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         createWiseTable(db);
         createDeviceInfoTable(db);
+        createUser(db);
     }
 
     @Override
@@ -28,6 +29,12 @@ public class Database extends SQLiteOpenHelper {
             if (oldVersion < 2) { // 1
                 createDeviceInfoTable(sqLiteDatabase);
             }
+
+            // version 3에서 is_login 컬럼 추가
+            if (oldVersion < 3) {
+                createUser(sqLiteDatabase);
+            }
+
         }
     }
 
@@ -49,6 +56,16 @@ public class Database extends SQLiteOpenHelper {
             Column.device_info,
             Column.device_info_column_fcm_token,
             Column.device_info_column_tel
+        );
+
+        db.execSQL(sql);
+    }
+
+    private void createUser(SQLiteDatabase db) {
+        String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
+                "%s INTEGER DEFAULT 0);",
+            Column.user,
+            Column.user_is_login
         );
 
         db.execSQL(sql);
@@ -77,6 +94,26 @@ public class Database extends SQLiteOpenHelper {
     public long insert(String tableName, ContentValues contentValues) {
         Log.d("db", "insert: " + tableName + " / " + contentValues.toString());
         return getWritableDatabase().insert(tableName, null, contentValues); // 성공 시 0보다 큰 정수, 실패 시 -1 반환
+    }
+
+    public long update(String tableName, ContentValues contentValues, ContentValues whereValues) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // WHERE 절 생성
+        StringBuilder whereClause = new StringBuilder();
+        String[] whereArgs = new String[whereValues.size()];
+
+        int i = 0;
+        for (String key : whereValues.keySet()) {
+            if (i > 0) whereClause.append(" AND ");
+            whereClause.append(key).append("=?");
+
+            Object value = whereValues.get(key);
+            whereArgs[i] = value == null ? null : String.valueOf(value);
+            i++;
+        }
+
+        return db.update(tableName, contentValues, whereClause.toString(), whereArgs);
     }
 
     // 직접 작성하여 update하는 함수
@@ -114,7 +151,10 @@ public class Database extends SQLiteOpenHelper {
                     ContentValues cv = new ContentValues();
                     cv.put(Column.device_info_column_tel, telNum);
                     cv.put(Column.device_info_column_fcm_token, token);
-                    return insert(Column.device_info, cv);
+
+                    ContentValues whereCv = new ContentValues();
+                    whereCv.put(Column.device_info_column_tel, telNum);
+                    return update(Column.device_info, cv, whereCv);
                 }
             }
 
@@ -134,32 +174,69 @@ public class Database extends SQLiteOpenHelper {
             contentValues.put(Column.device_info_column_tel, telNum);
             return insert(Column.device_info, contentValues);
         } else { // 수정
-            Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
-            if (cursor.moveToNext()) {
-                String token  = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
-                ContentValues cv = new ContentValues();
-                cv.put(Column.device_info_column_fcm_token, token);
-                cv.put(Column.device_info_column_tel, telNum);
-                return insert(Column.device_info, cv);
+            try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
+                if (cursor.moveToNext()) {
+                    String token = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
+                    ContentValues cv = new ContentValues();
+                    cv.put(Column.device_info_column_fcm_token, token);
+                    cv.put(Column.device_info_column_tel, telNum);
+
+                    ContentValues whereCv = new ContentValues();
+                    whereCv.put(Column.device_info_column_fcm_token, token);
+                    return update(Column.device_info, cv, whereCv);
+                }
             }
         }
         return -1;
     }
 
     public String getTelNum() {
-        Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
-        if (cursor.moveToNext()) {
-            return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+        try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+            }
         }
         return null;
     }
 
     public String getFcmToken() {
-        Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1");
-        if (cursor.moveToNext()) {
-            return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
+        try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
+            }
         }
         return null;
+    }
+
+    public boolean isLogin() {
+        try (Cursor cursor = selectCursor(Column.user, null, null, null, null, null, null, "1")) {
+            if (cursor.moveToNext()) {
+                return cursor.getInt(cursor.getColumnIndexOrThrow(Column.user_is_login)) == 1;
+            }
+        }
+
+        return false;
+    }
+
+    public void setLogin(boolean bool) {
+        if (getCountOfTable(Column.user) == 0) {
+            ContentValues cv = new ContentValues();
+            cv.put(Column.user_is_login, bool ? 1:0);
+            insert(Column.device_info, cv);
+        } else {
+            try (Cursor cursor = selectCursor(Column.user, null, null, null, null, null, null, "1")) {
+                if (cursor.moveToNext()) {
+                    int isLogin = cursor.getInt(cursor.getColumnIndexOrThrow(Column.user_is_login));
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(Column.user_is_login, bool ? 1:0);
+
+                    ContentValues whereCv = new ContentValues();
+                    whereCv.put(Column.user_is_login, isLogin);
+                    update(Column.device_info, cv, whereCv);
+                }
+            }
+        }
     }
 
 }

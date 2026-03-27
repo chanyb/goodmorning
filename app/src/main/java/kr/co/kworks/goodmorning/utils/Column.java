@@ -20,4 +20,8 @@ public class Column {
         device_info_column_tel, device_info_column_fcm_token
     };
 
+    /* User */
+    public static String user = "user";
+    public static String user_is_login = "user_is_login";
+
 }

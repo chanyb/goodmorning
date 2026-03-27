@@ -12,8 +12,10 @@ import kr.co.kworks.goodmorning.activity.LockScreenActivity;
 import kr.co.kworks.goodmorning.service.GoodmorningService;
 
 public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
+    private Database database;
 
     public GoodmorningBroadcastReceiver() {
+        database = new Database();
     }
 
     @Override
@@ -23,7 +25,7 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
 
         switch (action) {
             case Intent.ACTION_BOOT_COMPLETED -> {
-                startForeground(context);
+                if(database.isLogin()) startForeground(context);
             }
             case Intent.ACTION_BATTERY_CHANGED -> {
                 // level: 현재 배터리 레벨
