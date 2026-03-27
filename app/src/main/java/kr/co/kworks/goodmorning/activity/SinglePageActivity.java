@@ -1,6 +1,7 @@
 package kr.co.kworks.goodmorning.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -326,6 +327,13 @@ public class SinglePageActivity extends AppCompatActivity {
 
             }
         });
+
+        globalViewModel._login.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+            startForeground();
+        });
     }
 
     private void popAllBackStack() {
@@ -419,4 +427,26 @@ public class SinglePageActivity extends AppCompatActivity {
             });
 
     }
+
+    private void startForeground() {
+        if (isServiceRunning(this)) return;
+
+        Intent serviceIntent = new Intent(this, GoodmorningService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+    }
+
+    private boolean isServiceRunning (Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+
+        for (ActivityManager.RunningServiceInfo rsi : am.getRunningServices(Integer.MAX_VALUE)) {
+            if (GoodmorningService.class.getName().equals(rsi.service.getClassName())) return true;
+        }
+
+        return false;
+    }
+
 }
