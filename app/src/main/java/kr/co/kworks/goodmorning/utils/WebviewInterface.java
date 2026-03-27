@@ -109,13 +109,13 @@ public class WebviewInterface {
         });
     }
 
-    // 8. 권한 요청
+    // 8. 권한 요청 하기
     @JavascriptInterface
     public void doGetPermission() {
         Logger.getInstance().info("doGetPermission()");
-//        mActivity.runOnUiThread(() -> {
-//            global._launchGetContact.setValue(new Event<>("launch"));
-//        });
+        mActivity.runOnUiThread(() -> {
+            global._permission.setValue(new Event<>("start"));
+        });
     }
 
 
