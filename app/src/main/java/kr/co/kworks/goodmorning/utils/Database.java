@@ -12,7 +12,7 @@ import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
@@ -79,7 +79,7 @@ public class Database extends SQLiteOpenHelper {
 
     private void createUnlock(SQLiteDatabase db) {
         String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
-                "%s TEXT PRIMARY KEY" +
+                "%s TEXT PRIMARY KEY," +
                 "%s INTEGER DEFAULT 0);",
             Column.unlock,
             Column.unlock_datetime,
@@ -241,7 +241,7 @@ public class Database extends SQLiteOpenHelper {
         if (getCountOfTable(Column.user) == 0) {
             ContentValues cv = new ContentValues();
             cv.put(Column.user_is_login, bool ? 1:0);
-            insert(Column.device_info, cv);
+            insert(Column.user, cv);
         } else {
             try (Cursor cursor = selectCursor(Column.user, null, null, null, null, null, null, "1")) {
                 if (cursor.moveToNext()) {
@@ -252,7 +252,7 @@ public class Database extends SQLiteOpenHelper {
 
                     ContentValues whereCv = new ContentValues();
                     whereCv.put(Column.user_is_login, isLogin);
-                    update(Column.device_info, cv, whereCv);
+                    update(Column.user, cv, whereCv);
                 }
             }
         }

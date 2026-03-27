@@ -124,10 +124,13 @@ public class GoodmorningService extends LifecycleService {
             serverRepository.unlock(
                 unlockRequest,
                 unlockResponseResponse -> {
-                    ContentValues whereCv = new ContentValues();
-                    whereCv.put(Column.unlock_datetime, unlock.datetime);
-                    unlock.submit = 1;
-                    database.update(Column.unlock, unlock.getContentValues(), whereCv);
+                    if (!unlockResponseResponse.isSuccessful()) return;
+                    if (unlockResponseResponse.body().result.equals("200")) {
+                        ContentValues whereCv = new ContentValues();
+                        whereCv.put(Column.unlock_datetime, unlock.datetime);
+                        unlock.submit = 1;
+                        database.update(Column.unlock, unlock.getContentValues(), whereCv);
+                    }
                 },
                 throwable -> {
                     Logger.getInstance().error("unlockRequest", throwable);
