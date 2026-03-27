@@ -70,7 +70,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private PermissionFragment permissionFragment;
 
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> startServiceScheduled, progressSyncScheduled;
+    private ScheduledFuture<?> startServiceScheduled, testScheduled;
 
     private CalendarHandler calendarHandler;
 
@@ -100,6 +100,7 @@ public class SinglePageActivity extends AppCompatActivity {
         observerInit();
         initClickListener();
         initProgressDialog();
+//        test();
     }
 
     @Override
@@ -462,6 +463,12 @@ public class SinglePageActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    private void test() {
+        testScheduled = executor.schedule(() -> {
+            runOnUiThread(() -> globalViewModel._login.setValue(new Event<>("logout")));
+        }, 10_000, TimeUnit.MILLISECONDS);
     }
 
 }
