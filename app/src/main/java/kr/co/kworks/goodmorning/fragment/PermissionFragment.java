@@ -43,14 +43,7 @@ public class PermissionFragment extends Fragment {
     private GlobalViewModel globalViewModel;
     private Handler mHandler;
 
-    private ScheduledExecutorService executor;
-    private ScheduledFuture<?> permissionFinishCheckScheduled;
-    private Activity activity;
-
     public PermissionFragment() {}
-    public PermissionFragment(Activity activity) {
-        this.activity = activity;
-    }
 
     public interface Listener{
         void onComplete();
@@ -71,74 +64,55 @@ public class PermissionFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        init();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestOverlayPermission();
     }
 
     public void init() {
         mHandler = new Handler(Looper.getMainLooper());
-        globalViewModel = new ViewModelProvider((ViewModelStoreOwner) activity).get(GlobalViewModel.class);
-        executor = Executors.newSingleThreadScheduledExecutor();
+        globalViewModel = new ViewModelProvider(requireActivity()).get(GlobalViewModel.class);
     }
 
     private ArrayList<String> getNeededPermissions() {
         ArrayList<String> neededPermissions = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // POST_NOTIFICATION
-            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
+            if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_DENIED) {
                 neededPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
         return neededPermissions;
     }
 
-    private void requestPermissions() {
+    public void requestPermissions() {
         ArrayList<String> list = getNeededPermissions();
         if(list.isEmpty()) {
             // 권한 요청 끝남
-            requestDetailPermission();
             return;
         }
         String[] permissions = list.toArray(new String[0]);
-        ActivityCompat.requestPermissions(activity, permissions, 2424);
+        ActivityCompat.requestPermissions(requireActivity(), permissions, 2424);
+
     }
 
-    private ArrayList<String> getNeededDetailPermission() {
-        ArrayList<String> neededDetailPermissions = new ArrayList<>();
-        return neededDetailPermissions;
-    }
-
-    private void requestDetailPermission() {
-        ArrayList<String> list = getNeededDetailPermission();
-        if(list.isEmpty()) {
-            // 권한 요청 끝남
-            requestOverlayPermission();
-            return;
-        }
-        String[] permissions = list.toArray(new String[0]);
-        ActivityCompat.requestPermissions(activity, permissions, 2425);
-    }
-
-    private void requestOverlayPermission() {
+    public void requestOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(activity)) {
+            if (!Settings.canDrawOverlays(requireActivity())) {
                 Intent intent = new Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + activity.getPackageName())
+                    Uri.parse("package:" + requireActivity().getPackageName())
                 );
                 startActivity(intent);
             } else {
                 // 이미 허용됨
-                activity.runOnUiThread(() -> {
-                    globalViewModel._permission.setValue(new Event<>("done"));
-                });
             }
         } else {
             // Android 6 미만은 별도 체크 없이 진행
         }
-    }
-
-    public void startGetPermission() {
-        requestPermissions();
     }
 
 
