@@ -118,5 +118,14 @@ public class WebviewInterface {
         });
     }
 
+    // 9. 로그인 성공
+    @JavascriptInterface
+    public void loginSuccess() {
+        Logger.getInstance().info("loginSuccess()");
+        mActivity.runOnUiThread(() -> {
+            global._login.setValue(new Event<>("start"));
+        });
+    }
+
 
 }
