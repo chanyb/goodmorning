@@ -127,5 +127,12 @@ public class WebviewInterface {
         });
     }
 
+    // 10. 전화 앱 이동
+    @JavascriptInterface
+    public void doActionDial(String phoneNumber) {
+        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
+        mActivity.startActivity(intent);
+    }
+
 
 }

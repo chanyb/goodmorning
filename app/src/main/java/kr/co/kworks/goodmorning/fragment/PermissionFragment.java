@@ -69,7 +69,6 @@ public class PermissionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        requestOverlayPermission();
     }
 
     public void init() {
