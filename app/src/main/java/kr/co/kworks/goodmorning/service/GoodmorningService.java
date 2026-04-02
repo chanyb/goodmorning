@@ -147,6 +147,7 @@ public class GoodmorningService extends LifecycleService {
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
+        intentFilter.addAction(Intent.ACTION_USER_PRESENT);
         registerReceiver(goodmorningBroadcastReceiver, intentFilter);
     }
 

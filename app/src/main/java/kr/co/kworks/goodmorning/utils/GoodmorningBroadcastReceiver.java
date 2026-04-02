@@ -9,6 +9,7 @@ import android.os.Build;
 import androidx.lifecycle.MutableLiveData;
 
 import kr.co.kworks.goodmorning.activity.LockScreenActivity;
+import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 import kr.co.kworks.goodmorning.service.GoodmorningService;
 
 public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
@@ -43,13 +44,24 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 Logger.getInstance().info("battery: " + batteryPercentage);
             }
             case Intent.ACTION_SCREEN_ON -> {
+                Logger.getInstance().info("Screen On");
             }
             case Intent.ACTION_SCREEN_OFF -> {
+                Logger.getInstance().info("Screen Off");
                 Intent lockScreenIntent = new Intent(context, LockScreenActivity.class);
                 lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                context.startActivity(lockScreenIntent);
+                try {
+//                    context.startActivity(lockScreenIntent);
+                } catch(Exception e) {
+                    Logger.getInstance().error("LockScreenActivityError", e);
+                }
+            }
+            case Intent.ACTION_USER_PRESENT -> {
+                Logger.getInstance().info("ACTION_USER_PRESENT");
+                Unlock unlock = new Unlock();
+                database.insert(Column.unlock, unlock.getContentValues());
             }
         }
     }
