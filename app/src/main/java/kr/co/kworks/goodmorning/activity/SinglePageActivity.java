@@ -6,15 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +41,9 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -77,6 +85,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private NetworkBroadcastReceiver networkBroadcastReceiver;
 
     private ActivityResultLauncher<Intent> getContactLauncher;
+    private ActivityResultLauncher<PickVisualMediaRequest> pick1Media;
 
     public interface onBackPressedListener {
         public void onBack();
@@ -174,6 +183,8 @@ public class SinglePageActivity extends AppCompatActivity {
 
         permissionFragment.init();
 
+        // pick 1 media
+        pick1Media = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::sendImage);
     }
 
     private void launchContactLauncher() {
@@ -469,6 +480,51 @@ public class SinglePageActivity extends AppCompatActivity {
         testScheduled = executor.schedule(() -> {
             runOnUiThread(() -> globalViewModel._login.setValue(new Event<>("logout")));
         }, 10_000, TimeUnit.MILLISECONDS);
+    }
+
+    private void sendImage(Uri uri) {
+        if (uri == null) return;
+        Bitmap image = GlobalApplication.getContext().getBitmapFromUri(uri);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArr = byteArrayOutputStream.toByteArray();
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(byteArr, 0, byteArr.length, options);
+
+        options.inSampleSize = calculateInSampleSize(options, 640, 640);
+        options.inJustDecodeBounds = false;
+        Bitmap resized = BitmapFactory.decodeByteArray(byteArr, 0, byteArr.length, options);
+        byteArrayOutputStream = new ByteArrayOutputStream();
+        resized.compress(Bitmap.CompressFormat.JPEG, 65, byteArrayOutputStream);
+        byteArr = byteArrayOutputStream.toByteArray();
+        String base64String = Base64.encodeToString(byteArr, Base64.DEFAULT);
+
+
+    }
+
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 2;
+
+        try {
+            if (height > reqHeight || width > reqWidth) {
+                final int halfHeight = height / 2;
+                final int halfWidth = width / 2;
+                while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                    inSampleSize *= 2;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return inSampleSize;
+    }
+
+    public void pickMedia() {
+        pick1Media.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
     }
 
 }

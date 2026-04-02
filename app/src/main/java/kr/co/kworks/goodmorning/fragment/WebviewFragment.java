@@ -145,23 +145,12 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         else webview.postUrl(url, postDataBuilder.toString().getBytes());
 
         observerInit();
+        testInterface();
     }
 
     private void testInterface() {
-        webviewInterface.doGetPushToken("callback");
-        webviewInterface.doGetAppVersion("callback");
-        webviewInterface.doOpenToast("toast test");
-
         mHandler.postDelayed(() -> {
-            webviewInterface.doOpenProgress("progress test...");
-        }, 3000);
-
-        mHandler.postDelayed(() -> {
-            webviewInterface.doCloseProgress();
-        }, 5_000);
-
-        mHandler.postDelayed(() -> {
-            webviewInterface.doGetContact("contact");
+            webviewInterface.doGetPhoto();
         }, 7_000);
 
     }

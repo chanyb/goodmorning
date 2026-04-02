@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.util.Locale;
 
+import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
@@ -134,5 +135,11 @@ public class WebviewInterface {
         mActivity.startActivity(intent);
     }
 
-
+    // 11. 사진 가져오기
+    @JavascriptInterface
+    public void doGetPhoto() {
+        mActivity.runOnUiThread(() -> {
+            ((SinglePageActivity)mActivity).pickMedia();
+        });
+    }
 }
