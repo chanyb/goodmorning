@@ -137,7 +137,8 @@ public class WebviewInterface {
 
     // 11. 사진 가져오기
     @JavascriptInterface
-    public void doGetPhoto() {
+    public void doGetPhoto(String callback) {
+        global._callbackForPhoto = callback;
         mActivity.runOnUiThread(() -> {
             ((SinglePageActivity)mActivity).pickMedia();
         });

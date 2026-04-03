@@ -28,6 +28,7 @@ public class GlobalViewModel extends ViewModel {
     public MutableLiveData<Confirm> confirmContent;
     public MutableLiveData<String> _progressText1, _progressText2;
     public String _callbackForContact;
+    public String _callbackForPhoto;
 
 
     @Inject

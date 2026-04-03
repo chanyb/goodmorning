@@ -145,12 +145,11 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         else webview.postUrl(url, postDataBuilder.toString().getBytes());
 
         observerInit();
-        testInterface();
     }
 
     private void testInterface() {
         mHandler.postDelayed(() -> {
-            webviewInterface.doGetPhoto();
+            webviewInterface.doGetPhoto("asdf");
         }, 7_000);
 
     }

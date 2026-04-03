@@ -500,6 +500,9 @@ public class SinglePageActivity extends AppCompatActivity {
         byteArr = byteArrayOutputStream.toByteArray();
         String base64String = Base64.encodeToString(byteArr, Base64.DEFAULT);
 
+        globalViewModel._callFunction.setValue(new Event<>(
+            String.format(Locale.KOREA, "%s('%s')", globalViewModel._callbackForPhoto, base64String)
+        ));
 
     }
 
