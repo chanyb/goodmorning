@@ -91,6 +91,7 @@ public class PermissionFragment extends Fragment {
         ArrayList<String> list = getNeededPermissions();
         if(list.isEmpty()) {
             // 권한 요청 끝남
+            requestOverlayPermission();
             return;
         }
         String[] permissions = list.toArray(new String[0]);
