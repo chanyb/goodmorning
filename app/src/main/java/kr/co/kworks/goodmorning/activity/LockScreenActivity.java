@@ -77,8 +77,6 @@ public class LockScreenActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_lock_screen);
         init();
-        observerInit();
-        initClickListener();
         initSeekbar();
 
         getWindow().addFlags(
@@ -154,8 +152,6 @@ public class LockScreenActivity extends AppCompatActivity {
         seekbarFragment.setListener(new SeekbarFragment.Listener() {
             @Override
             public void onComplete() {
-                Unlock unlock = new Unlock();
-                database.insert(Column.unlock, unlock.getContentValues());
                 requestKeyguardDismiss();
             }
         });
@@ -169,18 +165,11 @@ public class LockScreenActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void observerInit() {
-    }
-
     private void popAllBackStack() {
         while (fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
-
-    private void initClickListener() {
-    }
-
 
     private boolean isOnline(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -25,6 +25,17 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
         if (action == null) return;
 
         switch (action) {
+            case Intent.ACTION_SCREEN_OFF -> {
+                Logger.getInstance().info("Screen Off");
+                Intent lockScreenIntent = new Intent(context, LockScreenActivity.class);
+                lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                try {
+                    context.startActivity(lockScreenIntent);
+                } catch(Exception e) {
+                    Logger.getInstance().error("LockScreenActivityError", e);
+                }
+            }
             case Intent.ACTION_BOOT_COMPLETED -> {
                 if(database.isLogin()) startForeground(context);
             }
@@ -42,21 +53,6 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                     status == BatteryManager.BATTERY_STATUS_FULL;
                 Logger.getInstance().info("battery: " + batteryPercentage);
-            }
-            case Intent.ACTION_SCREEN_ON -> {
-                Logger.getInstance().info("Screen On");
-            }
-            case Intent.ACTION_SCREEN_OFF -> {
-                Logger.getInstance().info("Screen Off");
-                Intent lockScreenIntent = new Intent(context, LockScreenActivity.class);
-                lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                try {
-//                    context.startActivity(lockScreenIntent);
-                } catch(Exception e) {
-                    Logger.getInstance().error("LockScreenActivityError", e);
-                }
             }
             case Intent.ACTION_USER_PRESENT -> {
                 Logger.getInstance().info("ACTION_USER_PRESENT");

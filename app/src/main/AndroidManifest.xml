@@ -27,7 +27,6 @@
             android:taskAffinity="kr.co.kworks.goodmorning.lock"
             android:launchMode="singleTask"
             android:excludeFromRecents="true"
-            android:showWhenLocked="true"
             android:theme="@style/Theme.App.LockScreen"
             />
 
