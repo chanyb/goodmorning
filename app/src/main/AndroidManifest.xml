@@ -80,10 +80,6 @@
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <!-- SIM INFO -->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />-->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-
     <!-- Foreground Service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
@@ -93,5 +89,8 @@
 
     <!-- BOOT_COMPLETE -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- CALLING STATE -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
 </manifest>

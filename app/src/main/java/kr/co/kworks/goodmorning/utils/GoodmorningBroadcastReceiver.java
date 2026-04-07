@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -58,6 +59,22 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 Logger.getInstance().info("ACTION_USER_PRESENT");
                 Unlock unlock = new Unlock();
                 database.insert(Column.unlock, unlock.getContentValues());
+            }
+            case TelephonyManager.ACTION_PHONE_STATE_CHANGED -> {
+                Logger.getInstance().info("ACTION_PHONE_STATE_CHANGED");
+                String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+                if (state != null) {
+                    if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
+                        // 전화 수신
+                        Logger.getInstance().info("EXTRA_STATE_RINGING");
+                    } else if (TelephonyManager.EXTRA_STATE_OFFHOOK.equals(state)) {
+                        // 통화 시작
+                        Logger.getInstance().info("EXTRA_STATE_OFFHOOK");
+                    } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
+                        // 통화 종료
+                        Logger.getInstance().info("EXTRA_STATE_IDLE");
+                    }
+                }
             }
         }
     }

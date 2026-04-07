@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.telephony.TelephonyManager;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -148,6 +149,7 @@ public class GoodmorningService extends LifecycleService {
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         intentFilter.addAction(Intent.ACTION_USER_PRESENT);
+        intentFilter.addAction(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
         registerReceiver(goodmorningBroadcastReceiver, intentFilter);
     }
 
