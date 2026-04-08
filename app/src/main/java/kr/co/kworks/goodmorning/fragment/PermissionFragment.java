@@ -84,6 +84,11 @@ public class PermissionFragment extends Fragment {
                 neededPermissions.add(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
+
+        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
+            neededPermissions.add(Manifest.permission.READ_PHONE_STATE);
+        }
+
         return neededPermissions;
     }
 
