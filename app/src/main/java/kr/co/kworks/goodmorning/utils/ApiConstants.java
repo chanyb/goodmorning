@@ -10,5 +10,8 @@ public class ApiConstants {
     }
 
     public static final String SERVER_BASE_URL = GlobalApplication.getContext().getString(R.string.domain);
-    public static final String MAIN_URL = SERVER_BASE_URL + "/main/main.do";;
+    public static final String MAIN_URL = SERVER_BASE_URL + "/main/main.do";
+    public static final String LOGIN_URL = SERVER_BASE_URL + "/login/login.do";
+    public static final String ONBOARDING_URL = SERVER_BASE_URL + "/connect/onboarding.do";
+
 }
