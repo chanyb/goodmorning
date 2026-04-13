@@ -105,14 +105,14 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL(
                 "CREATE TABLE device_info_new (" +
                     Column.device_info_column_fcm_token + " TEXT," +
-                    "device_info_app_token TEXT" +
+                    Column.device_info_app_token + " TEXT" +
                     ");"
             );
 
             // 2. 데이터 복사
             db.execSQL(
                 "INSERT INTO device_info_new (" +
-                    Column.device_info_column_fcm_token + ", device_info_app_token) " +
+                    Column.device_info_column_fcm_token + ", " + Column.device_info_column_fcm_token + ") " +
                     "SELECT " +
                     Column.device_info_column_fcm_token + ", " +
                     Column.device_info_column_tel +
@@ -126,6 +126,8 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE device_info_new RENAME TO " + Column.device_info);
 
             db.setTransactionSuccessful();
+        } catch(Exception e) {
+            Logger.getInstance().error("upgradeDeviceInfoTable error", e);
         } finally {
             db.endTransaction();
         }
