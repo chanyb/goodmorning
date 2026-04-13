@@ -59,6 +59,17 @@
                 android:value="Detect screen on/off and present in-app overlay UI for application workflow" />
         </service>
 
+        <service
+            android:name=".utils.AlarmNotificationListener"
+            android:label="Alarm Listener"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
         <receiver android:name=".utils.GoodmorningBroadcastReceiver"
             android:exported="true">
             <intent-filter>
