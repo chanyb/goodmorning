@@ -12,7 +12,7 @@ import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 5;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
@@ -99,29 +99,36 @@ public class Database extends SQLiteOpenHelper {
      * @param db
      */
     private void updateDeviceInfo(SQLiteDatabase db) {
-        // 1. 새 테이블 생성
-        db.execSQL(
-            "CREATE TABLE device_info_new (" +
-                Column.device_info_column_fcm_token + " TEXT," +
-                "device_info_app_token TEXT" +
-                ");"
-        );
+        db.beginTransaction();
+        try {
+            // 1. 새 테이블 생성
+            db.execSQL(
+                "CREATE TABLE device_info_new (" +
+                    Column.device_info_column_fcm_token + " TEXT," +
+                    "device_info_app_token TEXT" +
+                    ");"
+            );
 
-        // 2. 데이터 복사 (tel → app_token)
-        db.execSQL(
-            "INSERT INTO device_info_new (" +
-                Column.device_info_column_fcm_token + ", device_info_app_token) " +
-                "SELECT " +
-                Column.device_info_column_fcm_token + ", " +
-                Column.device_info_column_tel +
-                " FROM " + Column.device_info
-        );
+            // 2. 데이터 복사
+            db.execSQL(
+                "INSERT INTO device_info_new (" +
+                    Column.device_info_column_fcm_token + ", device_info_app_token) " +
+                    "SELECT " +
+                    Column.device_info_column_fcm_token + ", " +
+                    Column.device_info_column_tel +
+                    " FROM " + Column.device_info
+            );
 
-        // 3. 기존 테이블 삭제
-        db.execSQL("DROP TABLE " + Column.device_info);
+            // 3. 기존 테이블 삭제
+            db.execSQL("DROP TABLE " + Column.device_info);
 
-        // 4. 이름 변경
-        db.execSQL("ALTER TABLE device_info_new RENAME TO " + Column.device_info);
+            // 4. 이름 변경
+            db.execSQL("ALTER TABLE device_info_new RENAME TO " + Column.device_info);
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     private void deleteDeviceInfo(SQLiteDatabase db) {
