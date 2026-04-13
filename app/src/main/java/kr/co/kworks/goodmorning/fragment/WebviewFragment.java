@@ -25,10 +25,13 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.gms.common.api.Api;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -42,6 +45,7 @@ import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
+import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.Event;
@@ -62,6 +66,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private long backKeyPressedTime = 0;
     private Toast toast;
     private WebviewInterface webviewInterface;
+    private OnBackPressedCallback backPressedCallback;
 
     public WebviewFragment(String url, HashMap<String, String> postData) {
         this.url = url;
@@ -84,10 +89,43 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         activity.setOnKeyBackPressedListener(null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (backPressedCallback != null) {
+            backPressedCallback.setEnabled(true);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_webview, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        backPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (webview != null && webview.canGoBack() && webview.getUrl() != null && webview.getUrl().startsWith(ApiConstants.SERVER_BASE_URL)) {
+                    if (!webview.getUrl().equals(ApiConstants.MAIN_URL) && !webview.getUrl().equals(ApiConstants.LOGIN_URL) && !webview.getUrl().equals(ApiConstants.ONBOARDING_URL)) {
+                        final String javascript = "gfn_CustomBackEvent()";
+                        callFunction(javascript);
+                    } else {
+                        onBack();
+                    }
+                } else {
+                    onBack();
+                }
+            }
+        };
+
+        requireActivity()
+            .getOnBackPressedDispatcher()
+            .addCallback(getViewLifecycleOwner(), backPressedCallback);
     }
 
     @Override
@@ -448,10 +486,10 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             return;
         }
 
-        if (webview != null && webview.canGoBack()) {
-            webview.goBack();
-            return;
-        }
+//        if (webview != null && webview.canGoBack()) {
+//            webview.goBack();
+//            return;
+//        }
 
         // 2초 이내 2번 클릭 시 종료
         if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
