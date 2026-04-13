@@ -18,18 +18,21 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.FragmentPermissionBinding;
+import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 
@@ -42,6 +45,9 @@ public class PermissionFragment extends Fragment {
     private FragmentPermissionBinding binding;
     private GlobalViewModel globalViewModel;
     private Handler mHandler;
+
+    private boolean waitingOverlayResult = false;
+    private boolean waitingNotificationListenerResult = false;
 
     public PermissionFragment() {}
 
@@ -69,6 +75,29 @@ public class PermissionFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (waitingOverlayResult) {
+            waitingOverlayResult = false;
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(requireContext())) {
+            } else {
+                onOverlayPermissionDenied();
+            }
+
+            if(!waitingNotificationListenerResult) {
+                requestNotificationListener();
+            }
+            return;
+        }
+
+        if (waitingNotificationListenerResult) {
+            waitingNotificationListenerResult = false;
+
+            if (isNotificationListenerEnabled(requireContext())) {
+            } else {
+                onNotificationListenerDenied();
+            }
+        }
     }
 
     public void init() {
@@ -111,6 +140,7 @@ public class PermissionFragment extends Fragment {
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                     Uri.parse("package:" + requireActivity().getPackageName())
                 );
+                waitingOverlayResult = true;
                 startActivity(intent);
             } else {
                 // 이미 허용됨
@@ -120,6 +150,47 @@ public class PermissionFragment extends Fragment {
         }
     }
 
+    public void requestNotificationListener() {
+        Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        waitingNotificationListenerResult = true;
+        startActivity(intent);
+    }
 
 
+    private void onAllPermissionsGranted() {
+        // 둘 다 허용된 상태
+        Logger.getInstance().info("AllPermissionGranted");
+    }
+
+    private void onOverlayPermissionDenied() {
+        // 오버레이 권한 미허용
+        Logger.getInstance().info("OverlayPermissionDenied");
+    }
+
+    private void onNotificationListenerDenied() {
+        // 알림 리스너 권한 미허용
+        Logger.getInstance().info("NotificationListenerDenied");
+    }
+
+    private void checkNextPermission() {
+        Context context = requireContext();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+            && !Settings.canDrawOverlays(context)) {
+            requestOverlayPermission();
+            return;
+        }
+
+        if (!isNotificationListenerEnabled(context)) {
+            requestNotificationListener();
+            return;
+        }
+
+        onAllPermissionsGranted();
+    }
+
+    private boolean isNotificationListenerEnabled(Context context) {
+        Set<String> enabledPackages = NotificationManagerCompat.getEnabledListenerPackages(context);
+        return enabledPackages.contains(context.getPackageName());
+    }
 }
