@@ -87,6 +87,8 @@ public class SinglePageActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> getContactLauncher;
     private ActivityResultLauncher<PickVisualMediaRequest> pick1Media;
 
+    private OnBackPressedCallback backPressedCallback;
+
     public interface onBackPressedListener {
         public void onBack();
     }
@@ -112,7 +114,6 @@ public class SinglePageActivity extends AppCompatActivity {
         observerInit();
         initClickListener();
         initProgressDialog();
-//        test();
     }
 
     @Override
@@ -152,19 +153,18 @@ public class SinglePageActivity extends AppCompatActivity {
         setFirstFragment();
 
 
-        getOnBackPressedDispatcher().addCallback(
-            this,
-            new OnBackPressedCallback(true) {   // 항상 활성(true) ← 매우 중요
-                @Override
-                public void handleOnBackPressed() {
-                    if (mOnBackPressedListener != null) {
-                        mOnBackPressedListener.onBack();
-                    } else {
+        backPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (mOnBackPressedListener != null) {
+                    mOnBackPressedListener.onBack();
+                } else {
 
-                    }
                 }
             }
-        );
+        };
+
+//        getOnBackPressedDispatcher().addCallback(this, backPressedCallback);
 
         getContactLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -481,7 +481,7 @@ public class SinglePageActivity extends AppCompatActivity {
 
     private void test() {
         testScheduled = executor.schedule(() -> {
-            runOnUiThread(() -> globalViewModel._login.setValue(new Event<>("logout")));
+            permissionFragment.requestPermissions();
         }, 10_000, TimeUnit.MILLISECONDS);
     }
 
