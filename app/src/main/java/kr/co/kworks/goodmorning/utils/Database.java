@@ -12,7 +12,7 @@ import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 8;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
@@ -41,6 +41,10 @@ public class Database extends SQLiteOpenHelper {
                 createUnlock(sqLiteDatabase);
             }
 
+            if (oldVersion < 5) {
+                updateDeviceInfo(sqLiteDatabase);
+            }
+
         }
     }
 
@@ -61,7 +65,7 @@ public class Database extends SQLiteOpenHelper {
             "%s TEXT);",
             Column.device_info,
             Column.device_info_column_fcm_token,
-            Column.device_info_column_tel
+            Column.device_info_app_token
         );
 
         db.execSQL(sql);
@@ -87,6 +91,41 @@ public class Database extends SQLiteOpenHelper {
         );
 
         db.execSQL(sql);
+    }
+
+    /**
+     * DeviceInfo Table 의 Column 변경 device_info_column_tel -> device_info_app_token
+     * DROP -> CREATE NEW TABLE
+     * @param db
+     */
+    private void updateDeviceInfo(SQLiteDatabase db) {
+        // 1. 새 테이블 생성
+        db.execSQL(
+            "CREATE TABLE device_info_new (" +
+                Column.device_info_column_fcm_token + " TEXT," +
+                "device_info_app_token TEXT" +
+                ");"
+        );
+
+        // 2. 데이터 복사 (tel → app_token)
+        db.execSQL(
+            "INSERT INTO device_info_new (" +
+                Column.device_info_column_fcm_token + ", device_info_app_token) " +
+                "SELECT " +
+                Column.device_info_column_fcm_token + ", " +
+                Column.device_info_column_tel +
+                " FROM " + Column.device_info
+        );
+
+        // 3. 기존 테이블 삭제
+        db.execSQL("DROP TABLE " + Column.device_info);
+
+        // 4. 이름 변경
+        db.execSQL("ALTER TABLE device_info_new RENAME TO " + Column.device_info);
+    }
+
+    private void deleteDeviceInfo(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE " + Column.device_info);
     }
 
 
@@ -166,13 +205,13 @@ public class Database extends SQLiteOpenHelper {
         } else { // 수정
             try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
                 if (cursor.moveToNext()) {
-                    String telNum  = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+                    String appToken  = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_app_token));
                     ContentValues cv = new ContentValues();
-                    cv.put(Column.device_info_column_tel, telNum);
+                    cv.put(Column.device_info_app_token, appToken);
                     cv.put(Column.device_info_column_fcm_token, token);
 
                     ContentValues whereCv = new ContentValues();
-                    whereCv.put(Column.device_info_column_tel, telNum);
+                    whereCv.put(Column.device_info_app_token, appToken);
                     return update(Column.device_info, cv, whereCv);
                 }
             }
@@ -182,15 +221,15 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
-     * Save telNum
-     * @param telNum
+     * Save app token
+     * @param appToken
      * @return success > 0, fail == -1
      */
-    public long setTelNum(String telNum) {
+    public long setAppToken(String appToken) {
         int count = getCountOfTable(Column.device_info);
         if (count == 0) { // 새로 추가
             ContentValues contentValues = new ContentValues();
-            contentValues.put(Column.device_info_column_tel, telNum);
+            contentValues.put(Column.device_info_app_token, appToken);
             return insert(Column.device_info, contentValues);
         } else { // 수정
             try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
@@ -198,7 +237,7 @@ public class Database extends SQLiteOpenHelper {
                     String token = cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_fcm_token));
                     ContentValues cv = new ContentValues();
                     cv.put(Column.device_info_column_fcm_token, token);
-                    cv.put(Column.device_info_column_tel, telNum);
+                    cv.put(Column.device_info_app_token, appToken);
 
                     ContentValues whereCv = new ContentValues();
                     whereCv.put(Column.device_info_column_fcm_token, token);
@@ -209,10 +248,10 @@ public class Database extends SQLiteOpenHelper {
         return -1;
     }
 
-    public String getTelNum() {
+    public String getAppToken() {
         try (Cursor cursor = selectCursor(Column.device_info, null, null, null, null, null, null, "1")) {
             if (cursor.moveToNext()) {
-                return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_column_tel));
+                return cursor.getString(cursor.getColumnIndexOrThrow(Column.device_info_app_token));
             }
         }
         return null;
@@ -283,5 +322,4 @@ public class Database extends SQLiteOpenHelper {
         }
         return null;
     }
-
 }

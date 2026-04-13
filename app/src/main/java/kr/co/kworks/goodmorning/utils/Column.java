@@ -15,6 +15,7 @@ public class Column {
     /* 디바이스 정보 */
     public static String device_info = "device_info";
     public static String device_info_column_tel = "device_tel_num";
+    public static String device_info_app_token = "device_app_token";
     public static String device_info_column_fcm_token = "device_fcm_token";
     public static String[] device_info_column_list = new String[] {
         device_info_column_tel, device_info_column_fcm_token
