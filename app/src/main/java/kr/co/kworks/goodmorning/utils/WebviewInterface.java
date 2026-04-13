@@ -1,7 +1,6 @@
 package kr.co.kworks.goodmorning.utils;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -17,7 +16,6 @@ import java.util.Locale;
 import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
-import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
 
 public class WebviewInterface {
@@ -142,5 +140,15 @@ public class WebviewInterface {
         mActivity.runOnUiThread(() -> {
             ((SinglePageActivity)mActivity).pickMedia();
         });
+    }
+
+    // 13. app token 저장
+    @JavascriptInterface
+    public void doSetToken(String token) {
+        if (db.setAppToken(token) > 0) {
+            Logger.getInstance().info("doSetToken: " + token);
+        } else {
+            Logger.getInstance().info("doSetToken FAIL");
+        }
     }
 }
