@@ -45,6 +45,10 @@ public class Database extends SQLiteOpenHelper {
                 updateDeviceInfo(sqLiteDatabase);
             }
 
+            if (oldVersion < 6) {
+                updateUnlockTable(sqLiteDatabase);
+            }
+
         }
     }
 
@@ -84,9 +88,11 @@ public class Database extends SQLiteOpenHelper {
     private void createUnlock(SQLiteDatabase db) {
         String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
                 "%s TEXT PRIMARY KEY," +
+                "%s INTEGER DEFAULT 1," +
                 "%s INTEGER DEFAULT 0);",
             Column.unlock,
             Column.unlock_datetime,
+            Column.unlock_submit,
             Column.unlock_submit
         );
 
@@ -131,6 +137,12 @@ public class Database extends SQLiteOpenHelper {
         } finally {
             db.endTransaction();
         }
+    }
+
+    private void updateUnlockTable(SQLiteDatabase db) {
+        // version 5 -> 6
+        db.execSQL("ALTER TABLE " + Column.unlock +
+            " ADD COLUMN unlock_type INTEGER DEFAULT 1");
     }
 
     private void deleteDeviceInfo(SQLiteDatabase db) {
@@ -330,5 +342,26 @@ public class Database extends SQLiteOpenHelper {
             }
         }
         return null;
+    }
+
+    public int getUnlockCount() {
+        int count = 0;
+
+        try (Cursor cursor = selectCursor(
+            Column.unlock,
+            new String[]{"COUNT(*) AS cnt"},
+            Column.unlock_submit + "=?",
+            new String[]{"0"},
+            null,
+            null,
+            null,
+            null
+        )) {
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(cursor.getColumnIndexOrThrow("cnt"));
+            }
+        }
+
+        return count;
     }
 }

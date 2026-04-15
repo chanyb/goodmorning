@@ -28,6 +28,7 @@ public class Column {
     /* unlock */
     public static String unlock = "unlock";
     public static String unlock_datetime = "unlock_datetime";
+    public static String unlock_type = "unlock_type";
     public static String unlock_submit = "unlock_submit";
 
 
