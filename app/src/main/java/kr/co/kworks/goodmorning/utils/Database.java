@@ -12,7 +12,7 @@ import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 
 public class Database extends SQLiteOpenHelper {
     private static final String DB_NAME = "forest_vehicle.db";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 6;
 
     public Database() {
         super(GlobalApplication.getContext(), DB_NAME, null, DB_VERSION);
