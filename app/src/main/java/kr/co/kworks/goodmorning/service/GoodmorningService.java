@@ -118,7 +118,7 @@ public class GoodmorningService extends LifecycleService {
         stopUnLockDataScheduled();
         unLockDataScheduled = executor.scheduleWithFixedDelay(() -> {
             Unlock unlock = database.getUnlockInfo();
-            String token = database.getFcmToken();
+            String token = database.getAppToken();
             if(unlock == null || token == null || token.isEmpty()) return;
             UnlockRequest unlockRequest = new UnlockRequest();
             unlockRequest.token = token;
