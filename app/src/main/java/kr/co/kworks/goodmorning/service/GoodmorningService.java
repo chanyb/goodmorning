@@ -122,6 +122,13 @@ public class GoodmorningService extends LifecycleService {
             if(unlock == null || token == null || token.isEmpty()) return;
             UnlockRequest unlockRequest = new UnlockRequest();
             unlockRequest.token = token;
+            unlockRequest.etc = unlock.etc;
+            unlockRequest.type = String.valueOf(unlock.type);
+
+            if(unlock.type == 1) {
+                unlockRequest.etc = unlock.datetime;
+            }
+
             serverRepository.unlock(
                 unlockRequest,
                 unlockResponseResponse -> {

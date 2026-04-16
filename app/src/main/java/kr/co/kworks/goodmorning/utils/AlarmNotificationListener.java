@@ -1,11 +1,13 @@
 package kr.co.kworks.goodmorning.utils;
 
 import android.app.Notification;
+import android.content.ContentValues;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class AlarmNotificationListener extends NotificationListenerService {
@@ -32,11 +34,26 @@ public class AlarmNotificationListener extends NotificationListenerService {
         String key = sbn.getKey();
 
         if (ringingMap.containsKey(key)) {
+            CalendarHandler calendarHandler = new CalendarHandler();
             long startedAt = ringingMap.remove(key);
             long endedAt = System.currentTimeMillis();
+            double duration = (endedAt - startedAt) / 1000f;
 
             // 알람 종료 추정
-            Logger.getInstance().info("ALARM", "alarm ended: " + key + ", duration=" + (endedAt - startedAt));
+            Logger.getInstance().info("ALARM", "alarm ended: " + key + ", durationSec=" + duration);
+
+            try {
+                Database database = new Database();
+                ContentValues cv = new ContentValues();
+                cv.put(Column.unlock_datetime, calendarHandler.getCurrentDatetimeString());
+                cv.put(Column.unlock_type, 3);
+                cv.put(Column.unlock_etc, String.format(Locale.KOREA, "%.3f", duration));
+                database.insert(Column.unlock, cv);
+                Logger.getInstance().info(String.format(Locale.KOREA, "alarm end confirm: %.3f", duration));
+            } catch(Exception e) {
+                Logger.getInstance().error("onNotificationRemoved", e);
+            }
+
         }
     }
 

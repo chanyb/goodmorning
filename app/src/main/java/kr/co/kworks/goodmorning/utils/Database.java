@@ -349,10 +349,12 @@ public class Database extends SQLiteOpenHelper {
                 String datetime = cursor.getString(cursor.getColumnIndexOrThrow(Column.unlock_datetime));
                 int type = cursor.getInt(cursor.getColumnIndexOrThrow(Column.unlock_type));
                 int submit = cursor.getInt(cursor.getColumnIndexOrThrow(Column.unlock_submit));
+                String etc = cursor.getString(cursor.getColumnIndexOrThrow(Column.unlock_etc));
                 Unlock unlock = new Unlock();
                 unlock.datetime = datetime;
                 unlock.submit = submit;
                 unlock.type = type;
+                unlock.etc = etc;
                 return unlock;
             }
         }
