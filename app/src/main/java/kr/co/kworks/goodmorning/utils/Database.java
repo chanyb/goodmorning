@@ -24,6 +24,7 @@ public class Database extends SQLiteOpenHelper {
         createDeviceInfoTable(db);
         createUser(db);
         createUnlock(db);
+//        createUnlockV5(db);
     }
 
     @Override
@@ -89,10 +90,12 @@ public class Database extends SQLiteOpenHelper {
         String sql = String.format(Locale.KOREA, "CREATE TABLE IF NOT EXISTS %s(" +
                 "%s TEXT PRIMARY KEY," +
                 "%s INTEGER DEFAULT 1," +
+                "%s TEXT," +
                 "%s INTEGER DEFAULT 0);",
             Column.unlock,
             Column.unlock_datetime,
-            Column.unlock_submit,
+            Column.unlock_type,
+            Column.unlock_etc,
             Column.unlock_submit
         );
 
@@ -133,7 +136,7 @@ public class Database extends SQLiteOpenHelper {
 
             db.setTransactionSuccessful();
         } catch(Exception e) {
-            Logger.getInstance().error("upgradeDeviceInfoTable error", e);
+            Logger.getInstance().error("updateDeviceInfo() error", e);
         } finally {
             db.endTransaction();
         }
@@ -141,8 +144,20 @@ public class Database extends SQLiteOpenHelper {
 
     private void updateUnlockTable(SQLiteDatabase db) {
         // version 5 -> 6
-        db.execSQL("ALTER TABLE " + Column.unlock +
-            " ADD COLUMN unlock_type INTEGER DEFAULT 1");
+        db.beginTransaction();
+        try {
+            db.execSQL("ALTER TABLE " + Column.unlock +
+                " ADD COLUMN "+ Column.unlock_type + " INTEGER DEFAULT 1");
+
+            db.execSQL("ALTER TABLE " + Column.unlock +
+                " ADD COLUMN "+ Column.unlock_etc +" TEXT");
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Logger.getInstance().error("updateUnlockTable() error", e);
+        } finally {
+            db.endTransaction();
+        }
+
     }
 
     private void deleteDeviceInfo(SQLiteDatabase db) {
@@ -332,12 +347,12 @@ public class Database extends SQLiteOpenHelper {
         ) {
             if (cursor.moveToNext()) {
                 String datetime = cursor.getString(cursor.getColumnIndexOrThrow(Column.unlock_datetime));
+                int type = cursor.getInt(cursor.getColumnIndexOrThrow(Column.unlock_type));
                 int submit = cursor.getInt(cursor.getColumnIndexOrThrow(Column.unlock_submit));
-
                 Unlock unlock = new Unlock();
                 unlock.datetime = datetime;
                 unlock.submit = submit;
-
+                unlock.type = type;
                 return unlock;
             }
         }
