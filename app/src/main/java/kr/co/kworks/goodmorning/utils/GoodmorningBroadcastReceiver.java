@@ -3,11 +3,15 @@ package kr.co.kworks.goodmorning.utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 
 import androidx.lifecycle.MutableLiveData;
+
+import java.util.Calendar;
+import java.util.Locale;
 
 import kr.co.kworks.goodmorning.activity.LockScreenActivity;
 import kr.co.kworks.goodmorning.model.business_logic.Unlock;
@@ -15,9 +19,11 @@ import kr.co.kworks.goodmorning.service.GoodmorningService;
 
 public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
     private Database database;
+    private CalendarHandler calendarHandler;
 
     public GoodmorningBroadcastReceiver() {
         database = new Database();
+        calendarHandler = new CalendarHandler();
     }
 
     @Override
@@ -70,9 +76,18 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                     } else if (TelephonyManager.EXTRA_STATE_OFFHOOK.equals(state)) {
                         // 통화 시작
                         Logger.getInstance().info("EXTRA_STATE_OFFHOOK");
+
+                        setOffHookTimeInMillis(context, Calendar.getInstance().getTimeInMillis());
                     } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
                         // 통화 종료
                         Logger.getInstance().info("EXTRA_STATE_IDLE");
+                        long end = Calendar.getInstance().getTimeInMillis();
+                        long start = getOffHookTimeInMillis(context);
+                        double duration = (end - start) / 1000f;
+                        Unlock unlock = new Unlock();
+                        unlock.type = 2;
+                        unlock.etc = String.format(Locale.KOREA, "%.3f", duration);
+                        database.insert(Column.unlock, unlock.getContentValues());
                     }
                 }
             }
@@ -86,5 +101,17 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
         } else {
             context.startService(serviceIntent);
         }
+    }
+
+    private void setOffHookTimeInMillis(Context context, long value) {
+        SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
+        prefs.edit()
+            .putLong("off_hook_start", value)
+            .apply();
+    }
+
+    private long getOffHookTimeInMillis(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
+        return prefs.getLong("off_hook_start", -1);
     }
 }
