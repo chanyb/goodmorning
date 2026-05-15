@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "kr.co.kworks.goodmorning"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "kr.co.kworks.goodmorning"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 6
         versionName = "0.0.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -139,7 +139,7 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-compiler:2.44")
 
-    val cameraXVersion = "1.5.1"
+    val cameraXVersion = "1.6.1"
     implementation("androidx.camera:camera-core:${cameraXVersion}")
     implementation("androidx.camera:camera-camera2:${cameraXVersion}")
     implementation("androidx.camera:camera-lifecycle:${cameraXVersion}")
@@ -157,13 +157,13 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
 
     // firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.13.0"))
 
     // leakcanary
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     // lifecycler-service
-    implementation ("androidx.lifecycle:lifecycle-service:2.9.4")
+    implementation ("androidx.lifecycle:lifecycle-service:2.10.0")
 
     val sciChart_version = "4.6.0.4885"
     implementation ("com.scichart.library:core:${sciChart_version}@aar")
@@ -173,6 +173,9 @@ dependencies {
     implementation ("com.scichart.library:data:${sciChart_version}@aar")
     implementation ("com.scichart.library:extensions:${sciChart_version}@aar")
     implementation ("com.scichart.library:data:${sciChart_version}@aar")
+
+    // custom chrome tab
+    implementation("androidx.browser:browser:1.10.0")
 }
 
 fun loadLocalProperties(file: File): Properties {
