@@ -405,6 +405,10 @@ public class SinglePageActivity extends AppCompatActivity {
                 globalViewModel.jsResult = null;
             }
             binding.alertDialog.loDialog.setVisibility(View.GONE);
+            if (isPassAppError(binding.alertDialog.txtBody.getText().toString())) {
+                // WebviewFragment로 알림 필요
+                globalViewModel._closeChildView.postValue(new Event<>("close"));
+            }
         });
         binding.confirmDialog.loDialog.setOnClickListener(v -> {});
         binding.alertDialog.loDialog.setOnClickListener(v -> {});
@@ -533,4 +537,11 @@ public class SinglePageActivity extends AppCompatActivity {
         pick1Media.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
     }
 
+    private boolean isPassAppError(String msg) {
+
+        if (msg.contains("T994")) return true;
+        else if (msg.contains("B131")) return true;
+
+        return false;
+    }
 }

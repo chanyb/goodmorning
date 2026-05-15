@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <package android:name="com.sktelecom.tauth"/>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="tauthlink" />
+        </intent>
+    </queries>
+
     <application
         android:name=".utils.GlobalApplication"
         android:allowBackup="true"
@@ -29,6 +37,23 @@
             android:excludeFromRecents="true"
             android:theme="@style/Theme.App.LockScreen"
             />
+
+        <activity
+            android:name=".activity.LoginCallbackActivity"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="goodmorning"
+                    android:host="oauth"
+                    android:path="/google" />
+            </intent-filter>
+        </activity>
 
         <!-- provider -->
         <provider
