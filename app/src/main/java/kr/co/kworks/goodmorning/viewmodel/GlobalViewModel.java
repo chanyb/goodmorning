@@ -21,7 +21,7 @@ public class GlobalViewModel extends ViewModel {
 
     private final Executor io = Executors.newSingleThreadExecutor();
 
-    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login;
+    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login, _closeChildView;
     public JsResult jsResult;
     public ProgressDialog progressDialog;
     public MutableLiveData<Alert> alertContent;
@@ -60,5 +60,6 @@ public class GlobalViewModel extends ViewModel {
         _launchGetContact = new MutableLiveData<>();
         _permission = new MutableLiveData<>();
         _login = new MutableLiveData<>();
+        _closeChildView = new MutableLiveData<>();
     }
 }

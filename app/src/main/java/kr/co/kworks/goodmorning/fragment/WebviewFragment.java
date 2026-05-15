@@ -2,6 +2,8 @@ package kr.co.kworks.goodmorning.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -67,10 +70,12 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private Toast toast;
     private WebviewInterface webviewInterface;
     private OnBackPressedCallback backPressedCallback;
+    private boolean customChromeTabRunning;
 
     public WebviewFragment(String url, HashMap<String, String> postData) {
         this.url = url;
         this.postData = postData;
+        customChromeTabRunning = false;
     }
 
     @Override
@@ -94,6 +99,14 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         super.onResume();
         if (backPressedCallback != null) {
             backPressedCallback.setEnabled(true);
+        }
+
+        if (isCustomChromeTabRunning()) {
+            if(getContext() == null) return;
+            customChromeTabRunning = false;
+            String result = getCallbackResult(getContext());
+            String token  = getToken(getContext());
+            webviewConnect(result, token);
         }
     }
 
@@ -198,6 +211,12 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             String isHandled = event.getContentIfNotHandled();
             if (isHandled == null) return;
             callFunction(isHandled);
+        });
+        global._closeChildView.observe(this, event -> {
+            if (event==null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+            if ("close".equals(isHandled)) closeChildView();
         });
     }
 
@@ -308,14 +327,47 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 try {
                     intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 } catch (URISyntaxException e) {
+                    return true;
                 }
+
+                PackageManager pm = getContext().getPackageManager();
+                if (pm == null) {
+                    Logger.getInstance().info("pm is null");
+                }
+
+                try {
+                    if (intent.resolveActivity(pm) != null) {
+                        startActivity(intent);
+                    } else {
+                        // PASS 앱 미설치 or 해당 스킴 미지원
+                        // 마켓 이동 처리
+                        Intent marketIntent = new Intent(Intent.ACTION_VIEW);
+                        marketIntent.setData(Uri.parse("market://details?id=com.sktelecom.tauth"));
+                        marketIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(marketIntent);
+                        closeChildView();
+                    }
+                } catch (Exception e) {
+                    Logger.getInstance().error("webviewFragment-intent", e);
+                }
+                return true;
+            }
+
+            if (url.contains("accounts.google.com")) {
+                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                    .setShowTitle(true)
+                    .build();
+
+                customTabsIntent.launchUrl(getContext(), Uri.parse(url));
+                customChromeTabRunning = true;
                 return true;
             }
 
             // http/https 및 일반 URL은 WebView가 원래대로 처리하게 둠
             return false;
+
         }
 
         // 로딩이 시작될 때
@@ -343,6 +395,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             mHandler.post(() -> {
                 global.alertContent.setValue(alert);
                 global._alert.postValue(new Event<>("visible"));
+                webview.loadUrl(ApiConstants.MAIN_URL);
             });
         }
     }
@@ -514,6 +567,8 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             childView.destroy();
             childView = null;
         }
+
+        global._progress.postValue(new Event<>("gone"));
     }
 
     public void showGuide() {
@@ -527,5 +582,29 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         siteLaunch.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         siteLaunch.setData(Uri.parse(url));
         getActivity().startActivity(siteLaunch);
+    }
+
+    private boolean isCustomChromeTabRunning() {
+        return customChromeTabRunning;
+    }
+
+    private String getCallbackResult(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("result_prefs", Context.MODE_PRIVATE);
+        String result = prefs.getString("result_prefs", "");
+        prefs.edit().putString("result_prefs", "").apply();
+        return result;
+    }
+
+    private String getToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("token", Context.MODE_PRIVATE);
+        String token = prefs.getString("token", "");
+        prefs.edit().putString("token", "").apply();
+        return token;
+    }
+
+    private void webviewConnect(String result, String token) {
+        if(result.isEmpty()) return;
+        String url = "join".equalsIgnoreCase(result) ? ApiConstants.TERMS_URL : ApiConstants.LOGIN_COMPLETE_URL;
+        webview.loadUrl(String.format(Locale.KOREA, "%s?%s_token=%s", url, "join".equalsIgnoreCase(result) ? "join":"login", token));
     }
 }
