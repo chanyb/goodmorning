@@ -541,6 +541,15 @@ public class SinglePageActivity extends AppCompatActivity {
 
         if (msg.contains("T994")) return true;
         else if (msg.contains("B131")) return true;
+        else if (msg.contains("B123")) return true;
+        else if (msg.contains("B124")) return true;
+        else if (msg.contains("B128")) return true;
+        else if (msg.contains("B133")) return true;
+        else if (msg.contains("B132")) return true;
+        else if (msg.contains("B121")) return true;
+        else if (msg.contains("B138")) return true;
+        else if (msg.contains("B139")) return true;
+        else if (msg.contains("B140")) return true;
 
         return false;
     }
