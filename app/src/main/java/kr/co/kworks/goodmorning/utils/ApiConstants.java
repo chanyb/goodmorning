@@ -13,5 +13,7 @@ public class ApiConstants {
     public static final String MAIN_URL = SERVER_BASE_URL + "/main/main.do";
     public static final String LOGIN_URL = SERVER_BASE_URL + "/login/login.do";
     public static final String ONBOARDING_URL = SERVER_BASE_URL + "/connect/onboarding.do";
+    public static final String TERMS_URL = SERVER_BASE_URL + "/login/terms.do";
+    public static final String LOGIN_COMPLETE_URL = SERVER_BASE_URL + "/login/loginComplete.do";
 
 }
