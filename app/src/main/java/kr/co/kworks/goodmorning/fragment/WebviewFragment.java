@@ -130,7 +130,14 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                     } else {
                         onBack();
                     }
-                } else {
+                }
+                else if (webview != null && webview.canGoBack() && webview.getUrl() != null && webview.getUrl().startsWith("https://accounts.kakao.com")) {
+                    webview.goBack();
+                }
+                else if (webview != null && webview.canGoBack() && webview.getUrl() != null && webview.getUrl().startsWith("https://nid.naver.com")) {
+                    webview.goBack();
+                }
+                else {
                     onBack();
                 }
             }
