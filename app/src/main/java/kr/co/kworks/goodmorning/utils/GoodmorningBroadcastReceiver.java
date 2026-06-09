@@ -84,6 +84,9 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                         long end = Calendar.getInstance().getTimeInMillis();
                         long start = getOffHookTimeInMillis(context);
                         double duration = (end - start) / 1000f;
+
+                        if(duration <= 0) return;
+
                         Unlock unlock = new Unlock();
                         unlock.type = 2;
                         unlock.etc = String.format(Locale.KOREA, "%.3f", duration);
