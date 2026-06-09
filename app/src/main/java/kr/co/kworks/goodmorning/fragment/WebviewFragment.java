@@ -611,7 +611,20 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
     private void webviewConnect(String result, String token) {
         if(result.isEmpty()) return;
-        String url = "join".equalsIgnoreCase(result) ? ApiConstants.TERMS_URL : ApiConstants.LOGIN_COMPLETE_URL;
-        webview.loadUrl(String.format(Locale.KOREA, "%s?%s_token=%s", url, "join".equalsIgnoreCase(result) ? "join":"login", token));
+        String url = "";
+        switch (result) {
+            case "JOIN":
+                url = ApiConstants.TERMS_URL;
+                webview.loadUrl(String.format(Locale.KOREA, "%s?join_token=%s", url, token));
+                break;
+            case "LOGIN":
+                url = ApiConstants.LOGIN_COMPLETE_URL;
+                webview.loadUrl(String.format(Locale.KOREA, "%s?login_token=%s", url, token));
+                break;
+            case "REVOKE":
+                url = ApiConstants.WITHDRAW_COMPLETE_URL;
+                webview.loadUrl(String.format(Locale.KOREA, "%s?login_token=%s", url, token));
+                break;
+        }
     }
 }
