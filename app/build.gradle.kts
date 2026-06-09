@@ -15,8 +15,8 @@ android {
         applicationId = "kr.co.kworks.goodmorning"
         minSdk = 26
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.0.8"
+        versionCode = 9
+        versionName = "0.0.9"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

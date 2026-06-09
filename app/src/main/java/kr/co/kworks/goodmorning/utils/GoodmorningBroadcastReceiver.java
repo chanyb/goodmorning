@@ -76,16 +76,18 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                     } else if (TelephonyManager.EXTRA_STATE_OFFHOOK.equals(state)) {
                         // 통화 시작
                         Logger.getInstance().info("EXTRA_STATE_OFFHOOK");
-
+                        setIsHook(context, true);
                         setOffHookTimeInMillis(context, Calendar.getInstance().getTimeInMillis());
                     } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
                         // 통화 종료
+                        if (!getIsHook(context)) return;
+
                         Logger.getInstance().info("EXTRA_STATE_IDLE");
                         long end = Calendar.getInstance().getTimeInMillis();
                         long start = getOffHookTimeInMillis(context);
-                        double duration = (end - start) / 1000f;
 
-                        if(duration <= 0) return;
+                        if(start == -1L) return;
+                        double duration = (end - start) / 1000f;
 
                         Unlock unlock = new Unlock();
                         unlock.type = 2;
@@ -116,5 +118,17 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
     private long getOffHookTimeInMillis(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
         return prefs.getLong("off_hook_start", -1);
+    }
+
+    private void setIsHook(Context context, boolean bool) {
+        SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
+        prefs.edit()
+            .putBoolean("is_hook", bool)
+            .apply();
+    }
+
+    private boolean getIsHook(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
+        return prefs.getBoolean("is_hook", false);
     }
 }
