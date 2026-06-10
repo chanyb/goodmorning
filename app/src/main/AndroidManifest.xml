@@ -3,11 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <queries>
+
+        <!-- PASS 인증 -->
         <package android:name="com.sktelecom.tauth"/>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="tauthlink" />
         </intent>
+
+        <!-- 네이버 앱 -->
+        <package android:name="com.nhn.android.search"/>
+
+        <!-- 카카오톡 -->
+        <package android:name="com.kakao.talk"/>
     </queries>
 
     <application

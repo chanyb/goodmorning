@@ -12,7 +12,12 @@ import java.util.Map;
 
 public class AlarmNotificationListener extends NotificationListenerService {
 
+    private boolean isClockNotification;
     private final Map<String, Long> ringingMap = new HashMap<>();
+
+    public AlarmNotificationListener() {
+        isClockNotification = false;
+    }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -21,7 +26,7 @@ public class AlarmNotificationListener extends NotificationListenerService {
 
         if (isClockAlarmNotification(sbn)) {
             ringingMap.put(key, System.currentTimeMillis());
-
+            isClockNotification = true;
             // 알람 시작 추정
             Logger.getInstance().info("alarm started: " + key);
         } else {
@@ -34,6 +39,10 @@ public class AlarmNotificationListener extends NotificationListenerService {
         String key = sbn.getKey();
 
         if (ringingMap.containsKey(key)) {
+            if (!isClockNotification) {
+                return;
+            }
+
             CalendarHandler calendarHandler = new CalendarHandler();
             long startedAt = ringingMap.remove(key);
             long endedAt = System.currentTimeMillis();
@@ -75,6 +84,8 @@ public class AlarmNotificationListener extends NotificationListenerService {
 
         String t1 = title == null ? "" : title.toString().toLowerCase();
         String t2 = text == null ? "" : text.toString().toLowerCase();
+
+        if (t1.equals("곧 울릴 알람을 끌까요?")) return false;
 
         return t1.contains("alarm") || t2.contains("alarm")
             || t1.contains("알람") || t2.contains("알람");

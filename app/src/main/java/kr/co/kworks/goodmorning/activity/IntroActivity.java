@@ -30,6 +30,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import com.navercorp.nid.NidOAuth;
+import com.navercorp.nid.core.data.datastore.NidOAuthInitializingCallback;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -70,6 +73,17 @@ public class IntroActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_intro);
         GlobalApplication.currentActivity = this;
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
+        NidOAuth.INSTANCE.initialize(this, getString(R.string.naver_client_id), getString(R.string.naver_client_secret), "굿모닝서비스", new NidOAuthInitializingCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
         init();
     }
 

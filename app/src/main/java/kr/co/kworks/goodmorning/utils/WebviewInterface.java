@@ -151,4 +151,17 @@ public class WebviewInterface {
             Logger.getInstance().info("doSetToken FAIL");
         }
     }
+
+    // 14. 앱 설치 유무 확인
+    @JavascriptInterface
+    public void isInstalled(String name) {
+        // name : naver, kakao, google
+        if ("naver".equals(name)) {
+
+        } else if ("kakao".equals(name)) {
+
+        } else if ("google".equals(name)) {
+
+        }
+    }
 }

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.telephony.TelephonyManager;
 
 import androidx.lifecycle.MutableLiveData;
@@ -29,6 +31,7 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        Handler mHandler = new Handler(Looper.getMainLooper());
         if (action == null) return;
 
         switch (action) {
@@ -36,8 +39,13 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 Logger.getInstance().info("Screen Off");
                 Intent lockScreenIntent = new Intent(context, LockScreenActivity.class);
                 lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
                 try {
+//                    mHandler.postDelayed(() -> {
+//                        context.startActivity(lockScreenIntent);
+//                    }, 500);
                     context.startActivity(lockScreenIntent);
                 } catch(Exception e) {
                     Logger.getInstance().error("LockScreenActivityError", e);

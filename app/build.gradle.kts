@@ -39,6 +39,8 @@ android {
             signingConfig = signingConfigs.getByName("release");
 
             resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
+            resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
+            resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
 
@@ -55,6 +57,8 @@ android {
                 "proguard-rules.pro"
             )
             resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
+            resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
+            resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -67,6 +71,8 @@ android {
                 "proguard-rules.pro"
             )
             resValue("string", "domain", getProperty("DEV_LEE_IP"))
+            resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
+            resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -79,6 +85,8 @@ android {
                 "proguard-rules.pro"
             )
             resValue("string", "domain", getProperty("DEV_NOH_IP"))
+            resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
+            resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -152,6 +160,8 @@ dependencies {
 
     // Naver map
     implementation("com.naver.maps:map-sdk:3.22.1")
+    // Naver ID LOGIN
+    implementation("com.navercorp.nid:oauth:5.11.2")
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
