@@ -89,6 +89,7 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                     } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
                         // 통화 종료
                         if (!getIsHook(context)) return;
+                        setIsHook(context, false);
 
                         Logger.getInstance().info("EXTRA_STATE_IDLE");
                         long end = Calendar.getInstance().getTimeInMillis();

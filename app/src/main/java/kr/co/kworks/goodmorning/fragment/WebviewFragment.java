@@ -207,7 +207,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
     private void testInterface() {
         mHandler.postDelayed(() -> {
-            webviewInterface.doGetPhoto("asdf");
+            webviewInterface.isInstalled("naver");
         }, 7_000);
 
     }

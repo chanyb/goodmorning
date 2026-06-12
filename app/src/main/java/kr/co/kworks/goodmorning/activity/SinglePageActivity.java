@@ -40,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.navercorp.nid.NidOAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -96,6 +97,8 @@ public class SinglePageActivity extends AppCompatActivity {
     private onBackPressedListener mOnBackPressedListener;
 
     private Database database;
+
+    private ActivityResultLauncher<Intent> naverLoginLauncher;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -188,6 +191,17 @@ public class SinglePageActivity extends AppCompatActivity {
 
         // pick 1 media
         pick1Media = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::sendImage);
+
+        naverLoginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            switch (result.getResultCode()) {
+                case RESULT_OK -> {
+                    Logger.getInstance().info("naverLoginAccessToken:" + NidOAuth.INSTANCE.getAccessToken());
+                }
+                case RESULT_CANCELED -> {
+
+                }
+            }
+        });
     }
 
     private void launchContactLauncher() {
@@ -363,6 +377,16 @@ public class SinglePageActivity extends AppCompatActivity {
                 }
             }
 
+        });
+
+        globalViewModel._naverLogin.observe(this, event -> {
+            if (event == null) return;
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+
+            if (isHandled.equals("start")) {
+                naverLogin();
+            }
         });
     }
 
@@ -552,5 +576,9 @@ public class SinglePageActivity extends AppCompatActivity {
         else if (msg.contains("B140")) return true;
 
         return false;
+    }
+
+    private void naverLogin() {
+        NidOAuth.INSTANCE.requestLogin(this, naverLoginLauncher);
     }
 }

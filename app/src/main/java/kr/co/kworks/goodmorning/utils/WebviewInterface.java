@@ -1,6 +1,7 @@
 package kr.co.kworks.goodmorning.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -156,12 +157,36 @@ public class WebviewInterface {
     @JavascriptInterface
     public void isInstalled(String name) {
         // name : naver, kakao, google
+        boolean isInstalled = false;
         if ("naver".equals(name)) {
+            isInstalled = isInstalled(mActivity, "com.nhn.android.search");
 
         } else if ("kakao".equals(name)) {
-
+            isInstalled = isInstalled(mActivity, "com.kakao.talk");
         } else if ("google".equals(name)) {
+//            isInstalled = isInstalled(mActivity, "");
+        }
 
+
+        boolean finalIsInstalled = isInstalled;
+        mActivity.runOnUiThread(() -> {
+            global._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
+            ));
+
+            if (finalIsInstalled) {
+                global.naverLogin();
+            }
+        });
+    }
+
+
+    private boolean isInstalled(Context context, String packageName) {
+        try {
+            context.getPackageManager().getPackageInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
     }
 }

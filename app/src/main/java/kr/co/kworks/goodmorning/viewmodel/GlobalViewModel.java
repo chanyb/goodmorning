@@ -21,7 +21,7 @@ public class GlobalViewModel extends ViewModel {
 
     private final Executor io = Executors.newSingleThreadExecutor();
 
-    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login, _closeChildView;
+    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login, _closeChildView, _naverLogin;
     public JsResult jsResult;
     public ProgressDialog progressDialog;
     public MutableLiveData<Alert> alertContent;
@@ -61,5 +61,10 @@ public class GlobalViewModel extends ViewModel {
         _permission = new MutableLiveData<>();
         _login = new MutableLiveData<>();
         _closeChildView = new MutableLiveData<>();
+        _naverLogin = new MutableLiveData<>();
+    }
+
+    public void naverLogin() {
+        _naverLogin.postValue(new Event<>("start"));
     }
 }
