@@ -3,6 +3,7 @@ plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
+    id("org.cyclonedx.bom")
     kotlin("android")
     kotlin("kapt") // kotlin annotation processing tool
 }
@@ -186,6 +187,18 @@ dependencies {
 
     // custom chrome tab
     implementation("androidx.browser:browser:1.10.0")
+}
+
+tasks.cyclonedxDirectBom {
+    projectType.set(org.cyclonedx.model.Component.Type.APPLICATION)
+    componentName = "GoodMorning"
+    componentVersion = android.defaultConfig.versionName
+    includeConfigs = listOf("releaseRuntimeClasspath")
+    schemaVersion.set(org.cyclonedx.Version.VERSION_16)
+    includeBomSerialNumber = true
+    includeLicenseText = false
+    jsonOutput = rootProject.file("sbom.cdx.json")
+    xmlOutput.unsetConvention()
 }
 
 fun loadLocalProperties(file: File): Properties {
