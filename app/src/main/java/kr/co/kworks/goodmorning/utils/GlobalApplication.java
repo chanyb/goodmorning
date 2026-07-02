@@ -43,11 +43,14 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelStore;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.kakao.sdk.common.KakaoSdk;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 import dagger.hilt.android.HiltAndroidApp;
+import kr.co.kworks.goodmorning.R;
 
 @HiltAndroidApp
 public class GlobalApplication extends Application implements ViewModelStoreOwner{
@@ -104,6 +107,7 @@ public class GlobalApplication extends Application implements ViewModelStoreOwne
         imm = (InputMethodManager) getSystemService(GlobalApplication.INPUT_METHOD_SERVICE);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         viewModelStore = new ViewModelStore();
+        KakaoSdk.init(this, getString(R.string.kakao_native_app_key));
     }
 
     ActivityLifecycleCallbacks activityLifecycleCallbacks = new ActivityLifecycleCallbacks() {

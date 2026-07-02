@@ -14,6 +14,7 @@ dependencyResolutionManagement {
         maven("https://repository.map.naver.com/archive/maven")
         maven("https://www.myget.org/F/abtsoftware-bleeding-edge/maven")
         maven("https://www.myget.org/F/abtsoftware/maven")
+        maven("https://devrepo.kakao.com/nexus/content/groups/public/")
     }
 }
 

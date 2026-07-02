@@ -160,24 +160,27 @@ public class WebviewInterface {
         boolean isInstalled = false;
         if ("naver".equals(name)) {
             isInstalled = isInstalled(mActivity, "com.nhn.android.search");
+            if (isInstalled) {
+                mActivity.runOnUiThread(global::naverLogin);
 
+            }
         } else if ("kakao".equals(name)) {
             isInstalled = isInstalled(mActivity, "com.kakao.talk");
+            mActivity.runOnUiThread(global::kakaoLogin);
+            if (isInstalled) {
+
+            }
         } else if ("google".equals(name)) {
 //            isInstalled = isInstalled(mActivity, "");
         }
 
 
-        boolean finalIsInstalled = isInstalled;
-        mActivity.runOnUiThread(() -> {
-            global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
-            ));
-
-            if (finalIsInstalled) {
-                global.naverLogin();
-            }
-        });
+//        boolean finalIsInstalled = isInstalled;
+//        mActivity.runOnUiThread(() -> {
+//            global._callFunction.setValue(new Event<>(
+//                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
+//            ));
+//        });
     }
 
 

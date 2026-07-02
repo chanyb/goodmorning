@@ -42,6 +42,7 @@ android {
             resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
+            resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
 
@@ -60,6 +61,7 @@ android {
             resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
+            resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -74,6 +76,7 @@ android {
             resValue("string", "domain", getProperty("DEV_LEE_IP"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
+            resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -88,6 +91,7 @@ android {
             resValue("string", "domain", getProperty("DEV_NOH_IP"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
+            resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -163,6 +167,9 @@ dependencies {
     implementation("com.naver.maps:map-sdk:3.22.1")
     // Naver ID LOGIN
     implementation("com.navercorp.nid:oauth:5.11.2")
+
+    // Kakao
+    implementation("com.kakao.sdk:v2-user:2.23.2")
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")

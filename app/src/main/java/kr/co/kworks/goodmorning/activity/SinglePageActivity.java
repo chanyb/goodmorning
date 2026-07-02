@@ -40,7 +40,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.kakao.sdk.user.UserApi;
+import com.kakao.sdk.user.UserApiClient;
 import com.navercorp.nid.NidOAuth;
+import com.navercorp.nid.profile.domain.vo.NidProfile;
+import com.navercorp.nid.profile.util.NidProfileCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -195,7 +199,22 @@ public class SinglePageActivity extends AppCompatActivity {
         naverLoginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             switch (result.getResultCode()) {
                 case RESULT_OK -> {
-                    Logger.getInstance().info("naverLoginAccessToken:" + NidOAuth.INSTANCE.getAccessToken());
+                    String accessToken = NidOAuth.INSTANCE.getAccessToken();
+                    Logger.getInstance().info("social_login", "naverLoginAccessToken: " + NidOAuth.INSTANCE.getAccessToken());
+
+                    NidOAuth.INSTANCE.getUserProfile(new NidProfileCallback<NidProfile>() {
+                        @Override
+                        public void onSuccess(NidProfile nidProfile) {
+                            String id = nidProfile.getProfile().getId();
+                            Logger.getInstance().info("social_login", "naver-id: " + id);
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull String s, @NonNull String s1) {
+
+                        }
+                    });
+
                 }
                 case RESULT_CANCELED -> {
 
@@ -386,6 +405,19 @@ public class SinglePageActivity extends AppCompatActivity {
 
             if (isHandled.equals("start")) {
                 naverLogin();
+            }
+        });
+
+        globalViewModel._kakaoLogin.observe(this, event -> {
+            if (event == null) {
+                Logger.getInstance().info("social_login", "_kakao_login event is null");
+                return;
+            }
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+
+            if (isHandled.equals("start")) {
+                kakaoLogin();
             }
         });
     }
@@ -580,5 +612,62 @@ public class SinglePageActivity extends AppCompatActivity {
 
     private void naverLogin() {
         NidOAuth.INSTANCE.requestLogin(this, naverLoginLauncher);
+    }
+
+    private void kakaoLogin() {
+        if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(this)) {
+            UserApiClient.getInstance().loginWithKakaoTalk(this, (token, error) -> {
+                if (error != null) {
+                    Logger.getInstance().info("social_login", "kakaoTalk Login Error:" + error);
+
+                    // 카카오톡 로그인 실패 시 카카오계정 로그인으로 재시도
+                    loginWithKakaoAccount();
+                    return null;
+                }
+
+                if (token != null) {
+                    Logger.getInstance().info("social_login", "kakaoLogin token: " + token.getAccessToken());
+                }
+
+                return null;
+            });
+        } else {
+            loginWithKakaoAccount();
+        }
+    }
+
+    private void loginWithKakaoAccount() {
+        UserApiClient.getInstance().loginWithKakaoAccount(this, (oAuthToken, throwable) -> {
+            if (throwable != null) {
+                Logger.getInstance().info("social_login", "kakaoAccount Login Error:" + throwable);
+                return null;
+            }
+
+            if (oAuthToken == null) {
+                Logger.getInstance().info("social_login", "kakaoAccount token is null");
+                return null;
+            }
+
+
+            getKakaoUserId();
+
+            return null;
+        });
+    }
+
+    private void getKakaoUserId() {
+        UserApiClient.getInstance().me((user, error) -> {
+            if (error != null) {
+                Logger.getInstance().info("social_login", error.toString());
+                return null;
+            }
+
+            if (user != null) {
+                Long kakaoUserId = user.getId();
+                Logger.getInstance().info("social_login", "Kakao User ID = " + kakaoUserId);
+            }
+
+            return null;
+        });
     }
 }

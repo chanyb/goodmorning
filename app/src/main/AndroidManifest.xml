@@ -30,6 +30,20 @@
         android:usesCleartextTraffic="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.GoodMorning">
+
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="oauth"
+                    android:scheme="kakaoe0fa46f89ab09c1d3843c8c057995b88"/>
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".activity.IntroActivity"
             android:exported="true">
@@ -38,7 +52,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.SinglePageActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".activity.SinglePageActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+        </activity>
+
         <activity android:name=".activity.LockScreenActivity" android:exported="false" android:screenOrientation="portrait" android:windowSoftInputMode="adjustPan"
             android:taskAffinity="kr.co.kworks.goodmorning.lock"
             android:launchMode="singleTask"
@@ -56,10 +75,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="goodmorning"
-                    android:host="oauth"
-                    android:path="/google" />
+                <data android:scheme="goodmorning" />
+                <data android:host="oauth" />
+                <data android:path="/google" />
             </intent-filter>
         </activity>
 
