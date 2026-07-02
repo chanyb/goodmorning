@@ -166,21 +166,20 @@ public class WebviewInterface {
             }
         } else if ("kakao".equals(name)) {
             isInstalled = isInstalled(mActivity, "com.kakao.talk");
-            mActivity.runOnUiThread(global::kakaoLogin);
             if (isInstalled) {
-
+                mActivity.runOnUiThread(global::kakaoLogin);
             }
         } else if ("google".equals(name)) {
 //            isInstalled = isInstalled(mActivity, "");
         }
 
 
-//        boolean finalIsInstalled = isInstalled;
-//        mActivity.runOnUiThread(() -> {
-//            global._callFunction.setValue(new Event<>(
-//                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
-//            ));
-//        });
+        boolean finalIsInstalled = isInstalled;
+        mActivity.runOnUiThread(() -> {
+            global._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
+            ));
+        });
     }
 
 
