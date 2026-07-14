@@ -128,6 +128,9 @@ public class SinglePageActivity extends AppCompatActivity {
         super.onResume();
         registerBroadcastReceiver();
         startAllScheduled();
+        if (database.isLogin()) {
+            startForeground();
+        }
     }
 
     @Override
