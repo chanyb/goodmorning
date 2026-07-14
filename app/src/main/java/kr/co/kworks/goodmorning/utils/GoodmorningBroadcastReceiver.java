@@ -22,6 +22,7 @@ import kr.co.kworks.goodmorning.service.GoodmorningService;
 public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
     private Database database;
     private CalendarHandler calendarHandler;
+    private Calendar lastScreenTime;
 
     public GoodmorningBroadcastReceiver() {
         database = new Database();
@@ -41,6 +42,17 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                int hourOf24 = calendarHandler.getHourOf24(Calendar.getInstance());
+
+                if (hourOf24 < 5 || hourOf24 > 10) {
+                    return;
+                }
+
+                if (lastScreenTime != null && calendarHandler.getSecondsCal1MinusCal2(Calendar.getInstance(), lastScreenTime) < 3600 * 6) return;
+
+                lastScreenTime = Calendar.getInstance();
+
 
                 try {
 //                    mHandler.postDelayed(() -> {
