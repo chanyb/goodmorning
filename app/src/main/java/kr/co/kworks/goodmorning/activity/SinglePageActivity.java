@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -56,6 +57,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
 import kr.co.kworks.goodmorning.fragment.PermissionFragment;
@@ -67,7 +73,9 @@ import kr.co.kworks.goodmorning.service.GoodmorningService;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Database;
+import kr.co.kworks.goodmorning.utils.GetFile;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
+import kr.co.kworks.goodmorning.utils.LiveUpdator;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.viewmodel.Event;
@@ -75,6 +83,8 @@ import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 
 @AndroidEntryPoint
 public class SinglePageActivity extends AppCompatActivity {
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     private FragmentManager fragmentManager;
     private GlobalViewModel globalViewModel;
     private Handler mHandler;
@@ -95,6 +105,8 @@ public class SinglePageActivity extends AppCompatActivity {
     private ActivityResultLauncher<PickVisualMediaRequest> pick1Media;
 
     private OnBackPressedCallback backPressedCallback;
+    private LiveUpdator liveUpdator;
+    private GetFile getFile;
 
     public interface onBackPressedListener {
         public void onBack();
@@ -133,6 +145,7 @@ public class SinglePageActivity extends AppCompatActivity {
         if (database.isLogin()) {
             startForeground();
         }
+        updateFileVersionCheck();
     }
 
     @Override
@@ -157,6 +170,8 @@ public class SinglePageActivity extends AppCompatActivity {
         webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
         database = new Database();
         securityManager = new SecurityManager(this);
+        liveUpdator = new LiveUpdator(this, globalViewModel);
+        getFile = new GetFile();
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
@@ -440,6 +455,28 @@ public class SinglePageActivity extends AppCompatActivity {
                 kakaoLogin();
             }
         });
+
+        globalViewModel.updateString.observe(this, o -> {
+            if (o==null || o.isEmpty()) return;
+            binding.updateDialog.txtBody.setText(
+                String.format(Locale.KOREA, "앱 업데이트가 필요합니다.\n%s", o)
+            );
+        });
+
+        globalViewModel.updateNeeded.observe(this, o -> {
+            if (o == null || !o) return;
+            binding.updateDialog.loDialog.setVisibility(View.VISIBLE);
+        });
+
+        globalViewModel.updateNotNeed.observe(this, o -> {
+            if (o == null || !o) return;
+            binding.updateDialog.loDialog.setVisibility(View.GONE);
+        });
+
+        binding.updateDialog.loDialog.setOnClickListener(v -> {});
+        binding.updateDialog.btn.setOnClickListener(v -> {
+            v.setVisibility(View.GONE);
+        });
     }
 
     private void popAllBackStack() {
@@ -703,5 +740,107 @@ public class SinglePageActivity extends AppCompatActivity {
 
             return null;
         });
+    }
+
+    private void updateFileVersionCheck() {
+        Disposable disposable = Single.fromCallable(() -> {
+                String directoryPath = getFilesDir().getAbsolutePath();
+                String fileName = "gm.txt";
+
+                boolean downloaded = getFile.textDownload(
+                    "https://apk-link14.kworks.co.kr/apk/gm/",
+                    fileName,
+                    directoryPath
+                );
+
+                if (!downloaded) {
+                    return VersionCheckResult.DOWNLOAD_FAILED;
+                }
+
+                List<String> lines = getFile.readFileToLineList(
+                    directoryPath + "/" + fileName
+                );
+
+                return lines;
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                result -> {
+                    if (result == null) return;
+                    List<String> lines = (List<String>) result;
+
+                    if (lines.size() < 3) {
+                        return ;
+                    }
+
+                    String[] values = lines.get(1).split(",");
+                    String updateText = String.join("\n", lines.subList(2, lines.size()));
+                    globalViewModel.updateString.postValue(updateText);
+                    if (values.length < 2) {
+                        return ;
+                    }
+
+                    String serverVersion = values[1].trim();
+
+                    PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+
+                    boolean updateNeeded = !isRecent(
+                        packageInfo.versionName,
+                        serverVersion
+                    );
+
+                    if(updateNeeded) globalViewModel.updateNeeded.postValue(true);
+                    else globalViewModel.updateNotNeed.postValue(true);
+                },
+                throwable -> Logger.getInstance().error(
+                    "VersionCheck",
+                    "앱 버전 확인 중 오류가 발생했습니다.",
+                    throwable
+                )
+            );
+
+        compositeDisposable.add(disposable);
+    }
+
+    private enum VersionCheckResult {
+        UPDATE_NEEDED,
+        UPDATE_NOT_NEEDED,
+        DOWNLOAD_FAILED,
+        INVALID_FILE
+    }
+
+    public boolean isRecent(String localVersion, String serverVersion) {
+        String[] serverVersionSplit = serverVersion.split("\\.");
+        if (serverVersionSplit.length == 3) {
+            // 유의적 버전 명세
+            int serverMajor = Integer.parseInt(serverVersionSplit[0]);
+            int serverMinor = Integer.parseInt(serverVersionSplit[1]);
+            int serverPatch = Integer.parseInt(serverVersionSplit[2]);
+            String[] localVersionSplit = localVersion.split("\\.");
+            int localMajor = Integer.parseInt(localVersionSplit[0]);
+            int localMinor = Integer.parseInt(localVersionSplit[1]);
+            int localPatch = Integer.parseInt(localVersionSplit[2]);
+
+            if (serverMajor < localMajor) {
+                return true;
+            }
+            if (serverMajor == localMajor && serverMinor < localMinor) {
+                return true;
+            }
+            if (serverMajor == localMajor && serverMinor == localMinor && serverPatch <= localPatch) {
+                return true;
+            }
+            return false;
+        } else {
+            // 소수점 버전체크
+            double dCurrent = Double.parseDouble(localVersion);
+            double dRecent = Double.parseDouble(serverVersion);
+            if (dRecent <= dCurrent) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

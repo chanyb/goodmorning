@@ -44,7 +44,7 @@ public class LocationManagerHandler {
         updating = true;
         try {
             if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                Logger.getInstance().error("LocationManagerHandler-start-PROVIDER-disable", null);
+                Logger.getInstance().error("LocationManagerHandler","-start-PROVIDER-disable");
                 return;
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, gpsListener, Looper.getMainLooper());

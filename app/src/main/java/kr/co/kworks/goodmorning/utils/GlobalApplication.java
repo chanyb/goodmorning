@@ -154,7 +154,7 @@ public class GlobalApplication extends Application implements ViewModelStoreOwne
             if (GlobalApplication.currentActivity != null) {
                 if (activity.getClass() == GlobalApplication.currentActivity.getClass()) {
                     GlobalApplication.currentActivity = null;
-                    Logger.getInstance().error("GlobalApplication: currentAcc null", null);
+                    Logger.getInstance().error("globalApplication", "currentAcc null");
                 }
             }
         }

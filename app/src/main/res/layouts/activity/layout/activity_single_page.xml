@@ -30,5 +30,9 @@
             android:id="@+id/alert_dialog"
             layout="@layout/item_alert_dialog" />
 
+        <include
+            android:id="@+id/update_dialog"
+            layout="@layout/item_update_dialog" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
