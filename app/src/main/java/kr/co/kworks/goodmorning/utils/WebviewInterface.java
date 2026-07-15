@@ -177,7 +177,7 @@ public class WebviewInterface {
         boolean finalIsInstalled = isInstalled;
         mActivity.runOnUiThread(() -> {
             global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s(%s)", "asdf", finalIsInstalled ? "true":"false")
+                String.format(Locale.KOREA, "%sLogin(%s)", name, finalIsInstalled ? "true":"false")
             ));
         });
     }
