@@ -99,7 +99,7 @@ public class WebviewInterface {
         });
     }
 
-    // 7. 주소록 가져오기 (연락처에서 선택한 사람의 저장 명칭과 번호) P
+    // 7. 주소록 가져오기 (연락처에서 선택한 사람의 저장 명칭과 번호) [암호화]
     @JavascriptInterface
     public void doGetContact(String callback) {
         global._callbackForContact = callback;
@@ -143,7 +143,7 @@ public class WebviewInterface {
         });
     }
 
-    // 13. app token 저장
+    // 13. app token 저장 (암호화)
     @JavascriptInterface
     public void doSetToken(String token) {
         if (db.setAppToken(token) > 0) {

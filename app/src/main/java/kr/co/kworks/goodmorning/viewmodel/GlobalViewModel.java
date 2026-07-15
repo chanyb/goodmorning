@@ -30,6 +30,11 @@ public class GlobalViewModel extends ViewModel {
     public String _callbackForContact;
     public String _callbackForPhoto;
 
+    // liveUpdate
+    public MutableLiveData<Integer> _downloadPercent;
+    public MutableLiveData<Boolean> updateNeeded, updateNotNeed;
+    public MutableLiveData<String> updateString;
+
 
     @Inject
     public GlobalViewModel(
@@ -63,6 +68,10 @@ public class GlobalViewModel extends ViewModel {
         _closeChildView = new MutableLiveData<>();
         _naverLogin = new MutableLiveData<>();
         _kakaoLogin = new MutableLiveData<>();
+        _downloadPercent = new MutableLiveData<>();
+        updateNeeded = new MutableLiveData<>();
+        updateNotNeed = new MutableLiveData<>();
+        updateString = new MutableLiveData<>();
     }
 
     public void naverLogin() {
