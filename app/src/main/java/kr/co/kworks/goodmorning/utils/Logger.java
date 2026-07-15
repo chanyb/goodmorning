@@ -93,4 +93,16 @@ public class Logger {
             Log.e(tag, str, t);
         }
     }
+
+    public void error(String tag, String str) {
+        if (BuildConfig.IS_PRODUCTION) {
+            // operation
+            StringWriter sw = new StringWriter();
+
+            Utils.get().writeLog(String.format(Locale.KOREA, "(%s) %s", tag, str), "");
+        } else {
+            // debug
+            Log.e(tag, str);
+        }
+    }
 }
