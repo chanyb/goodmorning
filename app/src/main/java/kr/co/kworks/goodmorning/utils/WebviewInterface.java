@@ -173,13 +173,13 @@ public class WebviewInterface {
 //            isInstalled = isInstalled(mActivity, "");
         }
 
-
-        boolean finalIsInstalled = isInstalled;
-        mActivity.runOnUiThread(() -> {
-            global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%sLogin(%s)", name, finalIsInstalled ? "true":"false")
-            ));
-        });
+        if (!isInstalled) {
+            mActivity.runOnUiThread(() -> {
+                global._callFunction.setValue(new Event<>(
+                    String.format(Locale.KOREA, "%sLogin(false)", name)
+                ));
+            });
+        }
     }
 
 

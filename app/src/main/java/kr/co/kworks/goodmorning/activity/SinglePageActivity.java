@@ -203,20 +203,22 @@ public class SinglePageActivity extends AppCompatActivity {
             switch (result.getResultCode()) {
                 case RESULT_OK -> {
                     String accessToken = NidOAuth.INSTANCE.getAccessToken();
-                    Logger.getInstance().info("social_login", "naverLoginAccessToken: " + NidOAuth.INSTANCE.getAccessToken());
+                    globalViewModel._callFunction.setValue(new Event<>(
+                        String.format(Locale.KOREA, "naverLogin(true, '%s')", accessToken)
+                    ));
 
-                    NidOAuth.INSTANCE.getUserProfile(new NidProfileCallback<NidProfile>() {
-                        @Override
-                        public void onSuccess(NidProfile nidProfile) {
-                            String id = nidProfile.getProfile().getId();
-                            Logger.getInstance().info("social_login", "naver-id: " + id);
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull String s, @NonNull String s1) {
-
-                        }
-                    });
+//                    NidOAuth.INSTANCE.getUserProfile(new NidProfileCallback<NidProfile>() {
+//                        @Override
+//                        public void onSuccess(NidProfile nidProfile) {
+//                            String id = nidProfile.getProfile().getId();
+//                            Logger.getInstance().info("social_login", "naver-id: " + id);
+//                        }
+//
+//                        @Override
+//                        public void onFailure(@NonNull String s, @NonNull String s1) {
+//
+//                        }
+//                    });
 
                 }
                 case RESULT_CANCELED -> {
@@ -632,6 +634,10 @@ public class SinglePageActivity extends AppCompatActivity {
                     Logger.getInstance().info("social_login", "kakaoLogin token: " + token.getAccessToken());
                 }
 
+                globalViewModel._callFunction.setValue(new Event<>(
+                    String.format(Locale.KOREA, "kakaoLogin(true, '%s')", token.getAccessToken())
+                ));
+
                 return null;
             });
         } else {
@@ -651,8 +657,11 @@ public class SinglePageActivity extends AppCompatActivity {
                 return null;
             }
 
+            globalViewModel._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "kakaoLogin(true, '%s')", oAuthToken.getAccessToken())
+            ));
 
-            getKakaoUserId();
+//            getKakaoUserId();
 
             return null;
         });
