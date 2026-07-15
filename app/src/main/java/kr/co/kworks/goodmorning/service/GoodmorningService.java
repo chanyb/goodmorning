@@ -34,6 +34,7 @@ import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
 import kr.co.kworks.goodmorning.utils.Logger;
+import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.utils.Utils;
 
 @AndroidEntryPoint
@@ -46,6 +47,7 @@ public class GoodmorningService extends LifecycleService {
     private ScheduledFuture<?> unLockDataScheduled;
     private Handler mHandler;
     private Database database;
+    private SecurityManager securityManager;
 
     private boolean screenOff;
 
@@ -88,6 +90,7 @@ public class GoodmorningService extends LifecycleService {
         executor = Executors.newScheduledThreadPool(4);
         goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
         database = new Database();
+        securityManager = new SecurityManager(this);
     }
 
     /**
@@ -121,7 +124,12 @@ public class GoodmorningService extends LifecycleService {
             String token = database.getAppToken();
             if(unlock == null || token == null || token.isEmpty()) return;
             UnlockRequest unlockRequest = new UnlockRequest();
-            unlockRequest.token = token;
+            try {
+                unlockRequest.token = securityManager.encAES(token);
+            } catch (Exception e) {
+                Logger.getInstance().error("securityManager", "encAes", e);
+                return;
+            }
             unlockRequest.etc = unlock.etc;
             unlockRequest.type = String.valueOf(unlock.type);
 
