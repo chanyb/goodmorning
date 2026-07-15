@@ -23,12 +23,14 @@ public class WebviewInterface {
     private final Activity mActivity;
     private final GlobalViewModel global;
     private final Database db;
+    private SecurityManager securityManager;
 
 
     public WebviewInterface(Activity activity) {
         mActivity = activity;
         db = new Database();
         global = new ViewModelProvider((ViewModelStoreOwner) activity).get(GlobalViewModel.class);
+        securityManager = new SecurityManager(activity);
     }
 
     // 1. Open Progress Dialog P
@@ -146,6 +148,12 @@ public class WebviewInterface {
     // 13. app token 저장 (암호화)
     @JavascriptInterface
     public void doSetToken(String token) {
+        try {
+            token = securityManager.decAES(token);
+        } catch (Exception e) {
+            Logger.getInstance().error("securityManager", "decryptAES error", e);
+            return;
+        }
         if (db.setAppToken(token) > 0) {
             Logger.getInstance().info("doSetToken: " + token);
         } else {

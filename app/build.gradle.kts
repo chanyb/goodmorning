@@ -43,6 +43,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
 
@@ -62,6 +63,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -77,6 +79,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
@@ -92,6 +95,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 

@@ -69,6 +69,7 @@ import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
 import kr.co.kworks.goodmorning.utils.Logger;
+import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
 
@@ -78,6 +79,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private GlobalViewModel globalViewModel;
     private Handler mHandler;
     private ActivitySinglePageBinding binding;
+    private SecurityManager securityManager;
 
     private WebviewFragment webViewFragment;
     private PermissionFragment permissionFragment;
@@ -154,7 +156,7 @@ public class SinglePageActivity extends AppCompatActivity {
         executor = Executors.newSingleThreadScheduledExecutor();
         webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
         database = new Database();
-
+        securityManager = new SecurityManager(this);
 
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
@@ -202,10 +204,14 @@ public class SinglePageActivity extends AppCompatActivity {
         naverLoginLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             switch (result.getResultCode()) {
                 case RESULT_OK -> {
-                    String accessToken = NidOAuth.INSTANCE.getAccessToken();
-                    globalViewModel._callFunction.setValue(new Event<>(
-                        String.format(Locale.KOREA, "naverLogin(true, '%s')", accessToken)
-                    ));
+                    try {
+                        String accessToken = securityManager.encAES(NidOAuth.INSTANCE.getAccessToken());
+                        globalViewModel._callFunction.setValue(new Event<>(
+                            String.format(Locale.KOREA, "naverLogin(true, '%s')", accessToken)
+                        ));
+                    } catch(Exception e) {
+                        Logger.getInstance().error("securityManager", "encrypt error", e);
+                    }
 
 //                    NidOAuth.INSTANCE.getUserProfile(new NidProfileCallback<NidProfile>() {
 //                        @Override
@@ -242,11 +248,20 @@ public class SinglePageActivity extends AppCompatActivity {
                 String name = cursor.getString(0);
                 String phone = cursor.getString(1);
                 phone = phone.replace("-", "");
-                String finalPhone = phone;
 
+                try {
+                    name = securityManager.encAES(name);
+                    phone = securityManager.encAES(phone);
+                } catch (Exception e) {
+                    Logger.getInstance().error("securityManager", "encryptAES error", e);
+                    return ;
+                }
+
+                String finalName = name;
+                String finalPhone = phone;
                 mHandler.post(() -> {
                     globalViewModel._callFunction.setValue(new Event<>(
-                        String.format(Locale.KOREA, "%s('%s', '%s')", globalViewModel._callbackForContact, name, finalPhone)
+                        String.format(Locale.KOREA, "%s('%s', '%s')", globalViewModel._callbackForContact, finalName, finalPhone)
                     ));
                 });
             }
@@ -633,10 +648,17 @@ public class SinglePageActivity extends AppCompatActivity {
                 if (token != null) {
                     Logger.getInstance().info("social_login", "kakaoLogin token: " + token.getAccessToken());
                 }
+                
+                try {
+                    String accessToken = securityManager.encAES(token.getAccessToken());
+                    globalViewModel._callFunction.setValue(new Event<>(
+                        String.format(Locale.KOREA, "kakaoLogin(true, '%s')", accessToken)
+                    ));
+                } catch(Exception e) {
+                    Logger.getInstance().error("securityManager", "encrypt error", e);
+                }
 
-                globalViewModel._callFunction.setValue(new Event<>(
-                    String.format(Locale.KOREA, "kakaoLogin(true, '%s')", token.getAccessToken())
-                ));
+
 
                 return null;
             });
