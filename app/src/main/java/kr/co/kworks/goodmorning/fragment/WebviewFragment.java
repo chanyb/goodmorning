@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -49,6 +50,7 @@ import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
+import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.Event;
@@ -71,11 +73,14 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private WebviewInterface webviewInterface;
     private OnBackPressedCallback backPressedCallback;
     private boolean customChromeTabRunning;
+    private Calendar progressDialogOpenTime;
+    private CalendarHandler calendarHandler;
 
     public WebviewFragment(String url, HashMap<String, String> postData) {
         this.url = url;
         this.postData = postData;
         customChromeTabRunning = false;
+        calendarHandler = new CalendarHandler();
     }
 
     @Override
@@ -384,13 +389,21 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             mHandler.post(() -> {
                 global._progress.setValue(new Event<>("visible"));
             });
+            progressDialogOpenTime = Calendar.getInstance();
         }
 
         // 로딩이 완료됬을 때 한번 호출
         @Override
         public void onPageFinished(WebView view, final String url) {
             super.onPageFinished(view, url);
-            releaseTimeout();
+            Calendar progressDialogCloseTime = Calendar.getInstance();
+            long diffMiliis = progressDialogCloseTime.getTimeInMillis() - progressDialogOpenTime.getTimeInMillis();
+            if (diffMiliis < 1000L) {
+                long lastMillis = 1000L - diffMiliis;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    mHandler.postDelayed(WebviewFragment.this::releaseTimeout, lastMillis);
+                }
+            }
         }
 
         @Override
