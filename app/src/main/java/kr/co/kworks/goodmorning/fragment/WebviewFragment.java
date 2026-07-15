@@ -403,6 +403,8 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     mHandler.postDelayed(WebviewFragment.this::releaseTimeout, lastMillis);
                 }
+            } else{
+                releaseTimeout();
             }
         }
 
