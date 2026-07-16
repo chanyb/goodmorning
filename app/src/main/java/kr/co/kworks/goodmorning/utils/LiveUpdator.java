@@ -63,9 +63,22 @@ public class LiveUpdator {
         if (file.exists()) file.delete();
 
         executorService.execute(() -> {
-            gf.contentDownload(APK_DOWNLOAD_PATH, apkFileName, savePath, progress -> {
-                mHandler.post(() -> globalViewModel._downloadPercent.postValue(Math.toIntExact(progress)));
-            });
+            boolean downloaded = gf.contentDownload(
+                APK_DOWNLOAD_PATH,
+                apkFileName,
+                savePath,
+                progress -> mHandler.post(() ->
+                    globalViewModel._downloadPercent.postValue(
+                        Math.toIntExact(progress)
+                    )
+                )
+            );
+
+            if (downloaded) {
+                mHandler.post(() ->
+                    globalViewModel._downloadPercent.postValue(100)
+                );
+            }
         });
     }
 

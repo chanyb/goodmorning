@@ -76,9 +76,13 @@ public class GetFile {
             long downloadedFileSize = 0;
             while ((length = is.read(buffer)) >= 0) {
                 downloadedFileSize += length;
-                long progress = (downloadedFileSize * 100L) / fileSize;
+
                 fos.write(buffer, 0, length);
-                callback.accept(progress);
+
+                if (fileSize > 0) {
+                    long progress = Math.min(99L, downloadedFileSize * 100L / fileSize);
+                    callback.accept(progress);
+                }
             }
 
             fos.flush();
