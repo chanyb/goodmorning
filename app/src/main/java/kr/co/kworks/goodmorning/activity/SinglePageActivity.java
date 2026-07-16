@@ -524,6 +524,8 @@ public class SinglePageActivity extends AppCompatActivity {
                 // WebviewFragment로 알림 필요
                 globalViewModel._closeChildView.postValue(new Event<>("close"));
             }
+
+            if (globalViewModel._alertConfirmAppFinish) finish();
         });
         binding.confirmDialog.loDialog.setOnClickListener(v -> {});
         binding.alertDialog.loDialog.setOnClickListener(v -> {});

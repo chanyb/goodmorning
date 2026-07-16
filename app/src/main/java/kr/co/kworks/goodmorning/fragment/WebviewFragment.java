@@ -21,6 +21,7 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -411,13 +412,76 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             super.onReceivedError(view, request, error);
+            if (!request.isForMainFrame()) {
+                return; // 이미지, JS, CSS 오류는 무시
+            }
+
+            int errorCode = error.getErrorCode();
+            String description = error.getDescription().toString();
+            String failedUrl = request.getUrl().toString();
+
             view.loadUrl("about:blank");
             Alert alert = global.alertContent.getValue();
-            alert.body = String.format(Locale.KOREA, "(%d) %s", error.getErrorCode(), error.getDescription());
+            alert.body = String.format(Locale.KOREA, "네트워크 연결이 원활하지 않아 서비스를 불러올 수 없습니다. 네트워크 상태를 확인한 후 앱을 다시 실행해 주세요.(%s)", errorCode);
+            global._alertConfirmAppFinish = true;
             mHandler.post(() -> {
                 global.alertContent.setValue(alert);
                 global._alert.postValue(new Event<>("visible"));
-                webview.loadUrl(ApiConstants.MAIN_URL);
+            });
+
+        }
+
+        @Override
+        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+            super.onReceivedHttpError(view, request, errorResponse);
+
+            // 이미지, JS, CSS 등의 오류는 제외하고 메인 페이지 오류만 처리
+            if (!request.isForMainFrame()) {
+                return;
+            }
+
+            int statusCode = errorResponse.getStatusCode();
+
+            String message = "";
+            switch (statusCode) {
+                case 400:
+                    message = "잘못된 요청입니다.";
+                    break;
+
+                case 401:
+                    message = "로그인이 필요합니다.";
+                    break;
+
+                case 403:
+                    message = "서비스에 접근할 권한이 없습니다.";
+                    break;
+
+                case 404:
+                    message = "요청한 페이지를 찾을 수 없습니다.";
+                    break;
+
+                case 500:
+                    message = "서버 내부 오류가 발생했습니다.";
+                    break;
+
+                case 502:
+                case 503:
+                case 504:
+                    message = "현재 서버에 연결할 수 없습니다.";
+                    break;
+
+                default:
+                    message = "서비스를 불러오지 못했습니다. (오류 코드: "
+                        + statusCode + ")";
+                    break;
+            }
+
+            Alert alert = global.alertContent.getValue();
+            alert.body = String.format(Locale.KOREA, "%s", message);
+            global._alertConfirmAppFinish = true;
+            mHandler.post(() -> {
+                global.alertContent.setValue(alert);
+                global._alert.postValue(new Event<>("visible"));
             });
         }
     }

@@ -29,6 +29,7 @@ public class GlobalViewModel extends ViewModel {
     public MutableLiveData<String> _progressText1, _progressText2;
     public String _callbackForContact;
     public String _callbackForPhoto;
+    public boolean _alertConfirmAppFinish;
 
     // liveUpdate
     public MutableLiveData<Integer> _downloadPercent;
@@ -72,6 +73,7 @@ public class GlobalViewModel extends ViewModel {
         updateNeeded = new MutableLiveData<>();
         updateNotNeed = new MutableLiveData<>();
         updateString = new MutableLiveData<>();
+        _alertConfirmAppFinish = false;
     }
 
     public void naverLogin() {
