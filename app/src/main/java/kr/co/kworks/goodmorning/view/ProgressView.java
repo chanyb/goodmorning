@@ -38,7 +38,7 @@ public class ProgressView extends View {
         whitePaint.setAntiAlias(true);
 
         greenPaint = new Paint();
-        greenPaint.setColor(mContext.getColor(R.color.communicate_green));
+        greenPaint.setColor(mContext.getColor(R.color.blue_2563EB));
         greenPaint.setStyle(Paint.Style.FILL);
         greenPaint.setAntiAlias(true);
         currentFillPercent = fillPercent = 0f;

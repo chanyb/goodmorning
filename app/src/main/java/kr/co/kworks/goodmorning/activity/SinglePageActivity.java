@@ -473,9 +473,11 @@ public class SinglePageActivity extends AppCompatActivity {
             binding.updateDialog.loDialog.setVisibility(View.GONE);
         });
 
-        binding.updateDialog.loDialog.setOnClickListener(v -> {});
-        binding.updateDialog.btn.setOnClickListener(v -> {
-            v.setVisibility(View.GONE);
+        globalViewModel._downloadPercent.observe(this, o -> {
+            binding.updateDialog.progressView.animateFill(o/100f);
+            if (o == 100) {
+                liveUpdator.executeApk("gm.apk",getFilesDir().getAbsolutePath());
+            }
         });
     }
 
@@ -526,6 +528,13 @@ public class SinglePageActivity extends AppCompatActivity {
         binding.confirmDialog.loDialog.setOnClickListener(v -> {});
         binding.alertDialog.loDialog.setOnClickListener(v -> {});
         binding.progressDialog.loDialog.setOnClickListener(v -> {});
+
+        binding.updateDialog.loDialog.setOnClickListener(v -> {});
+        binding.updateDialog.btn.setOnClickListener(v -> {
+            v.setVisibility(View.GONE);
+            binding.updateDialog.loUpdateStatus.setVisibility(View.VISIBLE);
+            liveUpdator.downloadApk("gm.apk", getFilesDir().getAbsolutePath());
+        });
     }
 
     private boolean isOnline(Context context) {
@@ -754,7 +763,7 @@ public class SinglePageActivity extends AppCompatActivity {
                 );
 
                 if (!downloaded) {
-                    return VersionCheckResult.DOWNLOAD_FAILED;
+                    return null;
                 }
 
                 List<String> lines = getFile.readFileToLineList(
@@ -767,8 +776,11 @@ public class SinglePageActivity extends AppCompatActivity {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 result -> {
-                    if (result == null) return;
-                    List<String> lines = (List<String>) result;
+                    if (result == null) {
+                        Logger.getInstance().error("liveupdate", "download fail");
+                        return;
+                    }
+                    List<String> lines = result;
 
                     if (lines.size() < 3) {
                         return ;
