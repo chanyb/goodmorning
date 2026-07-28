@@ -152,6 +152,9 @@ public class LockScreenActivity extends AppCompatActivity {
         seekbarFragment.setListener(new SeekbarFragment.Listener() {
             @Override
             public void onComplete() {
+                Unlock unlock = new Unlock();
+                database.insert(Column.unlock, unlock.getContentValues());
+
                 requestKeyguardDismiss();
             }
         });

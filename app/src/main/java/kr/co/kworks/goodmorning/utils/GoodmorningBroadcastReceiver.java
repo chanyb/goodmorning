@@ -42,17 +42,7 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                 lockScreenIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 lockScreenIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                int hourOf24 = calendarHandler.getHourOf24(Calendar.getInstance());
-
-                if (hourOf24 < 5 || hourOf24 > 10) {
-                    return;
-                }
-
-                if (lastScreenTime != null && calendarHandler.getSecondsCal1MinusCal2(Calendar.getInstance(), lastScreenTime) < 3600 * 6) return;
-
                 lastScreenTime = Calendar.getInstance();
-
 
                 try {
 //                    mHandler.postDelayed(() -> {
@@ -83,8 +73,9 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
             }
             case Intent.ACTION_USER_PRESENT -> {
                 Logger.getInstance().info("ACTION_USER_PRESENT");
-                Unlock unlock = new Unlock();
-                database.insert(Column.unlock, unlock.getContentValues());
+                // 260728 회의 결과 제거
+//                Unlock unlock = new Unlock();
+//                database.insert(Column.unlock, unlock.getContentValues());
             }
             case TelephonyManager.ACTION_PHONE_STATE_CHANGED -> {
                 Logger.getInstance().info("ACTION_PHONE_STATE_CHANGED");
