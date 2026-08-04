@@ -41,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -51,7 +52,6 @@ import kr.co.kworks.goodmorning.activity.SinglePageActivity;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
 import kr.co.kworks.goodmorning.utils.ApiConstants;
-import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.WebviewInterface;
 import kr.co.kworks.goodmorning.viewmodel.Event;
@@ -60,6 +60,9 @@ import kr.co.kworks.goodmorning.viewmodel.WebviewCommunicationViewModel;
 
 @AndroidEntryPoint
 public class WebviewFragment extends Fragment implements SinglePageActivity.onBackPressedListener {
+    private static final String ARG_URL = "arg_url";
+    private static final String ARG_POST_DATA = "arg_post_data";
+
     private WebView webview, childView;
     private SecurityManager securityManager;
     private WebviewCommunicationViewModel webviewCommunicationViewModel;
@@ -75,13 +78,36 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
     private OnBackPressedCallback backPressedCallback;
     private boolean customChromeTabRunning;
     private Calendar progressDialogOpenTime;
-    private CalendarHandler calendarHandler;
 
-    public WebviewFragment(String url, HashMap<String, String> postData) {
-        this.url = url;
-        this.postData = postData;
+    public WebviewFragment() {
+        // FragmentManager가 상태를 복원할 때 사용하는 public 기본 생성자입니다.
+    }
+
+    public static WebviewFragment newInstance(String url, HashMap<String, String> postData) {
+        WebviewFragment fragment = new WebviewFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_URL, url);
+
+        if (postData != null) {
+            args.putSerializable(ARG_POST_DATA, postData);
+        }
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         customChromeTabRunning = false;
-        calendarHandler = new CalendarHandler();
+
+        Bundle args = getArguments();
+        if (args != null) {
+            url = args.getString(ARG_URL);
+            postData = (HashMap<String, String>) args.getSerializable(ARG_POST_DATA);
+        }
     }
 
     @Override
@@ -94,10 +120,11 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
     @Override
     public void onDetach() {
-        super.onDetach();
         SinglePageActivity activity = (SinglePageActivity) getActivity();
-        if (activity == null) return;
-        activity.setOnKeyBackPressedListener(null);
+        if (activity != null) {
+            activity.setOnKeyBackPressedListener(null);
+        }
+        super.onDetach();
     }
 
     @Override
@@ -203,10 +230,18 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
 
         Log.i("this", "url: " + url);
 
+        if (url == null || url.trim().isEmpty()) {
+            Log.e("WebviewFragment", "url argument is missing");
+            return;
+        }
+
         setWebView(webview);
         reserveTimeout();
-        if(postDataBuilder == null) webview.loadUrl(url);
-        else webview.postUrl(url, postDataBuilder.toString().getBytes());
+        if (postDataBuilder == null) {
+            webview.loadUrl(url);
+        } else {
+            webview.postUrl(url, postDataBuilder.toString().getBytes(StandardCharsets.UTF_8));
+        }
 
         observerInit();
     }
@@ -620,7 +655,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
             if (childView.canGoBack()) {
                 childView.goBack();
             } else {
-                 closeChildView();
+                closeChildView();
             }
             return;
         }

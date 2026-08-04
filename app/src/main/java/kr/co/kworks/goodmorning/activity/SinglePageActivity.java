@@ -167,7 +167,7 @@ public class SinglePageActivity extends AppCompatActivity {
         globalViewModel = new ViewModelProvider(this).get(GlobalViewModel.class);
         fragmentManager = getSupportFragmentManager();
         executor = Executors.newSingleThreadScheduledExecutor();
-        webViewFragment = new WebviewFragment(ApiConstants.MAIN_URL, null);
+        webViewFragment = WebviewFragment.newInstance(ApiConstants.MAIN_URL, null);
         database = new Database();
         securityManager = new SecurityManager(this);
         liveUpdator = new LiveUpdator(this, globalViewModel);
