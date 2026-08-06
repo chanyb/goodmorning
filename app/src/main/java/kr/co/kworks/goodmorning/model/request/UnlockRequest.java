@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 public class UnlockRequest {
     @SerializedName("token")
     public String token;
+    @SerializedName("unlock_datetime")
+    public String datetime;
     @SerializedName("unlock_type")
     public String type;
     @SerializedName("unlock_etc")

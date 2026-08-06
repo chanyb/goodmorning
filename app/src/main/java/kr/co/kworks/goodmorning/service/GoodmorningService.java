@@ -130,6 +130,7 @@ public class GoodmorningService extends LifecycleService {
                 Logger.getInstance().error("securityManager", "encAes", e);
                 return;
             }
+            unlockRequest.datetime = unlock.datetime;
             unlockRequest.etc = unlock.etc;
             unlockRequest.type = String.valueOf(unlock.type);
 
