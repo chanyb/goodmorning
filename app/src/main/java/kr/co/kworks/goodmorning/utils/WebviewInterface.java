@@ -190,6 +190,12 @@ public class WebviewInterface {
         }
     }
 
+    // 15. 권한 상태 확인
+    @JavascriptInterface
+    public int[] doGetPermissionStatus() {
+        return PermissionUtils.getPermissionStatus(mActivity);
+    }
+
 
     private boolean isInstalled(Context context, String packageName) {
         try {
