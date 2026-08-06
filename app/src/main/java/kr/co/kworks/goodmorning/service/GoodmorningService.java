@@ -130,29 +130,35 @@ public class GoodmorningService extends LifecycleService {
                 Logger.getInstance().error("securityManager", "encAes", e);
                 return;
             }
-            unlockRequest.datetime = unlock.datetime;
-            unlockRequest.etc = unlock.etc;
-            unlockRequest.type = String.valueOf(unlock.type);
 
-            if(unlock.type == 1) {
-                unlockRequest.etc = unlock.datetime;
+            try {
+                unlockRequest.datetime = unlock.datetime;
+                unlockRequest.etc = unlock.etc;
+                unlockRequest.type = String.valueOf(unlock.type);
+
+                if(unlock.type == 1) {
+                    unlockRequest.etc = unlock.datetime;
+                }
+
+                serverRepository.unlock(
+                    unlockRequest,
+                    unlockResponseResponse -> {
+                        if (!unlockResponseResponse.isSuccessful()) return;
+                        if (unlockResponseResponse.body().result.equals("200")) {
+                            ContentValues whereCv = new ContentValues();
+                            whereCv.put(Column.unlock_datetime, unlock.datetime);
+                            unlock.submit = 1;
+                            database.update(Column.unlock, unlock.getContentValues(), whereCv);
+                        }
+                    },
+                    throwable -> {
+                        Logger.getInstance().error("unlockRequest", throwable);
+                    }
+                );
+            } catch(Exception e) {
+                Logger.getInstance().error("service", "exception", e);
             }
 
-            serverRepository.unlock(
-                unlockRequest,
-                unlockResponseResponse -> {
-                    if (!unlockResponseResponse.isSuccessful()) return;
-                    if (unlockResponseResponse.body().result.equals("200")) {
-                        ContentValues whereCv = new ContentValues();
-                        whereCv.put(Column.unlock_datetime, unlock.datetime);
-                        unlock.submit = 1;
-                        database.update(Column.unlock, unlock.getContentValues(), whereCv);
-                    }
-                },
-                throwable -> {
-                    Logger.getInstance().error("unlockRequest", throwable);
-                }
-            );
         },1000, 1000, TimeUnit.MILLISECONDS);
 
     }
