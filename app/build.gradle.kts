@@ -43,6 +43,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
@@ -63,6 +64,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
@@ -79,6 +81,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
@@ -95,6 +98,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
@@ -176,7 +180,9 @@ dependencies {
     implementation("com.kakao.sdk:v2-user:2.23.2")
 
     // Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:21.6.0")
+    implementation("androidx.credentials:credentials:1.6.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.6.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.2.0")
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")

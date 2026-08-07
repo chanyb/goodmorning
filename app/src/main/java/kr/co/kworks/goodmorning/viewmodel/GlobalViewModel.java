@@ -21,7 +21,7 @@ public class GlobalViewModel extends ViewModel {
 
     private final Executor io = Executors.newSingleThreadExecutor();
 
-    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login, _closeChildView, _naverLogin, _kakaoLogin;
+    public MutableLiveData<Event<String>> _webViewFragment, _popBackStack, _confirm, _alert, _progress, _callFunction, _launchGetContact, _permission, _login, _closeChildView, _naverLogin, _kakaoLogin, _googleLogin;
     public JsResult jsResult;
     public ProgressDialog progressDialog;
     public MutableLiveData<Alert> alertContent;
@@ -69,6 +69,7 @@ public class GlobalViewModel extends ViewModel {
         _closeChildView = new MutableLiveData<>();
         _naverLogin = new MutableLiveData<>();
         _kakaoLogin = new MutableLiveData<>();
+        _googleLogin = new MutableLiveData<>();
         _downloadPercent = new MutableLiveData<>();
         updateNeeded = new MutableLiveData<>();
         updateNotNeed = new MutableLiveData<>();
@@ -82,5 +83,9 @@ public class GlobalViewModel extends ViewModel {
 
     public void kakaoLogin() {
         _kakaoLogin.postValue(new Event<>("start"));
+    }
+
+    public void googleLogin() {
+        _googleLogin.postValue(new Event<>("start"));
     }
 }

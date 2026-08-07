@@ -178,7 +178,8 @@ public class WebviewInterface {
                 mActivity.runOnUiThread(global::kakaoLogin);
             }
         } else if ("google".equals(name)) {
-//            isInstalled = isInstalled(mActivity, "");
+            mActivity.runOnUiThread(global::googleLogin);
+            return ;
         }
 
         if (!isInstalled) {

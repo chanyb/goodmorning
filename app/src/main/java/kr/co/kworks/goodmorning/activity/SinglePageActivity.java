@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -31,6 +32,14 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.credentials.Credential;
+import androidx.credentials.CredentialManager;
+import androidx.credentials.CredentialManagerCallback;
+import androidx.credentials.CustomCredential;
+import androidx.credentials.GetCredentialRequest;
+import androidx.credentials.GetCredentialResponse;
+import androidx.credentials.exceptions.GetCredentialException;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -41,6 +50,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException;
 import com.kakao.sdk.user.UserApi;
 import com.kakao.sdk.user.UserApiClient;
 import com.navercorp.nid.NidOAuth;
@@ -117,6 +129,7 @@ public class SinglePageActivity extends AppCompatActivity {
     private Database database;
 
     private ActivityResultLauncher<Intent> naverLoginLauncher;
+    private CredentialManager credentialManager;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -247,6 +260,8 @@ public class SinglePageActivity extends AppCompatActivity {
                 }
             }
         });
+
+        credentialManager = CredentialManager.create(this);
     }
 
     private void launchContactLauncher() {
@@ -453,6 +468,18 @@ public class SinglePageActivity extends AppCompatActivity {
 
             if (isHandled.equals("start")) {
                 kakaoLogin();
+            }
+        });
+        globalViewModel._googleLogin.observe(this, event -> {
+            if (event == null) {
+                Logger.getInstance().info("social_login", "googleLogin event is null");
+                return;
+            }
+            String isHandled = event.getContentIfNotHandled();
+            if (isHandled == null) return;
+
+            if (isHandled.equals("start")) {
+                googleLogin();
             }
         });
 
@@ -856,5 +883,74 @@ public class SinglePageActivity extends AppCompatActivity {
 
             return true;
         }
+    }
+
+    private void googleLogin() {
+
+        String webClientId = getString(R.string.google_web_client_id);
+
+        GetSignInWithGoogleOption googleOption =
+            new GetSignInWithGoogleOption.Builder(webClientId)
+                .build();
+
+        GetCredentialRequest request =
+            new GetCredentialRequest.Builder()
+                .addCredentialOption(googleOption)
+                .build();
+
+        credentialManager.getCredentialAsync(
+            this,
+            request,
+            new CancellationSignal(),
+            ContextCompat.getMainExecutor(this),
+            new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>() {
+
+                @Override
+                public void onResult(@NonNull GetCredentialResponse result) {
+                    handleGoogleLogin(result);
+                }
+
+                @Override
+                public void onError(@NonNull GetCredentialException e) {
+                    Logger.getInstance().error("google", "Google login failed", e);
+                    globalViewModel._callFunction.setValue(new Event<>(
+                        String.format(Locale.KOREA, "googleLogin(false, '')")
+                    ));
+                }
+            }
+        );
+    }
+
+    private void handleGoogleLogin(GetCredentialResponse result) {
+
+        Credential credential = result.getCredential();
+
+        if (!(credential instanceof CustomCredential)) {
+            Logger.getInstance().error("google", "Unsupported credential");
+            return;
+        }
+
+        CustomCredential customCredential = (CustomCredential) credential;
+
+        if (!GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+            .equals(customCredential.getType())) {
+            Logger.getInstance().error("google", "Unknown credential type: " + customCredential.getType());
+            return;
+        }
+
+        GoogleIdTokenCredential googleCredential =
+            GoogleIdTokenCredential.createFrom(
+                customCredential.getData()
+            );
+
+        String idToken = googleCredential.getIdToken();
+        String email = googleCredential.getEmail();
+        String uniqueId = googleCredential.getUniqueId();
+        String name = googleCredential.getDisplayName();
+
+        globalViewModel._callFunction.setValue(new Event<>(
+            String.format(Locale.KOREA, "googleLogin(true,%s)", idToken)
+        ));
+
     }
 }
