@@ -10,6 +10,7 @@ plugins {
 buildscript {
     val hiltVersion by extra("2.44")
     repositories {
+        // buildscript.dependencies 에 선언된 기존 classpath 의존성을 찾을 곳 선언
         google()
         mavenCentral()
     }

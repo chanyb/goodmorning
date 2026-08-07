@@ -175,6 +175,9 @@ dependencies {
     // Kakao
     implementation("com.kakao.sdk:v2-user:2.23.2")
 
+    // Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:21.6.0")
+
     // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
 
