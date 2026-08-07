@@ -194,14 +194,16 @@ public class WebviewInterface {
     @JavascriptInterface
     public void doGetPermissionStatus(String callback) {
         int[] permissionStatus = PermissionUtils.getPermissionStatus(mActivity);
-        global._callFunction.setValue(new Event<>(
-            String.format(Locale.KOREA, "%s(%s,%s,%s,%s)", callback,
-                permissionStatus[0] == 1,
-                permissionStatus[1] == 1,
-                permissionStatus[2] == 1,
-                permissionStatus[3] == 1
-            )
-        ));
+        mActivity.runOnUiThread(() -> {
+            global._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "%s(%s,%s,%s,%s)", callback,
+                    permissionStatus[0] == 1,
+                    permissionStatus[1] == 1,
+                    permissionStatus[2] == 1,
+                    permissionStatus[3] == 1
+                )
+            ));
+        });
     }
 
 
