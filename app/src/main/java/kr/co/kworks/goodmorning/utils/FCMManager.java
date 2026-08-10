@@ -31,7 +31,7 @@ public class FCMManager extends FirebaseMessagingService {
 
     public FCMManager(Context context) {
         this.context = context;
-        subscribeToTopic("smart_agri_mach");
+        subscribeToTopic("goodmorning");
     }
 
     public void getToken() {
