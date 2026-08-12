@@ -1,5 +1,6 @@
 package kr.co.kworks.goodmorning.utils;
 
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.telephony.TelephonyManager;
+import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -48,7 +50,8 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
 //                    mHandler.postDelayed(() -> {
 //                        context.startActivity(lockScreenIntent);
 //                    }, 500);
-                    context.startActivity(lockScreenIntent);
+                    // 260810 대표님 대면 결과 제거
+//                    context.startActivity(lockScreenIntent);
                 } catch(Exception e) {
                     Logger.getInstance().error("LockScreenActivityError", e);
                 }
@@ -71,11 +74,18 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
                     status == BatteryManager.BATTERY_STATUS_FULL;
                 Logger.getInstance().info("battery: " + batteryPercentage);
             }
+            case Intent.ACTION_SCREEN_ON -> {
+                Logger.getInstance().info("ACTION_SCREEN_ON");
+                Logger.getInstance().info("isDeviceLocked: " + isDeviceLocked(context));
+                setDeviceLocked(context, isDeviceLocked(context));
+            }
             case Intent.ACTION_USER_PRESENT -> {
                 Logger.getInstance().info("ACTION_USER_PRESENT");
-                // 260728 회의 결과 제거
-//                Unlock unlock = new Unlock();
-//                database.insert(Column.unlock, unlock.getContentValues());
+                // 260728 회의 결과 제거 -> 260810 대표님 대면 결과 복원
+                boolean isDeviceSettingLocked = getDeviceLocked(context);
+                if (!isDeviceSettingLocked) return;
+                Unlock unlock = new Unlock();
+                database.insert(Column.unlock, unlock.getContentValues());
             }
             case TelephonyManager.ACTION_PHONE_STATE_CHANGED -> {
                 Logger.getInstance().info("ACTION_PHONE_STATE_CHANGED");
@@ -142,5 +152,27 @@ public class GoodmorningBroadcastReceiver extends BroadcastReceiver {
     private boolean getIsHook(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("broadcast_prefs", Context.MODE_PRIVATE);
         return prefs.getBoolean("is_hook", false);
+    }
+
+    private boolean isDeviceLocked(Context context) {
+        boolean isLocked = false;
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        isLocked = keyguardManager.isKeyguardLocked();
+
+        return isLocked;
+    }
+
+    private void setDeviceLocked(Context context, boolean bool) {
+        SharedPreferences prefs = context.getSharedPreferences("device_locked", Context.MODE_PRIVATE);
+        prefs.edit()
+            .putBoolean("device_locked", bool)
+            .apply();
+    }
+
+    private boolean getDeviceLocked(Context context)
+    {
+        SharedPreferences prefs = context.getSharedPreferences("device_locked", Context.MODE_PRIVATE);
+        boolean isLocked = prefs.getBoolean("device_locked", false);
+        return isLocked;
     }
 }
