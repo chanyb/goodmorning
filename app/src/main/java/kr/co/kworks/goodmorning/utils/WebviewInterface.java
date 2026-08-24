@@ -1,8 +1,10 @@
 package kr.co.kworks.goodmorning.utils;
 
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -207,6 +209,17 @@ public class WebviewInterface {
         });
     }
 
+    // 16. 디바이스 잠금 설정 사용 여부
+    @JavascriptInterface
+    public void doGetKeyGuardLocked(String callback) {
+        boolean isLocked = isDeviceLocked(mActivity);
+        mActivity.runOnUiThread(() -> {
+            global._callFunction.setValue(new Event<>(
+                String.format(Locale.KOREA, "%s(%s)", callback, isLocked)
+            ));
+        });
+    }
+
 
     private boolean isInstalled(Context context, String packageName) {
         try {
@@ -215,5 +228,13 @@ public class WebviewInterface {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    private boolean isDeviceLocked(Context context) {
+        boolean isLocked = false;
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
+        isLocked = keyguardManager.isKeyguardLocked();
+
+        return isLocked;
     }
 }
