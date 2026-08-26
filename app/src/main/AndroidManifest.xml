@@ -3,12 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <queries>
-
-        <!-- PASS 인증 -->
+        <!-- PASS 인증 SKT -->
         <package android:name="com.sktelecom.tauth"/>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="tauthlink" />
+        </intent>
+
+        <!-- PASS 인증 KT -->
+        <package android:name="com.kt.ktauth" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="ktauthexternalcall" />
+        </intent>
+
+        <!-- PASS 인증 LG -->
+        <package android:name="com.lguplus.smartotp" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="upluscorporation" />
         </intent>
 
         <!-- 네이버 앱 -->

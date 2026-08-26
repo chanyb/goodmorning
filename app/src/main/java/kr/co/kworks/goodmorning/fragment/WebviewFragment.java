@@ -392,7 +392,7 @@ public class WebviewFragment extends Fragment implements SinglePageActivity.onBa
                         // PASS 앱 미설치 or 해당 스킴 미지원
                         // 마켓 이동 처리
                         Intent marketIntent = new Intent(Intent.ACTION_VIEW);
-                        marketIntent.setData(Uri.parse("market://details?id=com.sktelecom.tauth"));
+                        marketIntent.setData(Uri.parse(intent.getPackage()));
                         marketIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(marketIntent);
                         closeChildView();
