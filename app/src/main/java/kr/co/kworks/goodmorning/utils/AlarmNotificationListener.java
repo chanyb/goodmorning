@@ -44,7 +44,11 @@ public class AlarmNotificationListener extends NotificationListenerService {
             }
 
             CalendarHandler calendarHandler = new CalendarHandler();
-            long startedAt = ringingMap.remove(key);
+            Long startedAtValue = ringingMap.remove(key);
+            if (startedAtValue == null) {
+                return;
+            }
+            long startedAt = startedAtValue;
             long endedAt = System.currentTimeMillis();
             double duration = (endedAt - startedAt) / 1000f;
 
