@@ -23,7 +23,14 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(getProperty("STORE_FILE_PATH"))
+            storeFile = file(getProperty("STORE_FILE_PATH_RELEASE"))
+            storePassword = getProperty("STORE_PASSWORD")
+            keyAlias = getProperty("STORE_KEY_ALIAS")
+            keyPassword = getProperty("STORE_KEY_PASSWORD")
+        }
+
+        create("bc") {
+            storeFile = file(getProperty("STORE_FILE_PATH_DEBUG"))
             storePassword = getProperty("STORE_PASSWORD")
             keyAlias = getProperty("STORE_KEY_ALIAS")
             keyPassword = getProperty("STORE_KEY_PASSWORD")
@@ -43,7 +50,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
-            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID_RELEASE"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "true")
             isDebuggable = false
@@ -60,28 +67,29 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("bc");
             resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
-            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID_DEBUG"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
 
-        create("devlee") {
+        create("dev") {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("release");
+            signingConfig = signingConfigs.getByName("bc");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            resValue("string", "domain", getProperty("DEV_LEE_IP"))
+            resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
-            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID_DEBUG"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
@@ -89,7 +97,7 @@ android {
         create("devnoh") {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("release");
+            signingConfig = signingConfigs.getByName("bc");
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -98,7 +106,7 @@ android {
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
             resValue("string", "kakao_native_app_key", getProperty("KAKAO_NATIVE_APP_KEY"))
-            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID"))
+            resValue("string", "google_web_client_id", getProperty("GOOGLE_CLIENT_ID_DEBUG"))
             resValue("string", "aes_key", getProperty("AES_KEY"))
             buildConfigField("Boolean", "IS_PRODUCTION", "false")
         }
@@ -165,7 +173,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:${cameraXVersion}")
     implementation("androidx.camera:camera-lifecycle:${cameraXVersion}")
     implementation("androidx.camera:camera-view:${cameraXVersion}")
-    // 🎥 VideoCapture & VideoOutput
+    // VideoCapture & VideoOutput
     implementation("androidx.camera:camera-video:${cameraXVersion}")
 
     // fusedLocationProvider

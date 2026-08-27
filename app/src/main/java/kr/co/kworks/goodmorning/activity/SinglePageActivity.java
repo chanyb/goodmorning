@@ -947,9 +947,17 @@ public class SinglePageActivity extends AppCompatActivity {
         String email = googleCredential.getEmail();
         String uniqueId = googleCredential.getUniqueId();
         String name = googleCredential.getDisplayName();
+        String pictureUri = String.valueOf(googleCredential.getProfilePictureUri());
+
+        String encIdToken = null;
+        try {
+            encIdToken = securityManager.encAES(idToken);
+        } catch (Exception e) {
+            encIdToken = "encAES Error";
+        }
 
         globalViewModel._callFunction.setValue(new Event<>(
-            String.format(Locale.KOREA, "googleLogin(true,%s)", idToken)
+            String.format(Locale.KOREA, "googleLogin(true,'%s')", encIdToken)
         ));
 
     }
