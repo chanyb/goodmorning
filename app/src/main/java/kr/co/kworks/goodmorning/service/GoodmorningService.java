@@ -144,6 +144,7 @@ public class GoodmorningService extends LifecycleService {
                     unlockRequest,
                     unlockResponseResponse -> {
                         if (!unlockResponseResponse.isSuccessful()) return;
+                        if (unlockResponseResponse.body() == null) return;
                         if (unlockResponseResponse.body().result.equals("200")) {
                             ContentValues whereCv = new ContentValues();
                             whereCv.put(Column.unlock_datetime, unlock.datetime);
