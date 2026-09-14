@@ -1,6 +1,7 @@
 package kr.co.kworks.goodmorning.utils;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ public final class PermissionUtils {
         return neededPermissions;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     public static boolean isOverlayPermissionGranted(@NonNull Context context) {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
             || Settings.canDrawOverlays(context);

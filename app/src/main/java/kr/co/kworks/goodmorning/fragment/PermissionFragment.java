@@ -80,8 +80,6 @@ public class PermissionFragment extends Fragment {
             waitingOverlayResult = false;
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(requireContext())) {
-            } else {
-                onOverlayPermissionDenied();
             }
 
             if(!waitingNotificationListenerResult) {
@@ -94,8 +92,6 @@ public class PermissionFragment extends Fragment {
             waitingNotificationListenerResult = false;
 
             if (isNotificationListenerEnabled(requireContext())) {
-            } else {
-                onNotificationListenerDenied();
             }
         }
     }
@@ -154,39 +150,6 @@ public class PermissionFragment extends Fragment {
         Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
         waitingNotificationListenerResult = true;
         startActivity(intent);
-    }
-
-
-    private void onAllPermissionsGranted() {
-        // 둘 다 허용된 상태
-        Logger.getInstance().info("AllPermissionGranted");
-    }
-
-    private void onOverlayPermissionDenied() {
-        // 오버레이 권한 미허용
-        Logger.getInstance().info("OverlayPermissionDenied");
-    }
-
-    private void onNotificationListenerDenied() {
-        // 알림 리스너 권한 미허용
-        Logger.getInstance().info("NotificationListenerDenied");
-    }
-
-    private void checkNextPermission() {
-        Context context = requireContext();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-            && !Settings.canDrawOverlays(context)) {
-            requestOverlayPermission();
-            return;
-        }
-
-        if (!isNotificationListenerEnabled(context)) {
-            requestNotificationListener();
-            return;
-        }
-
-        onAllPermissionsGranted();
     }
 
     private boolean isNotificationListenerEnabled(Context context) {
