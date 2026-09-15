@@ -121,7 +121,7 @@ public final class PermissionUtils {
     public static int[] getPermissionStatus(@NonNull Context context) {
         // [0] POST_NOTIFICATIONS, [1] READ_PHONE_STATE,
         // [2] overlay, [3] notification listener
-        int[] permissionStatus = {1, 1, 1, 1};
+        int[] permissionStatus = {1, 1, 1, 1, 1};
         ArrayList<String> neededPermissions = getNeededPermissions(context);
 
         if (neededPermissions.contains(Manifest.permission.POST_NOTIFICATIONS)) {
@@ -136,7 +136,12 @@ public final class PermissionUtils {
         if (!isNotificationListenerEnabled(context)) {
             permissionStatus[3] = 0;
         }
-
+        if (neededPermissions.contains(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            permissionStatus[4] = 0;
+        }
+        if (neededPermissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            permissionStatus[4] = 0;
+        }
         return permissionStatus;
     }
 
