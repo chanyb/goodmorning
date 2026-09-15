@@ -52,15 +52,10 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException;
-import com.kakao.sdk.user.UserApi;
 import com.kakao.sdk.user.UserApiClient;
 import com.navercorp.nid.NidOAuth;
-import com.navercorp.nid.profile.domain.vo.NidProfile;
-import com.navercorp.nid.profile.util.NidProfileCallback;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -76,7 +71,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.databinding.ActivitySinglePageBinding;
-import kr.co.kworks.goodmorning.fragment.PermissionFragment;
 import kr.co.kworks.goodmorning.fragment.WebviewFragment;
 import kr.co.kworks.goodmorning.model.business_logic.Alert;
 import kr.co.kworks.goodmorning.model.business_logic.Confirm;
@@ -88,7 +82,9 @@ import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GetFile;
 import kr.co.kworks.goodmorning.utils.GlobalApplication;
 import kr.co.kworks.goodmorning.utils.LiveUpdator;
+import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
+import kr.co.kworks.goodmorning.utils.PermissionUtils;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.viewmodel.Event;
 import kr.co.kworks.goodmorning.viewmodel.GlobalViewModel;
@@ -104,7 +100,6 @@ public class SinglePageActivity extends AppCompatActivity {
     private SecurityManager securityManager;
 
     private WebviewFragment webViewFragment;
-    private PermissionFragment permissionFragment;
 
     private ScheduledExecutorService executor;
     private ScheduledFuture<?> startServiceScheduled, testScheduled;
@@ -120,6 +115,8 @@ public class SinglePageActivity extends AppCompatActivity {
     private LiveUpdator liveUpdator;
     private GetFile getFile;
 
+    private LocationManagerHandler locationManagerHandler;
+
     public interface onBackPressedListener {
         public void onBack();
     }
@@ -134,8 +131,18 @@ public class SinglePageActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 2424) {
-            permissionFragment.requestOverlayPermission();
+
+        if (requestCode == PermissionUtils.REQUEST_CODE_RUNTIME_PERMISSIONS) {
+            if (!PermissionUtils.requestBackgroundLocation(this)) {
+                // background location already setting
+                if (!PermissionUtils.requestNotificationListenerPermission(this)) {
+                    // notification listener already setting
+                }
+            }
+        } else if (requestCode == PermissionUtils.REQUEST_CODE_BACKGROUND_PERMISSION) {
+            if (!PermissionUtils.requestNotificationListenerPermission(this)) {
+                // Notification Listener already setting
+            }
         }
     }
 
@@ -159,6 +166,7 @@ public class SinglePageActivity extends AppCompatActivity {
             startForeground();
         }
         updateFileVersionCheck();
+        test();
     }
 
     @Override
@@ -189,6 +197,8 @@ public class SinglePageActivity extends AppCompatActivity {
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
 
+        locationManagerHandler = new LocationManagerHandler(this);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
         setFirstFragment();
 
@@ -216,15 +226,6 @@ public class SinglePageActivity extends AppCompatActivity {
                 }
             }
         );
-
-        // Permission Fragment 추가
-        permissionFragment = new PermissionFragment();
-        getSupportFragmentManager()
-            .beginTransaction()
-            .add(permissionFragment, "permission_fragment")
-            .commitNow();
-
-        permissionFragment.init();
 
         // pick 1 media
         pick1Media = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), this::sendImage);
@@ -424,7 +425,13 @@ public class SinglePageActivity extends AppCompatActivity {
             if (isHandled == null) return;
 
             if (isHandled.equals("start")) {
-                permissionFragment.requestPermissions();
+                if (!PermissionUtils.requestRuntimePermissions(this)) {
+                    if (!PermissionUtils.requestBackgroundLocation(this)) {
+                        if (!PermissionUtils.requestNotificationListenerPermission(this)) {
+                            // nothing to do
+                        }
+                    }
+                }
             } else if (isHandled.equals("done")) {
 
             }
@@ -505,6 +512,10 @@ public class SinglePageActivity extends AppCompatActivity {
             if (o == 100) {
                 liveUpdator.executeApk("gm.apk",getFilesDir().getAbsolutePath());
             }
+        });
+
+        locationManagerHandler.liveLocation.observe(this, o -> {
+
         });
     }
 
@@ -636,7 +647,7 @@ public class SinglePageActivity extends AppCompatActivity {
 
     private void test() {
         testScheduled = executor.schedule(() -> {
-            permissionFragment.requestPermissions();
+            globalViewModel._permission.postValue(new Event<>("start"));
         }, 10_000, TimeUnit.MILLISECONDS);
     }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public final class PermissionUtils {
 
     public static final int REQUEST_CODE_RUNTIME_PERMISSIONS = 2424;
+    public static final int REQUEST_CODE_BACKGROUND_PERMISSION = 2425;
 
     private PermissionUtils() {
     }
@@ -34,6 +35,16 @@ public final class PermissionUtils {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
             neededPermissions.add(Manifest.permission.READ_PHONE_STATE);
         }
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            neededPermissions.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            neededPermissions.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
+
 
         return neededPermissions;
     }
@@ -127,5 +138,32 @@ public final class PermissionUtils {
         }
 
         return permissionStatus;
+    }
+
+    private static ArrayList<String> getNeededDetailPermission(Context context) {
+        ArrayList<String> neededDetailPermissions = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
+                neededDetailPermissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+            }
+        }
+
+        return neededDetailPermissions;
+    }
+
+    public static boolean requestBackgroundLocation(Activity activity) {
+        ArrayList<String> list = new ArrayList<>();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_DENIED) {
+                list.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+            }
+        }
+        if(list.isEmpty()) {
+            // 권한 요청 끝남
+            return false;
+        }
+        String[] permissions = list.toArray(new String[0]);
+        ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE_BACKGROUND_PERMISSION);
+        return true;
     }
 }
