@@ -4,11 +4,13 @@ import kr.co.kworks.goodmorning.model.request.GetAutoRefreshRequest;
 import kr.co.kworks.goodmorning.model.request.GetAuthRequest;
 import kr.co.kworks.goodmorning.model.request.GetHelliListRequest;
 import kr.co.kworks.goodmorning.model.request.GetVehicleListRequest;
+import kr.co.kworks.goodmorning.model.request.ReportLocRequest;
 import kr.co.kworks.goodmorning.model.request.UnlockRequest;
 import kr.co.kworks.goodmorning.model.response.BaseResponse;
 import kr.co.kworks.goodmorning.model.response.GetAuthBody;
 import kr.co.kworks.goodmorning.model.response.GetHelliListResponse;
 import kr.co.kworks.goodmorning.model.response.GetVehicleListResponse;
+import kr.co.kworks.goodmorning.model.response.ReportLocResponse;
 import kr.co.kworks.goodmorning.model.response.UnlockResponse;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -28,18 +30,10 @@ public interface RequestInterface {
         @Body UnlockRequest unlockRequest
     );
 
-    @POST("/api/vehicle/getVehicleList.do")
-    Call<BaseResponse<GetVehicleListResponse>> getVehicleList(
-        @Header("Authorization") String accessToken,
-        @Header("stime") String sDatetime,
-        @Body GetVehicleListRequest getVehicleListRequest
+    @POST("api/reportLoc.do")
+    Call<ReportLocResponse> reportLoc(
+        @Body ReportLocRequest reportLocRequest
     );
 
-    @POST("/api/vehicle/getHeliList.do")
-    Call<BaseResponse<GetHelliListResponse>> getHelliList(
-        @Header("Authorization") String accessToken,
-        @Header("stime") String sDatetime,
-        @Body GetHelliListRequest getHelliListRequest
-    );
 
 }

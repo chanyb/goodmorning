@@ -17,6 +17,13 @@ public class LocationManagerHandler {
     private Context mContext;
     private LocationListener gpsListener, networkListener;
     private boolean updating = false;
+    private LocationCallback locationCallback;
+
+
+    public interface LocationCallback {
+        void callback(Location location);
+    }
+
 
     public LocationManagerHandler(Context context) {
         mContext = context;
@@ -25,6 +32,9 @@ public class LocationManagerHandler {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 liveLocation.postValue(location);
+                if (locationCallback != null) {
+                    locationCallback.callback(location);
+                }
             }
         };
 
@@ -32,6 +42,9 @@ public class LocationManagerHandler {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 networkLocation.postValue(location);
+                if (locationCallback != null) {
+                    locationCallback.callback(location);
+                }
             }
         };
 
@@ -69,5 +82,9 @@ public class LocationManagerHandler {
 
     public boolean canUse() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    public void setLocationCallback(LocationCallback callback) {
+        this.locationCallback = callback;
     }
 }

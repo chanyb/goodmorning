@@ -9,10 +9,12 @@ import kr.co.kworks.goodmorning.model.network.NetworkModule;
 import kr.co.kworks.goodmorning.model.network.RequestInterface;
 import kr.co.kworks.goodmorning.model.request.GetHelliListRequest;
 import kr.co.kworks.goodmorning.model.request.GetVehicleListRequest;
+import kr.co.kworks.goodmorning.model.request.ReportLocRequest;
 import kr.co.kworks.goodmorning.model.request.UnlockRequest;
 import kr.co.kworks.goodmorning.model.response.BaseResponse;
 import kr.co.kworks.goodmorning.model.response.GetHelliListResponse;
 import kr.co.kworks.goodmorning.model.response.GetVehicleListResponse;
+import kr.co.kworks.goodmorning.model.response.ReportLocResponse;
 import kr.co.kworks.goodmorning.model.response.UnlockResponse;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import okhttp3.ResponseBody;
@@ -43,6 +45,26 @@ public class ServerRepository {
 
             @Override
             public void onFailure(Call<UnlockResponse> call, Throwable t) {
+                throwableCallback.accept(t);
+            }
+        });
+    }
+
+
+    public void reportLoc(
+        ReportLocRequest reportLocRequest,
+        Consumer<Response<ReportLocResponse>> responseCallback,
+        Consumer<Throwable> throwableCallback
+    ) {
+        Call<ReportLocResponse> callUnlock = api.reportLoc(reportLocRequest);
+        callUnlock.enqueue(new Callback<ReportLocResponse>() {
+            @Override
+            public void onResponse(Call<ReportLocResponse> call, Response<ReportLocResponse> response) {
+                responseCallback.accept(response);
+            }
+
+            @Override
+            public void onFailure(Call<ReportLocResponse> call, Throwable t) {
                 throwableCallback.accept(t);
             }
         });

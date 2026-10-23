@@ -197,9 +197,6 @@ public class SinglePageActivity extends AppCompatActivity {
         networkBroadcastReceiver = new NetworkBroadcastReceiver(bool -> {
         });
 
-        locationManagerHandler = new LocationManagerHandler(this);
-        locationManagerHandler.start();
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // keep screen on
         setFirstFragment();
 
@@ -515,9 +512,6 @@ public class SinglePageActivity extends AppCompatActivity {
             }
         });
 
-        locationManagerHandler.liveLocation.observe(this, o -> {
-            // 위치 정보 수집
-        });
     }
 
     private void popAllBackStack() {

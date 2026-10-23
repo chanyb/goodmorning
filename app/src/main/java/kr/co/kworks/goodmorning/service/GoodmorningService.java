@@ -28,11 +28,13 @@ import kr.co.kworks.goodmorning.R;
 import kr.co.kworks.goodmorning.activity.IntroActivity;
 import kr.co.kworks.goodmorning.model.business_logic.Unlock;
 import kr.co.kworks.goodmorning.model.repository.ServerRepository;
+import kr.co.kworks.goodmorning.model.request.ReportLocRequest;
 import kr.co.kworks.goodmorning.model.request.UnlockRequest;
 import kr.co.kworks.goodmorning.utils.CalendarHandler;
 import kr.co.kworks.goodmorning.utils.Column;
 import kr.co.kworks.goodmorning.utils.Database;
 import kr.co.kworks.goodmorning.utils.GoodmorningBroadcastReceiver;
+import kr.co.kworks.goodmorning.utils.LocationManagerHandler;
 import kr.co.kworks.goodmorning.utils.Logger;
 import kr.co.kworks.goodmorning.utils.SecurityManager;
 import kr.co.kworks.goodmorning.utils.Utils;
@@ -48,6 +50,8 @@ public class GoodmorningService extends LifecycleService {
     private Handler mHandler;
     private Database database;
     private SecurityManager securityManager;
+
+    private LocationManagerHandler locationManagerHandler;
 
     private boolean screenOff;
 
@@ -91,6 +95,29 @@ public class GoodmorningService extends LifecycleService {
         goodmorningBroadcastReceiver = new GoodmorningBroadcastReceiver();
         database = new Database();
         securityManager = new SecurityManager(this);
+        locationManagerHandler = new LocationManagerHandler(this);
+        locationManagerHandler.setLocationCallback(location -> {
+            String token = database.getAppToken();
+            ReportLocRequest reportLocRequest = new ReportLocRequest();
+            try {
+                reportLocRequest.token = securityManager.encAES(token);
+                reportLocRequest.loc_lat = securityManager.encAES(String.valueOf(location.getLatitude()));
+                reportLocRequest.loc_lon = securityManager.encAES(String.valueOf(location.getLongitude()));
+            } catch (Exception e) {
+                return ;
+            }
+            reportLocRequest.loc_datetime = calendarHandler.getDatetimeStringFromTimeMillis(location.getTime());
+
+            reportLocRequest.loc_acc = location.getAccuracy();
+            serverRepository.reportLoc(reportLocRequest, rsp -> {
+                if (!rsp.isSuccessful()) return;
+                if (rsp.body() == null) return;
+                Logger.getInstance().info("reportLoc", "result: " + rsp.body().result);
+            }, throwable -> {
+                Logger.getInstance().error("reportLoc", "throwable: " , throwable);
+            });
+        });
+        locationManagerHandler.start();
     }
 
     /**
