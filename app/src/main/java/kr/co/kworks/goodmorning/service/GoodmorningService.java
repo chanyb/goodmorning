@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
+import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -46,12 +47,14 @@ public class GoodmorningService extends LifecycleService {
 
     private GoodmorningBroadcastReceiver goodmorningBroadcastReceiver;
     private ScheduledExecutorService executor;
-    private ScheduledFuture<?> unLockDataScheduled;
+    private ScheduledFuture<?> unLockDataScheduled, reportLocScheduled;
     private Handler mHandler;
     private Database database;
     private SecurityManager securityManager;
 
     private LocationManagerHandler locationManagerHandler;
+
+    private Location lastLocation;
 
     private boolean screenOff;
 
@@ -97,25 +100,7 @@ public class GoodmorningService extends LifecycleService {
         securityManager = new SecurityManager(this);
         locationManagerHandler = new LocationManagerHandler(this);
         locationManagerHandler.setLocationCallback(location -> {
-            String token = database.getAppToken();
-            ReportLocRequest reportLocRequest = new ReportLocRequest();
-            try {
-                reportLocRequest.token = securityManager.encAES(token);
-                reportLocRequest.loc_lat = securityManager.encAES(String.valueOf(location.getLatitude()));
-                reportLocRequest.loc_lon = securityManager.encAES(String.valueOf(location.getLongitude()));
-            } catch (Exception e) {
-                return ;
-            }
-            reportLocRequest.loc_datetime = calendarHandler.getDatetimeStringFromTimeMillis(location.getTime());
-
-            reportLocRequest.loc_acc = location.getAccuracy();
-            serverRepository.reportLoc(reportLocRequest, rsp -> {
-                if (!rsp.isSuccessful()) return;
-                if (rsp.body() == null) return;
-                Logger.getInstance().info("reportLoc", "result: " + rsp.body().result);
-            }, throwable -> {
-                Logger.getInstance().error("reportLoc", "throwable: " , throwable);
-            });
+            lastLocation = location;
         });
         locationManagerHandler.start();
     }
@@ -146,6 +131,7 @@ public class GoodmorningService extends LifecycleService {
 
     private void startScheduled() {
         stopUnLockDataScheduled();
+        stopReportLocScheduled();
         unLockDataScheduled = executor.scheduleWithFixedDelay(() -> {
             Unlock unlock = database.getUnlockInfo();
             String token = database.getAppToken();
@@ -189,6 +175,10 @@ public class GoodmorningService extends LifecycleService {
 
         },1000, 1000, TimeUnit.MILLISECONDS);
 
+        reportLocScheduled = executor.scheduleWithFixedDelay(() -> {
+            if (lastLocation == null) return;
+            reportLoc(lastLocation);
+        },1000, 1000*60*5, TimeUnit.MILLISECONDS);
     }
 
 
@@ -217,6 +207,34 @@ public class GoodmorningService extends LifecycleService {
         if (unLockDataScheduled != null && !unLockDataScheduled.isCancelled()) {
             unLockDataScheduled.cancel(true);
         }
+    }
+
+    private void stopReportLocScheduled() {
+        if (reportLocScheduled != null && !reportLocScheduled.isCancelled()) {
+            reportLocScheduled.cancel(true);
+        }
+    }
+
+    private void reportLoc(Location location) {
+        String token = database.getAppToken();
+        ReportLocRequest reportLocRequest = new ReportLocRequest();
+        try {
+            reportLocRequest.token = securityManager.encAES(token);
+            reportLocRequest.loc_lat = securityManager.encAES(String.valueOf(location.getLatitude()));
+            reportLocRequest.loc_lon = securityManager.encAES(String.valueOf(location.getLongitude()));
+        } catch (Exception e) {
+            return ;
+        }
+        reportLocRequest.loc_datetime = calendarHandler.getDatetimeStringFromTimeMillis(location.getTime());
+
+        reportLocRequest.loc_acc = location.getAccuracy();
+        serverRepository.reportLoc(reportLocRequest, rsp -> {
+            if (!rsp.isSuccessful()) return;
+            if (rsp.body() == null) return;
+            Logger.getInstance().info("reportLoc", "result: " + rsp.body().result);
+        }, throwable -> {
+            Logger.getInstance().error("reportLoc", "throwable: " , throwable);
+        });
     }
 
 
