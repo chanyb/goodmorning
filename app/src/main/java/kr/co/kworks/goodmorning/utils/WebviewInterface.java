@@ -199,11 +199,12 @@ public class WebviewInterface {
         int[] permissionStatus = PermissionUtils.getPermissionStatus(mActivity);
         mActivity.runOnUiThread(() -> {
             global._callFunction.setValue(new Event<>(
-                String.format(Locale.KOREA, "%s(%s,%s,%s,%s)", callback,
+                String.format(Locale.KOREA, "%s(%s,%s,%s,%s,%s)", callback,
                     permissionStatus[0] == 1,
                     permissionStatus[1] == 1,
                     permissionStatus[2] == 1,
-                    permissionStatus[3] == 1
+                    permissionStatus[3] == 1,
+                    permissionStatus[4] == 1
                 )
             ));
         });

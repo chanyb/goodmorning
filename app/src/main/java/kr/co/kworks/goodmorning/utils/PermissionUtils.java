@@ -120,7 +120,7 @@ public final class PermissionUtils {
     @NonNull
     public static int[] getPermissionStatus(@NonNull Context context) {
         // [0] POST_NOTIFICATIONS, [1] READ_PHONE_STATE,
-        // [2] overlay, [3] notification listener
+        // [2] overlay, [3] notification listener, [4] foreground/background location
         int[] permissionStatus = {1, 1, 1, 1, 1};
         ArrayList<String> neededPermissions = getNeededPermissions(context);
 
@@ -140,6 +140,9 @@ public final class PermissionUtils {
             permissionStatus[4] = 0;
         }
         if (neededPermissions.contains(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            permissionStatus[4] = 0;
+        }
+        if (getNeededDetailPermission(context).contains(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
             permissionStatus[4] = 0;
         }
         return permissionStatus;
