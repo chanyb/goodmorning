@@ -1,0 +1,12 @@
+name: GoodMorning CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 실행 확인
+        run: echo "GoodMorning Actions started"
