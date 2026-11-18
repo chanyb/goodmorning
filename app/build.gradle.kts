@@ -22,18 +22,24 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            storeFile = file(getProperty("STORE_FILE_PATH_RELEASE"))
-            storePassword = getProperty("STORE_PASSWORD")
-            keyAlias = getProperty("STORE_KEY_ALIAS")
-            keyPassword = getProperty("STORE_KEY_PASSWORD")
+        val releasePath = getOptionalProperty("STORE_FILE_PATH_RELEASE")
+        if (!isCiBuild() && !releasePath.isNullOrBlank()) {
+            create("release") {
+                storeFile = file(releasePath)
+                storePassword = getProperty("STORE_PASSWORD")
+                keyAlias = getProperty("STORE_KEY_ALIAS")
+                keyPassword = getProperty("STORE_KEY_PASSWORD")
+            }
         }
 
-        create("bc") {
-            storeFile = file(getProperty("STORE_FILE_PATH_DEBUG"))
-            storePassword = getProperty("STORE_PASSWORD")
-            keyAlias = getProperty("STORE_KEY_ALIAS")
-            keyPassword = getProperty("STORE_KEY_PASSWORD")
+        val debugPath = getOptionalProperty("STORE_FILE_PATH_DEBUG")
+        if (!isCiBuild() && !debugPath.isNullOrBlank()) {
+            create("bc") {
+                storeFile = file(debugPath)
+                storePassword = getProperty("STORE_PASSWORD")
+                keyAlias = getProperty("STORE_KEY_ALIAS")
+                keyPassword = getProperty("STORE_KEY_PASSWORD")
+            }
         }
     }
 
@@ -44,7 +50,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release");
+            signingConfig = signingConfigs.findByName("release")
 
             resValue("string", "domain", getProperty("OPERATION_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
@@ -67,7 +73,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("bc");
+            signingConfig = signingConfigs.findByName("bc")
+                ?: signingConfigs.getByName("debug")
             resValue("string", "domain", getProperty("DEBUG_DOMAIN"))
             resValue("string", "naver_client_id", getProperty("NAVER_CLIENT_ID"))
             resValue("string", "naver_client_secret", getProperty("NAVER_CLIENT_SECRET"))
@@ -80,7 +87,8 @@ android {
         create("dev") {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("bc");
+            signingConfig = signingConfigs.findByName("bc")
+                ?: signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -97,7 +105,8 @@ android {
         create("devnoh") {
             isMinifyEnabled = false
             isDebuggable = true
-            signingConfig = signingConfigs.getByName("bc");
+            signingConfig = signingConfigs.findByName("bc")
+                ?: signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -242,7 +251,15 @@ fun loadLocalProperties(file: File): Properties {
 }
 
 
+// Environment variables take priority; local paths retain their app-relative meaning.
+fun getOptionalProperty(key: String): String? {
+    return System.getenv(key)?.takeIf { it.isNotBlank() }
+        ?: loadLocalProperties(rootProject.file("local.properties")).getProperty(key)
+}
+
+fun isCiBuild(): Boolean = System.getenv("GITHUB_ACTIONS") == "true"
+
 fun getProperty(key: String): String {
-    val localProperties = loadLocalProperties(rootProject.file("local.properties"))
-    return localProperties.getProperty(key)
+    return getOptionalProperty(key)
+        ?: error("Missing build setting: $key (environment or local.properties)")
 }

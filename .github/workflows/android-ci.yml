@@ -22,3 +22,25 @@ jobs:
 
       - name: Gradle 실행 확인
         run: bash ./gradlew --version
+
+      - name: 빌드 설정 준비
+        shell: bash
+        env:
+          CI_LOCAL_PROPERTIES: ${{ secrets.CI_LOCAL_PROPERTIES }}
+        run: |
+          if [ -z "$CI_LOCAL_PROPERTIES" ]; then
+            echo "CI_LOCAL_PROPERTIES Secret을 먼저 등록해 주세요."
+            exit 1
+          fi
+          printf '%s\n' "$CI_LOCAL_PROPERTIES" > local.properties
+
+      - name: 개발용 APK 빌드
+        run: bash ./gradlew :app:assembleDebug --no-daemon
+
+      - name: APK 보관
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodmorning-debug
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
