@@ -201,6 +201,7 @@ public class GoodmorningService extends LifecycleService {
     private void release() {
         unregisterBroadcastReceiver();
         stopUnLockDataScheduled();
+        stopReportLocScheduled();
     }
 
     private void stopUnLockDataScheduled() {
